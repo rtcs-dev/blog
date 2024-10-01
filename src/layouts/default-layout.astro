@@ -1,0 +1,16 @@
+---
+import Head from "@/components/layout/head.astro";
+import Header from "@/components/layout/header.astro";
+import Container from "@/components/layout/container.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/constants";
+---
+
+<html lang="en">
+  <Head title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  <body class="font-inter">
+    <Header />
+    <Container>
+      <slot />
+    </Container>
+  </body>
+</html>

@@ -1,0 +1,26 @@
+---
+import Container from "./container.astro";
+import ThemeSwitcher from "./theme-switcher.astro";
+---
+
+<header class="flex items-center sticky z-10 top-0 h-[80px] backdrop-blur-md">
+  <Container class="flex items-center justify-between flex-1">
+    <a class="text-2xl text-foreground font-semibold" href="/">RT </a>
+    <nav>
+      <ul class="flex items-center">
+        <li>
+          <a class="p-4 block text-md" href="/resume">Resume</a>
+        </li>
+        <li>
+          <a class="p-4 block text-md" href="/hub">Hub</a>
+        </li>
+        <li>
+          <button id="contact-button" class="p-4 block text-md">Contact</button>
+        </li>
+        <li>
+          <ThemeSwitcher />
+        </li>
+      </ul>
+    </nav>
+  </Container>
+</header>

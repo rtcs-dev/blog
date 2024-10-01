@@ -1,0 +1,12 @@
+---
+import { cn } from "@/lib/utils";
+import type { HTMLAttributes } from "astro/types";
+
+interface Props extends HTMLAttributes<"div"> {}
+
+const { class: classOverrides, ...props } = Astro.props;
+---
+
+<div class={cn("max-w-[1112px] mx-auto px-4", classOverrides)} {...props}>
+  <slot />
+</div>
