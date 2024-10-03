@@ -1,16 +1,25 @@
 ---
-import Head from "@/components/layout/head.astro";
+import Head, { type Props as HeadProps } from "@/components/layout/head.astro";
 import Header from "@/components/layout/header.astro";
 import Container from "@/components/layout/container.astro";
-import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/constants";
+import Footer from "@/components/layout/footer.astro";
+import Background from "@/components/layout/background.astro";
+
+type Props = {
+  headProps?: Partial<HeadProps>;
+};
+
+const { headProps } = Astro.props;
 ---
 
 <html lang="en">
-  <Head title={SITE_TITLE} description={SITE_DESCRIPTION} />
+  <Head {...headProps} />
   <body class="font-inter">
+    <Background />
     <Header />
     <Container>
       <slot />
+      <Footer />
     </Container>
   </body>
 </html>

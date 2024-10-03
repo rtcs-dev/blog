@@ -1,0 +1,28 @@
+footer .feather * {
+  @apply fill-transparent stroke-foreground;
+  transition: fill 250ms linear;
+}
+
+.footer-icons {
+  @apply flex items-center p-4 rounded-lg justify-center;
+}
+
+.footer-icons:not(.email-icon):hover * {
+  stroke: var(--icon-color-light, var(--icon-color));
+  @apply dark:fill-[var(--icon-color)] dark:stroke-accent-foreground;
+}
+
+.footer-icons:not(.email-icon).hover * {
+  stroke: var(--icon-color-light, var(--icon-color));
+  @apply dark:fill-[var(--icon-color)] dark:stroke-accent-foreground;
+}
+
+.footer-icons.email-icon:hover * {
+  stroke: var(--icon-color-light, var(--icon-color));
+  @apply dark:text-[var(--icon-color)];
+}
+
+.footer-icons.email-icon.hover * {
+  stroke: var(--icon-color-light, var(--icon-color));
+  @apply text-[var(--icon-color)];
+}

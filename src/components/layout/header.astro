@@ -24,3 +24,40 @@ import ThemeSwitcher from "./theme-switcher.astro";
     </nav>
   </Container>
 </header>
+
+<script>
+  async function highlightContactInfo() {
+    const contactSection = document.querySelector<HTMLDivElement>("#contact");
+
+    if (!contactSection) return;
+
+    window.scrollTo({ top: contactSection.offsetTop, behavior: "smooth" });
+
+    const icons = document.querySelectorAll("#contact .footer-icons");
+    const timeoutPromises: Promise<void>[] = [];
+
+    icons.forEach((icon, index) => {
+      const timeout = new Promise<void>((resolve) =>
+        setTimeout(() => {
+          icon.classList.add("hover");
+          resolve();
+        }, 500 * index),
+      );
+
+      timeoutPromises.push(timeout);
+    });
+
+    await Promise.all(timeoutPromises);
+
+    setTimeout(() => {
+      icons.forEach((icon) => {
+        icon.classList.remove("hover");
+      });
+    }, 500);
+  }
+
+  const contactLink = document.querySelector("#contact-button");
+  if (contactLink) {
+    contactLink.addEventListener("click", highlightContactInfo);
+  }
+</script>
