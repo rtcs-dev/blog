@@ -55,6 +55,7 @@ export default {
       },
       fontFamily: {
         inter: ["Inter Variable", "sans-serif"],
+        openSans: ["Open Sans Variable", "sans-serif"],
       },
     },
   },

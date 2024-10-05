@@ -1,11 +1,22 @@
 ---
+import { Image } from "astro:assets";
 import Container from "./container.astro";
+
 import ThemeSwitcher from "./theme-switcher.astro";
 ---
 
-<header class="flex items-center sticky z-10 top-0 h-[80px] backdrop-blur-md">
+<header
+  class="flex items-center sticky z-10 top-0 h-[80px] mb-4 sm:mb-8 backdrop-blur-md"
+>
   <Container class="flex items-center justify-between flex-1">
-    <a class="text-2xl text-foreground font-semibold" href="/">RT </a>
+    <a class="text-2xl text-foreground font-semibold" href="/">
+      <Image
+        src="/assets/logo/orange-256x256.png"
+        alt={"rtcs logo"}
+        width="50"
+        height="50"
+      />
+    </a>
     <nav>
       <ul class="flex items-center">
         <li>
