@@ -1,0 +1,42 @@
+---
+import type { Experience } from "@/lib/types/resume.types";
+import ExperienceDetails from "./experience-details.astro";
+import { format } from "date-fns";
+
+interface Props {
+  experience: Experience;
+}
+
+const { experience } = Astro.props;
+
+const { name, position, startDate, endDate, summary, url, highlights, stack } =
+  experience;
+const missions = "missions" in experience ? experience.missions : [];
+---
+
+<div>
+  <h4 class="mb-0">
+    {position}
+    <span>@</span>
+    {
+      url ? (
+        <a class="text-primary hover:underline" href={url} target="_blank">
+          {name}
+        </a>
+      ) : (
+        <span class="text-primary">{name}</span>
+      )
+    }
+  </h4>
+  <p class="text-muted-foreground mb-2">
+    {format(startDate, "MMMM yyyy")} - {
+      endDate === "present" ? "Present" : format(endDate, "MMMM yyyy")
+    }
+  </p>
+  <ExperienceDetails
+    missions={missions}
+    summary={summary}
+    highlights={highlights}
+    stack={stack}
+  />
+</div>

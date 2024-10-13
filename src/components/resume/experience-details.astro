@@ -1,0 +1,72 @@
+---
+import { Icon } from "astro-icon/components";
+import type { Mission, Experience } from "@/lib/types/resume.types";
+import BulletedList from "../ui/bulleted-list.astro";
+
+import { format } from "date-fns";
+
+interface Props extends Pick<Experience, "summary" | "highlights" | "stack"> {
+  missions: Mission[];
+}
+
+const { summary, highlights, missions, stack } = Astro.props;
+---
+
+<div class="flex flex-col gap-4">
+  {
+    Boolean(summary.length) && (
+      <div>
+        <p class="font-semibold text-lg mb-2">Summary</p>
+        <BulletedList>
+          {summary.map((summaryItem) => (
+            <li class="text-muted-foreground">{summaryItem}</li>
+          ))}
+        </BulletedList>
+      </div>
+    )
+  }
+  {
+    Boolean(missions.length) && (
+      <div>
+        <p class="font-semibold text-lg mb-2">Missions</p>
+        <BulletedList>
+          {missions.map(({ name, position, startDate, endDate }) => (
+            <li>
+              <span>
+                {name} -
+                <span class="text-muted-foreground">{`${position} (${format(startDate, "MMMM yyyy")} - ${endDate === "present" ? "Present" : format(endDate, "MMMM yyyy")})`}</span>
+              </span>
+            </li>
+          ))}
+        </BulletedList>
+      </div>
+    )
+  }
+  {
+    Boolean(highlights.length) && (
+      <div>
+        <p class="font-semibold text-lg mb-2">Highlights</p>
+        <BulletedList>
+          {highlights.map((highlight) => (
+            <li class="text-muted-foreground">{highlight}</li>
+          ))}
+        </BulletedList>
+      </div>
+    )
+  }
+  {
+    Boolean(stack.length) && (
+      <div>
+        <p class="font-semibold text-lg mb-2">Technologies</p>
+        <div class="grid grid-cols-3 md:flex md:flex-wrap gap-4">
+          {stack.map(({ name: techName, src: iconFileName }) => (
+            <div class="inline-flex gap-1">
+              <Icon class="size-6" name={iconFileName} />
+              <span>{techName}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+</div>
