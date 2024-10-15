@@ -48,27 +48,27 @@ const P5: Experience = {
   stack: [
     {
       name: "Node",
-      src: "node",
+      src: "resume/node",
     },
     {
       name: "Nest",
-      src: "nest",
+      src: "resume/nest",
     },
     {
       name: "React",
-      src: "react",
+      src: "resume/react",
     },
     {
       name: "Next",
-      src: "next",
+      src: "resume/next",
     },
     {
       name: "AWS",
-      src: "aws",
+      src: "resume/aws",
     },
     {
       name: "Terraform",
-      src: "terraform",
+      src: "resume/terraform",
     },
   ],
 };
@@ -88,15 +88,15 @@ const PrivateSky: Experience = {
   stack: [
     {
       name: "Node",
-      src: "node",
+      src: "resume/node",
     },
     {
       name: "WC",
-      src: "wc",
+      src: "resume/wc",
     },
     {
       name: "React native",
-      src: "react",
+      src: "resume/react",
     },
   ],
 };

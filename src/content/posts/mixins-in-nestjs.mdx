@@ -1,0 +1,403 @@
+---
+title: Mixins and their use-cases in NestJS
+description: This write-up explores the concept of mixins and how they can be used, especially in the context of NestJS applications, showcasing their use in configuration, middleware, and services.
+date: 2024-08-05
+image: "/assets/images/posts/mixins-nestjs.jpg"
+keywords: "NestJS, mixins, tutorial, Node.js, production-grade, advanced, Javascript, Typescript, backend, typeorm"
+---
+
+## Prerequisites
+
+This post aims to showcase the concept of mixins, especially in the context of NestJS applications. To get the most out of it, you should be familiar with javascript, typescript and know a little bit about working with NestJS and typeorm.
+
+<br />
+
+With that out of the way, let's get mixin' 💿.
+
+## What are mixins?
+
+Mixins are a programming concept with multiple definitions, but my favorite one is the most generic:
+
+<br />
+
+<i id="definition">
+  A mixin is a class whose methods are added to, or mixed in, with another
+  class.
+</i>
+
+<br />
+<br />
+
+In Javascript, there are multiple strategies for implementing mixins, including some helper libraries. We will focus on approaches that do not require any libraries.
+
+<br />
+
+Mixins can be really useful when you want to share some cross-cutting functionality between multiple classes, and, as we will see, they can be especially useful in NestJS for configuration, creating reusable services, and a lot more.
+
+## The "simplest" mixin
+
+```typescript
+class User {
+  constructor(protected readonly name: string) {}
+}
+
+const greetingMixin = {
+  greet() {
+    console.log(`Hi, my name is ${this.name}`);
+  },
+};
+
+Object.assign(User.prototype, greetingMixin);
+
+const me = new User("Robert");
+
+me.greet(); // Hi, my name is Robert
+```
+
+`Object.assign` is a powerful primitive that makes it very easy to add functionality to class prototypes. It is simple to use and helps us add the `greet` functionality to the `User` class. However, it has a few shortcomings:
+
+- The prototype of the target class is modified directly.
+- Poor typescript support. It will not see `.greet()` as a method belonging to `User`.
+- Composing multiple mixins without overriding behavior is difficult.
+
+## Mixins done right
+
+It's important to remember that classes in javascript are first class citizens, meaning they can be
+passed as an argument to functions and also returned from them.
+
+<br />
+
+So let's refactor the previous example and take advantage of these aspects.
+
+```typescript
+interface ClassType<T = any> extends Function {
+  new (...args: any[]): T;
+}
+
+const WithGreet = <TBase extends ClassType>(BaseCls: TBase) => {
+  return class extends BaseCls {
+    greet() {
+      console.log(`Hi, my name is ${this.name}`);
+    }
+  };
+};
+
+class User {
+  constructor(protected readonly name: string) {}
+}
+
+const UserWithGreet = WithGreet(User);
+
+const greeter = new UserWithGreet("Robert");
+
+greeter.greet();
+```
+
+Let's look at some key points of the implementation:
+
+- `ClassType` is just an utility type that I use in order to type a class passed as a parameter.
+- `WithGreet` is a mixin that takes a base class as a parameter and returns an "anonymous" class that extends the base one with the greet functionality.
+
+<br />
+
+Some key advantages of this approach are:
+
+- We preserve the integrity of the `User` prototype. Anyone using it directly will not be affected.
+- Good Typescript support: `greet()` is recognized as a method of `UserWithGreet`.
+- Composable: we can easily extend the resulting class to add even more functionality.
+
+## Use-cases in NestJS
+
+### Configuration
+
+In my <a href="/posts/configuring-nestjs" target="_blank">last blog post</a> I went through my preferred setup for validating the environment a NestJS app is initialized with.
+
+<br />
+
+<strong>TL;DR:</strong> I like to use `class-validator` and `class-transformer`
+for validation.
+
+<br />
+
+I also want to have a strict configuration when deploying to production. Here's how I achieve that:
+
+```typescript
+import { IsUrl } from "class-validator";
+
+type Env = "development" | "production";
+
+const PostgresSchema = (env: Env) => {
+  class PostgresSchemaHost {
+    @IsUrl({ protocols: env === "production" ? ["https"] : ["http", "https"] })
+    databaseHost: string;
+    //... other props
+  }
+
+  return PostgresSchemaHost;
+};
+```
+
+This allows me to use different criteria to verify my environment. In this example specifically I am making sure I pass a database host that has a secure protocol on production.
+
+Locally I am fine with non-secure links since I will probably use a database from a container I spun up.
+
+<br />
+
+#### Is this actually a mixin?
+
+<br />
+
+If we look at the definition I provided at the beginning of the article, then no. We are not mixing in functionality from another class, but rather relying on an external configuration to output a class with custom behavior.
+
+<br />
+
+If you've ever implemented auth inside a NestJS app, you've probably used the `@nestjs/passport` package:
+
+```typescript
+import { Injectable } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+
+@Injectable()
+export class JwtAuthGuard extends AuthGuard("jwt") {}
+```
+
+In a similar manner, they allow you to extend an `AuthGuard` that behaves differently according to the strategy you pass in.
+
+<br />
+
+While both examples don't exactly conform to the definition, I personally consider them as applications of the mixin pattern since they "mixin" additional logic into a class. (even though they use a string param and not another class to do it)
+
+### Middleware
+
+Mixins can be used in order to make highly generic middleware that you can use in multiple places in your app. It's important to note that in NestJS defines multiple types of middleware such as:
+
+- Guards
+- Pipes
+- Interceptors
+
+<br />
+
+Let's look at an end-to-end example that uses `@nestjs/typeorm` to create a pipe that checks
+if the id used in a request exists in the database:
+
+```typescript
+// base.entity.ts - simple base class that all entities extend
+import {
+  CreateDateColumn,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from "typeorm";
+
+export class BaseEntity {
+  @PrimaryGeneratedColumn("uuid")
+  id: string;
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+}
+```
+
+```typescript
+// user.entity.ts - user entity definition
+import { BaseEntity } from "../../shared/base.entity";
+import { Entity, Column } from "typeorm";
+
+@Entity()
+export class User extends BaseEntity {
+  @Column()
+  firstName: string;
+
+  @Column()
+  lastName: string;
+}
+```
+
+```typescript
+// entity-exists.pipe.ts
+import {
+  Injectable,
+  NotFoundException,
+  PipeTransform,
+  Type,
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { BaseEntity } from "./base.entity";
+
+export const EntityExistsPipe = <EntityCls extends BaseEntity>(
+  entityCls: Type<EntityCls>,
+): Type<PipeTransform> => {
+  @Injectable()
+  class EntityExistsPipeHost implements PipeTransform {
+    constructor(
+      @InjectRepository(entityCls)
+      private readonly repo: Repository<EntityCls>,
+    ) {}
+
+    async transform(value: any) {
+      const exists = await this.repo.exists({ where: { id: value } });
+
+      if (!exists)
+        throw new NotFoundException(
+          `Could not find entity of type ${entityCls.name} and id ${value}`,
+        );
+
+      return value;
+    }
+  }
+
+  return EntityExistsPipeHost;
+};
+```
+
+```typescript
+// actual usage
+@Controller("users")
+export class UsersController {
+  @Get(":id")
+  getById(@Param("id", EntityExistsPipe(User)) id: string) {
+    // ...
+  }
+}
+```
+
+For more information on using typeorm in NestJS I recommend reading the <a href="https://docs.nestjs.com/recipes/sql-typeorm" target="_blank">docs</a>.
+
+<br />
+
+Breakdown:
+
+- we define a base entity that contains some properties that all tables will have and also a user entity.
+- we create a function that takes in a class that extends `BaseEntity` and implement the logic for actually checking that an entry with a specific id exists in the database.
+- we use the pipe in the `UsersController` to check a user exists based on the id provided in the path.
+
+<br />
+
+**Warning:** This is just an example that showcases the versatility of mixins.
+My personal belief is that such validation should probably be defined in the service layer along with the rest of the business logic. As with any other pattern, mixins are not a silver bullet and can lead to unexpected behavior if not used properly.
+
+### Services
+
+We can also use mixins to centralize common CRUD functionality that is the same for all database entities:
+
+```typescript
+// crud.service.ts
+import { Injectable, Logger, Type } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { DeepPartial, Repository } from "typeorm";
+import { BaseEntity } from "./base.entity";
+
+type CreateEntityInput<EntityCls extends BaseEntity> = DeepPartial<EntityCls>;
+
+export interface ICrudService<EntityCls extends BaseEntity> {
+  repo: Repository<EntityCls>;
+
+  findAll(): Promise<EntityCls[]>;
+  create(input: CreateEntityInput<EntityCls>): Promise<EntityCls>;
+}
+
+export const CrudService = <EntityCls extends BaseEntity>(
+  entityCls: Type<EntityCls>,
+): Type<ICrudService<EntityCls>> => {
+  @Injectable()
+  class CrudServiceHost implements ICrudService<EntityCls> {
+    private readonly logger = new Logger(`${entityCls.name}CrudService`);
+
+    constructor(
+      @InjectRepository(entityCls)
+      public readonly repo: Repository<EntityCls>,
+    ) {}
+
+    findAll() {
+      this.logger.debug(`Searching for all ${entityCls.name} records`);
+      return this.repo.find();
+    }
+
+    create(input: CreateEntityInput<EntityCls>) {
+      this.logger.debug(
+        `Inserting ${entityCls.name} record: (${JSON.stringify(input)})`,
+      );
+      return this.repo.save(input);
+    }
+  }
+
+  return CrudServiceHost;
+};
+```
+
+<br />
+
+`CrudService` is a function that takes an entity as an input, and outputs the class for a CRUD service that can be easily extended. Let's look at how a service for the `User` entity would look:
+
+```typescript
+// users.service.ts
+import { Injectable } from "@nestjs/common";
+import { CrudService } from "../shared/crud.service";
+import { User } from "./entities/user.entity";
+
+@Injectable()
+export class UsersService extends CrudService(User) {
+  // can be augmented with other logic
+}
+```
+
+```typescript
+// actual usage
+@Controller('users')
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  @Post()
+  create(@Body() createUserDto: CreateUserDto) {
+    return this.usersService.create(createUserDto);
+  }
+
+  @Get()
+  findAll() {
+    return this.usersService.findAll();
+  }
+```
+
+## Conclusion
+
+Mixins can be a useful pattern to apply in order to share cross-cutting functionality across classes, or even to create classes with different behavior depending on the context.
+
+### Why not just pass parameters in the constructor?
+
+In the context of NestJS, most of the time we define classes and their dependencies, but instantiation is done behind the scenes by the IoC container (a topic for another day 😄).
+
+This ensures all of the required dependencies are injected correctly (and instantiated only when needed) without any additional effort from us as programmers.
+
+So, if you want to instantiate a class without help from the IoC container, you have to provide all of its dependencies, which is especially tricky when you want to make use of services from your app.
+
+<br />
+
+As a final word of advice, I'd suggest using mixins sensibly. Hopefully the examples and insights I have provided help a bit in the decision process.
+
+<br />
+
+See you next time!
+
+### Read more
+
+I think it's important to give credit where it is due, and if you want to read more about mixins you should definitely check these out (it certainly helped me):
+
+- <a
+    href="https://justinfagnani.com/2015/12/21/real-mixins-with-javascript-classes/"
+    target="_blank"
+  >
+    Justin Fagnani's blog
+  </a>
+- <a
+    href="https://www.typescriptlang.org/docs/handbook/mixins.html"
+    target="_blank"
+  >
+    {" "}
+    The official typescript docs
+  </a>
+- <a href="https://javascript.info/mixins" target="_blank">
+    javascript.info
+  </a>

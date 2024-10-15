@@ -1,0 +1,30 @@
+---
+import { format } from "date-fns";
+import type { Post as PostSchema } from "@/lib/schemas/post.schema";
+
+interface Props extends PostSchema {
+  slug: string;
+}
+
+const { title, description, image, slug, date } = Astro.props;
+---
+
+<a href={`posts/${slug}`}>
+  <article class="flex justify-between gap-2 hover:cursor-pointer">
+    <div class="flex flex-col justify-center gap-4">
+      <time class="text-muted-foreground" datetime={format(date, "yyyy-MM-dd")}>
+        {format(date, "MMM do, yyyy")}
+      </time>
+      <h2>{title}</h2>
+      <p class="text-muted-foreground">{description}</p>
+      <p class="text-lg text-primary">Read the article</p>
+    </div>
+    <div class="max-h-[300px] max-w-[300px]">
+      <img
+        class="w-full h-full object-cover rounded-2xl"
+        src={image}
+        alt=`blog-post-${slug}`
+      />
+    </div>
+  </article>
+</a>
