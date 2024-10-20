@@ -11,21 +11,21 @@ const posts = (await getCollection("posts")).sort(
 const [featuredPost, ...otherPosts] = posts;
 ---
 
-<DefaultLayout headProps={{ title: "Content hub - Robert Tabacaru" }}>
+<DefaultLayout headProps={{ title: "Blog - Robert Tabacaru" }}>
   <div>
     <h1 class="mb-8 text-center md:text-left">Articles and guides</h1>
   </div>
   <div>
     <div class="hidden md:block">
-      <FeaturedPost slug={featuredPost.id} {...featuredPost.data} />
+      <FeaturedPost id={featuredPost.id} {...featuredPost.data} />
     </div>
     <div class="md:hidden">
-      <Post {...featuredPost.data} slug={featuredPost.id} />
+      <Post {...featuredPost.data} id={featuredPost.id} />
     </div>
     <section
       class="my-8 grid gap-8 grid-cols-1 auto-rows-fr md:grid-cols-2 lg:grid-cols-3"
     >
-      {otherPosts.map((post) => <Post {...post.data} slug={post.id} />)}
+      {otherPosts.map((post) => <Post {...post.data} id={post.id} />)}
     </section>
     <div class="flex justify-center items-center gap-4">
       <hr class="bg-muted w-full" />

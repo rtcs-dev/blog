@@ -1,20 +1,16 @@
 ---
-import { format } from "date-fns";
-import type { Post as PostSchema } from "@/lib/schemas/post.schema";
+import type { CollectionEntry } from "astro:content";
+import FormattedDate from "../ui/formatted-date.astro";
 
-interface Props extends PostSchema {
-  slug: string;
-}
+type Props = CollectionEntry<"posts">["data"] & { id: string };
 
-const { title, description, image, slug, date } = Astro.props;
+const { title, description, image, id, date } = Astro.props;
 ---
 
-<a href={`posts/${slug}`}>
-  <article class="flex justify-between gap-2 hover:cursor-pointer">
+<a href={`posts/${id}`}>
+  <article class="flex justify-between gap-10 hover:cursor-pointer">
     <div class="flex flex-col justify-center gap-4">
-      <time class="text-muted-foreground" datetime={format(date, "yyyy-MM-dd")}>
-        {format(date, "MMM do, yyyy")}
-      </time>
+      <FormattedDate class="text-muted-foreground" date={date} />
       <h2>{title}</h2>
       <p class="text-muted-foreground">{description}</p>
       <p class="text-lg text-primary">Read the article</p>
@@ -23,7 +19,7 @@ const { title, description, image, slug, date } = Astro.props;
       <img
         class="w-full h-full object-cover rounded-2xl"
         src={image}
-        alt=`blog-post-${slug}`
+        alt=`blog-post-${id}`
       />
     </div>
   </article>

@@ -25,6 +25,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          "blog-foreground": "hsl(var(--primary-blog-foreground))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -52,6 +53,7 @@ export default {
           4: "hsl(var(--chart-4))",
           5: "hsl(var(--chart-5))",
         },
+        "blog-title-accent": "var(--blog-title-gradient-accent)",
       },
       fontFamily: {
         inter: ["Inter Variable", "sans-serif"],

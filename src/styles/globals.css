@@ -12,6 +12,7 @@
     --popover-foreground: 20 14.3% 4.1%;
     --primary: 24.6 95% 53.1%;
     --primary-foreground: 60 9.1% 97.8%;
+    --primary-blog-foreground: 222deg 22% 5%;
     --secondary: 60 4.8% 95.9%;
     --secondary-foreground: 24 9.8% 10%;
     --muted: 60 4.8% 95.9%;
@@ -29,6 +30,7 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
+    --blog-title-gradient-accent: #ffb547;
   }
 
   .dark {
@@ -40,6 +42,7 @@
     --popover-foreground: 60 9.1% 97.8%;
     --primary: 20.5 90.2% 48.2%;
     --primary-foreground: 60 9.1% 97.8%;
+    --primary-blog-foreground: 210deg 10% 90%;
     --secondary: 12 6.5% 15.1%;
     --secondary-foreground: 60 9.1% 97.8%;
     --muted: 12 6.5% 15.1%;
@@ -56,6 +59,7 @@
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
+    --blog-title-gradient-accent: #ffb547;
   }
 }
 
@@ -77,7 +81,7 @@
   }
 
   h1 {
-    @apply text-6xl;
+    @apply text-5xl md:text-6xl;
   }
   h2 {
     @apply text-4xl;

@@ -1,0 +1,15 @@
+---
+import type { HTMLAttributes } from "astro/types";
+import { format } from "date-fns";
+
+interface Props extends Omit<HTMLAttributes<"time">, "datetime"> {
+  date: Date;
+  dateFormat?: string;
+}
+
+const { date, dateFormat = "MMM do, yyyy", ...props } = Astro.props;
+---
+
+<time datetime={date.toISOString()} {...props}>
+  {format(date, dateFormat)}
+</time>

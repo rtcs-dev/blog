@@ -1,0 +1,48 @@
+.title {
+  @apply font-bold text-center leading-normal;
+  @apply dark:bg-gradient-to-br dark:from-primary dark:via-blog-title-accent dark:to-primary bg-clip-text text-transparent bg-primary;
+}
+
+h2 {
+  @apply my-6;
+  @apply dark:bg-gradient-to-br dark:from-primary dark:via-blog-title-accent dark:to-primary bg-clip-text text-transparent bg-primary;
+}
+
+h3 {
+  @apply my-4 font-semibold;
+}
+
+p,
+span,
+li {
+  @apply text-primary-blog-foreground text-lg;
+}
+
+code span {
+  line-height: inherit;
+}
+
+blockquote {
+  @apply pl-5 m-0 text-xl border-l-4 border-solid border-primary;
+}
+
+code {
+  @apply py-1 px-2 rounded-sm;
+}
+
+pre {
+  @apply p-2 my-4 rounded-md;
+}
+
+article code:not(pre code) {
+  @apply px-1 border-muted text-primary rounded-md border-2;
+}
+
+article ul,
+ol {
+  @apply list-disc list-inside marker:text-primary;
+}
+
+article a {
+  @apply text-primary hover:underline;
+}

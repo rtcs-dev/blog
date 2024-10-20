@@ -1,0 +1,24 @@
+---
+import type { CollectionEntry } from "astro:content";
+import DefaultLayout from "./default-layout.astro";
+import FormattedDate from "@/components/ui/formatted-date.astro";
+import DottedBackground from "@/components/layout/dotted-background.astro";
+import "@/styles/post.css";
+
+type Props = CollectionEntry<"posts">["data"];
+const { title, description, date } = Astro.props;
+---
+
+<DefaultLayout headProps={{ title, description }}>
+  <DottedBackground />
+  <div class="text-center my-12">
+    <h1 class="title">{title}</h1>
+    <p class="text-muted-foreground">Robert Tabacaru</p>
+    <p>
+      <FormattedDate class="text-muted-foreground" date={date} />
+    </p>
+  </div>
+  <article class="prose">
+    <slot />
+  </article>
+</DefaultLayout>

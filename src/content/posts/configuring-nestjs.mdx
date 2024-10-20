@@ -11,31 +11,25 @@ keywords: "NestJS, configuration, tutorial, Node.js, production-grade, advanced,
 When working on a complex project, being able to easily configure an application to run in multiple environments becomes a necessity.
 
 <br />
-Depending on the environment (local, staging or production) the requirements
-around environment variables might change and cause some headaches. Luckily, we
-will see that this is not such a big problem for applications that use NestJS,
-as it can help us drastically reduce the possibility of human errors.
+Depending on the environment (local, staging or production) the requirements around
+environment variables might change and cause some headaches. Luckily, we will see
+that this is not such a big problem for applications that use NestJS, as it can
+help us drastically reduce the possibility of human errors.
 
 <br />
 The nest documentation already provides a comprehensive guide on configuration
-that you can view <a
-  href="https://docs.nestjs.com/techniques/configuration"
-  target="_blank"
->
-  here
-</a>
-. Using that as a starting point, I will explain some of the basic concepts and
-showcase the setup that I prefer using.
+that you can view <a href="https://docs.nestjs.com/techniques/configuration" target="_blank">here</a>. Using that as a starting point, I will explain some of the basic concepts and showcase the setup that I prefer using.
 
 ## 2. Prerequisites
 
 - Have Node.js installed
 - A NestJS project with `@nestjs/config` installed. Basic knowledge of the framework and Node.js is required as I will only be focusing on configuration.
-  <br />
+<br />
 
 The easiest way to get everything set up is to run:
 
 ```bash
+
 $ npm i -g @nestjs/cli
 
 $ nest new my-project
@@ -51,8 +45,8 @@ Setting up the config module, as shown in the documentation, is as easy as impor
 
 ```typescript
 // app.module.ts
-import { Module } from "@nestjs/common";
-import { ConfigModule } from "@nestjs/config";
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [ConfigModule.forRoot()],
@@ -64,15 +58,13 @@ You could also specify custom/multiple env file paths if you wish:
 
 ```typescript
 ConfigModule.forRoot({
-  envFilePath: [".env.development.local", ".env.development"],
+  envFilePath: ['.env.development.local', '.env.development'],
 });
 ```
 
 Under the hood, this will parse the environment variables using the <a href="https://www.npmjs.com/package/dotenv" target="_blank">dotenv</a> package and assign them to process.env.
-
 <br />
-Defining it in the app module works just fine, but I generally opt for a
-slightly different approach:
+Defining it in the app module works just fine, but I generally opt for a slightly different approach:
 
 ### 3.1. Generate a core module
 
@@ -84,12 +76,12 @@ The idea of creating a core module as opposed to keeping everything at the top l
 
 ```typescript
 // core.module.ts
-import { Global, Module } from "@nestjs/common";
-import { CqrsModule } from "@nestjs/cqrs";
-import { ConfigModule } from "./config/config.module";
-import { DatabaseModule } from "./database/database.module";
-import { HealthModule } from "./health/health.module";
-import { AuthModule } from "./auth/auth.module";
+import { Global, Module } from '@nestjs/common';
+import { CqrsModule } from '@nestjs/cqrs';
+import { ConfigModule } from './config/config.module';
+import { DatabaseModule } from './database/database.module';
+import { HealthModule } from './health/health.module';
+import { AuthModule } from './auth/auth.module';
 
 @Global()
 @Module({
@@ -106,11 +98,8 @@ export class CoreModule {}
 ```
 
 This is the core module implementation from a project I am currently working on that showcases my point. I would also set up basic integrations with external services such as <a href="https://stripe.com" target="_blank">Stripe</a> here as well.
-
 <br />
-An important topic to keep in mind as well is to only export the things you
-need! There would be no point in exporting the health module as it will not be
-used by other modules in app.
+An important topic to keep in mind as well is to only export the things you need! There would be no point in exporting the health module as it will not be used by other modules in app.
 
 ### 3.2. Generate a config module inside the core module
 
@@ -125,11 +114,13 @@ After that, we can set up the nest config module.
 
 ```typescript
 // config.module.ts
-import { Module, Provider } from "@nestjs/common";
-import { ConfigModule as NestConfigModule } from "@nestjs/config";
+import { Module, Provider } from '@nestjs/common';
+import { ConfigModule as NestConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [NestConfigModule.forRoot()],
+  imports: [
+    NestConfigModule.forRoot(),
+  ],
 })
 export class ConfigModule {}
 ```
@@ -139,22 +130,22 @@ export class ConfigModule {}
 After following these steps, you should easily be able to inject the `ConfigService` which is exported from `@nestjs/config` and access your environment variables.
 
 ```typescript
-const dbUser = this.configService.get<string>("POSTGRES_USER");
+const dbUser = this.configService.get<string>('POSTGRES_USER');
 // you can also provide a fallback in case the value is not found
-const dbUser = this.configService.get<string>("POSTGRES_USER", "postgres");
+const dbUser = this.configService.get<string>('POSTGRES_USER', 'postgres');
 ```
 
 As you can see, you can even pass a generic parameter to specify a type for the result. The problem is that, by default, all properties from the environment are parsed as strings, and to handle other value types such as numbers or comma-separated values that you might want to parse into an array would probably be done through custom getters such as the one below:
 
 ```typescript
-import { ConfigService } from "@nestjs/config";
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class ConfigService {
   constructor(private readonly configService: ConfigService) {}
 
   get port(): number {
-    return Number(this.configService.get("POSTGRES_PORT"));
+    return Number(this.configService.get('POSTGRES_PORT'));
   }
 }
 ```
@@ -163,9 +154,7 @@ You can even provide a type for the config service to have autocompletion:
 
 ```typescript
 export class DbConfigService {
-  constructor(
-    private configService: ConfigService<{ POSTGRES_PORT: string }>,
-  ) {}
+  constructor(private configService: ConfigService<{ POSTGRES_PORT: string }>) {}
   // ...
 }
 ```
@@ -174,8 +163,8 @@ In my opinion, there are two main issues with this setup:
 
 1. There is no explicit validation of the provided variables.
    - For example, to validate that the input for `POSTGRES_PORT` is actually a valid port number.
-2. All of our variables are grouped together in one place. This might not be an issue at first, but as applications grow and have more and more third-party integrations separation becomes desirable.
-
+2. All of our variables are grouped together in one place. This might not be an issue at first, but as applications grow and have more and more third-party integrations separation becomes desirable. 
+ 
 ## 5. My preferred setup
 
 To avoid the issues described above, I employ two primary techniques: <a href="https://docs.nestjs.com/techniques/configuration#configuration-namespaces" target="_blank">namespacing</a> and <a href="https://docs.nestjs.com/techniques/configuration#custom-validate-function" target="_blank">runtime validation</a>.
@@ -183,10 +172,10 @@ To avoid the issues described above, I employ two primary techniques: <a href="h
 ### 5.1 Using namespaces
 
 ```typescript
-// postgres.configuration.ts
-import { registerAs } from "@nestjs/config";
+// postgres.configuration.ts 
+import { registerAs } from '@nestjs/config';
 
-export const POSTGRES_CONFIG_KEY = "postgres";
+export const POSTGRES_CONFIG_KEY = 'postgres';
 
 export const postgresConfig = registerAs(POSTGRES_CONFIG_KEY, () => {
   return {
@@ -214,19 +203,10 @@ Using namespaces allows you to break up the configuration of your app into multi
 
 ### 5.2 Environment validation at runtime
 
-<a href="https://www.npmjs.com/package/class-validator" target="_blank">
-  class-validator
-</a> and <a
-  href="https://www.npmjs.com/package/class-transformer"
-  target="_blank"
->
-  class-transformer
-</a> integrate really nicely with Nest and they are my go-to packages for
-request validation, so I see no point in adding another validation library for
-this as these two work really well.
+<a href="https://www.npmjs.com/package/class-validator" target="_blank">class-validator</a> and <a href="https://www.npmjs.com/package/class-transformer" target="_blank">class-transformer</a> integrate really nicely with Nest and they are my go-to packages for request validation, so I see no point in adding another validation library for this as these two work really well.
 
 <br />
-You can install them by running:{" "}
+You can install them by running: 
 
 ```bash
 $ npm i class-validator class-transformer
@@ -236,9 +216,9 @@ Before creating the validation schemas, let's create a function that applies our
 
 ```typescript
 // validate.ts
-import { plainToInstance } from "class-transformer";
-import { ValidationError, validateSync } from "class-validator";
-import { Type } from "@nestjs/common";
+import { plainToInstance } from 'class-transformer';
+import { ValidationError, validateSync } from 'class-validator';
+import { Type } from '@nestjs/common';
 
 export function validate<TDto extends Type>(
   config: Record<string, unknown>,
@@ -258,12 +238,12 @@ export function validate<TDto extends Type>(
 
 // Formatting the error is a thing of preference, but this is how I like to do it
 function getPrettyErrorMessage(errors: ValidationError[]): string {
-  let errorToPrint = "";
+  let errorToPrint = '';
   errors.forEach((err) => {
     if (!err.constraints) return;
 
     const violatedConstraints = Object.values(err.constraints);
-    errorToPrint += violatedConstraints.join("\n") + "\n";
+    errorToPrint += violatedConstraints.join('\n') + '\n';
   });
 
   return errorToPrint;
@@ -271,21 +251,20 @@ function getPrettyErrorMessage(errors: ValidationError[]): string {
 ```
 
 The `validate` function does the following:
-
-- Takes the raw config and validation class as inputs.
-- Tries to validate the raw config according to the specifications in the validation class. (we will look at an example in a moment)
-- Throws an error that prints the validation constraints that were not respected if the validation is not successful.
-- Returns the validated configuration if every check passed.
-
+ - Takes the raw config and validation class as inputs.
+ - Tries to validate the raw config according to the specifications in the validation class. (we will look at an example in a moment)
+ - Throws an error that prints the validation constraints that were not respected if the validation is not successful.
+ - Returns the validated configuration if every check passed.
+  
 ### 5.3 Updated namespace registration + example schema
 
 ```typescript
 // postgres.configuration.ts
-import { registerAs } from "@nestjs/config";
-import { validate } from "../validate";
-import { PostgresSchema } from "./postgres.schema";
+import { registerAs } from '@nestjs/config';
+import { validate } from '../validate';
+import { PostgresSchema } from './postgres.schema';
 
-export const POSTGRES_CONFIG_KEY = "postgres";
+export const POSTGRES_CONFIG_KEY = 'postgres';
 
 export const postgresConfig = registerAs(POSTGRES_CONFIG_KEY, () => {
   const rawConfig = {
@@ -303,8 +282,8 @@ export const postgresConfig = registerAs(POSTGRES_CONFIG_KEY, () => {
 
 ```typescript
 // postgres.schema.ts
-import { Transform } from "class-transformer";
-import { IsBoolean, IsPort, IsString } from "class-validator";
+import { Transform } from 'class-transformer';
+import { IsBoolean, IsPort, IsString } from 'class-validator';
 
 export class PostgresSchema {
   @IsString()
@@ -323,7 +302,7 @@ export class PostgresSchema {
   databaseName: string;
 
   @IsBoolean()
-  @Transform(({ value }) => value === "true")
+  @Transform(({ value }) => value === 'true')
   logging: boolean;
 }
 ```
@@ -333,12 +312,12 @@ export class PostgresSchema {
 ```typescript
 // implementation of "validate" found on nest docs
 export function validate(config: Record<string, unknown>) {
-  const validatedConfig = plainToInstance(EnvironmentVariables, config, {
-    enableImplicitConversion: true,
-  });
-  const errors = validateSync(validatedConfig, {
-    skipMissingProperties: false,
-  });
+  const validatedConfig = plainToInstance(
+    EnvironmentVariables,
+    config,
+    { enableImplicitConversion: true },
+  );
+  const errors = validateSync(validatedConfig, { skipMissingProperties: false });
 
   if (errors.length > 0) {
     throw new Error(errors.toString());
@@ -350,15 +329,10 @@ export function validate(config: Record<string, unknown>) {
 A key difference between our implementation and the one found in the documentation is that we did not set `{ enableImplicitConversion: true }`.
 
 This is a matter of preference, but there some things that must be accounted for. Let's look at an example:
-
 <br />
-If implicit conversion is enabled and the `POSTGRES_LOGS_ENABLED` variable is
-equal to the string `false`, since that is a truthy value it will be coerced to
-the boolean `true` when processed by `plainToInstance`.
+If implicit conversion is enabled and the `POSTGRES_LOGS_ENABLED` variable is equal to the string `false`, since that is a truthy value it will be coerced to the boolean `true` when processed by `plainToInstance`.
 <br />
-In consequence, to achieve our desired result of disabling logging when that
-variable is set to false we would have to do some processing when defining our
-configuration namespace.
+In consequence, to achieve our desired result of disabling logging when that variable is set to false we would have to do some processing when defining our configuration namespace.
 
 ```typescript
 {
@@ -369,10 +343,8 @@ configuration namespace.
 ```
 
 If we don't allow implicit conversion we have to define the transformation logic in our validation class, as showcased in our schema definition.
-
-<br />I personally avoid implicit conversion as I find it easier to treat
-everything that our validation schema receives as strings and perform the
-necessary processing there.
+<br />
+I personally avoid implicit conversion as I find it easier to treat everything that our validation schema receives as strings and perform the necessary processing there.
 
 ### 5.4 Consuming the configuration
 
@@ -380,35 +352,35 @@ One of the biggest benefits of configuration namespaces is that you can inject t
 
 ```typescript
 // postgres.service.ts
-import { ConfigType } from "@nestjs/config";
-import { postgresConfig } from "../config/postgres/postgres.configuration";
+import { ConfigType } from '@nestjs/config';
+import { postgresConfig } from '../config/postgres/postgres.configuration';
 
 export class PostgresService {
   constructor(
-    @Inject(postgresConfig.KEY)
-    private pgConfig: ConfigType<typeof postgresConfig>,
+  @Inject(postgresConfig.KEY)
+  private pgConfig: ConfigType<typeof postgresConfig>,
   ) {}
 }
 ```
 
 The `KEY` property is a unique string returned by `registerAs` that can be used as the injection token to gain access to the configuration object.
-
 <br />
 
 To avoid the `typeof` gymnastics, I like to do the following:
 
 ```typescript
 // config.module.ts
-import { Module, Provider } from "@nestjs/common";
-import { ConfigType, ConfigModule as NestConfigModule } from "@nestjs/config";
-import { postgresConfig } from "./postgres/postgres.configuration";
-import { PostgresSchema } from "./postgres/postgres.schema";
+import { Module, Provider } from '@nestjs/common';
+import { ConfigType, ConfigModule as NestConfigModule } from '@nestjs/config';
+import { postgresConfig } from './postgres/postgres.configuration';
+import { PostgresSchema } from './postgres/postgres.schema';
 
 const PostgresSchemaProvider: Provider = {
   provide: PostgresSchema,
   inject: [postgresConfig.KEY],
   useFactory: (config: ConfigType<typeof postgresConfig>) => config,
 };
+
 
 @Module({
   imports: [
@@ -422,20 +394,19 @@ const PostgresSchemaProvider: Provider = {
 export class ConfigModule {}
 ```
 
-The code above registers a custom provider so that we can gain access to the configuration using the `PostgresSchema` class both as the injection token and as the type. I like this approach the most.
-
+The code above registers a custom provider so that we can gain access to the configuration using the `PostgresSchema` class both as the injection token and as the type. I like this approach the most. 
 <br />
 
 The updated usage example:
 
 ```typescript
 // postgres.service.ts
-import { PostgresSchema } from "../config/postgres/postgres.schema";
+import { PostgresSchema } from '../config/postgres/postgres.schema';
 
 export class PostgresService {
   constructor(
-    @Inject(PostgresSchema)
-    private pgConfig: PostgresSchema,
+  @Inject(PostgresSchema)
+  private pgConfig: PostgresSchema,
   ) {}
 }
 ```
@@ -443,24 +414,13 @@ export class PostgresService {
 ## 6. Conclusion
 
 Environment configuration errors can be some of the most frustrating, especially when the person deploying the code is not the same as the one who wrote it.
-
-<br />I strongly believe that validating your application's environment is one
-of the most important things to think about when scaffolding a new project. One
-thing that we have not looked at in this post is how to apply different
-validation criteria depending on the deployment environment (staging,
-production), but I am planning to get into that soon and I will make a separate
-post on <a
-  href="https://wanago.io/2021/12/13/api-nestjs-mixin-pattern/"
-  target="_blank"
->
-  mixins
-</a>
-, as they are especially useful in this scenario.
-
 <br />
+I strongly believe that validating your application's environment is one of the most important things to think about when scaffolding a new project. One thing that we have not looked at in this post is how to apply different validation criteria depending on the deployment environment (staging, production), but I am planning to get into that soon and I will make a separate post on <a href="https://wanago.io/2021/12/13/api-nestjs-mixin-pattern/" target="_blank">mixins</a>, as they are especially useful in this scenario.
+
+<br/>
 
 Typos can also be extremely annoying, but that can also be solved really easily when using typescript. <a href="https://www.youtube.com/watch?v=q1im-hMlKhM" target="_blank">A good video by Matt Pocock</a> covers pretty much everything on the topic.
-
 <br />
+
 
 I hope you have found the content useful, and I am open to discuss anything regarding this post or Nest in general on twitter or linkedin. Thank you for reading!
