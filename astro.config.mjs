@@ -4,10 +4,16 @@ import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
 import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
+import aws from "astro-sst";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://rtcs.dev",
+  output: "server",
+  adapter: aws({
+    deploymentStrategy: "regional",
+    serverRoutes: ["/api/*"],
+  }),
   integrations: [
     mdx(),
     sitemap(),

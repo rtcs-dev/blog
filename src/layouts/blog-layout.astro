@@ -6,10 +6,12 @@ import DottedBackground from "@/components/layout/dotted-background.astro";
 import "@/styles/post.css";
 
 type Props = CollectionEntry<"posts">["data"];
-const { title, description, date } = Astro.props;
+const { title, description, date, image } = Astro.props;
 ---
 
-<DefaultLayout headProps={{ title: `${title} | Robert Tabacaru`, description }}>
+<DefaultLayout
+  headProps={{ title: `${title} | Robert Tabacaru`, description, image }}
+>
   <DottedBackground />
   <div class="text-center my-12">
     <h1 class="title">{title}</h1>
