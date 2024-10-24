@@ -8,9 +8,6 @@ import icon from "astro-icon";
 // https://astro.build/config
 export default defineConfig({
   site: "https://rtcs.dev",
-  redirects: {
-    "/hub": "/blog",
-  },
   integrations: [
     mdx(),
     sitemap(),
@@ -19,4 +16,15 @@ export default defineConfig({
     }),
     icon(),
   ],
+  redirects: {
+    "/hub": "/blog",
+  },
+  markdown: {
+    shikiConfig: {
+      themes: {
+        light: "catppuccin-latte",
+        dark: "github-dark",
+      },
+    },
+  },
 });

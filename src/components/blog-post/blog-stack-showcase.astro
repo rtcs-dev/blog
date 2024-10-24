@@ -1,0 +1,31 @@
+---
+import { Icon } from "astro-icon/components";
+import ThemeAwareIcon from "../ui/theme-aware-icon.astro";
+---
+
+<div class="flex items-center gap-4 flex-wrap">
+  <div class="flex items-center">
+    <ThemeAwareIcon
+      class="size-8 mr-1"
+      darkIconSrc="blog/astro-dark"
+      lightIconSrc="blog/astro-light"
+    />
+    <a href="https://astro.build/" target="_blank">Astro</a>
+  </div>
+  <div class="flex items-center">
+    <Icon class="size-8 mr-1" name="blog/tailwind" />
+    <a href="https://tailwindcss.com/" target="_blank">Tailwind</a>
+  </div>
+  <div class="flex items-center">
+    <ThemeAwareIcon
+      class="size-8 mr-1"
+      darkIconSrc="blog/mdx-dark"
+      lightIconSrc="blog/mdx-light"
+    />
+    <a href="https://astro.build/" target="_blank">MDX</a>
+  </div>
+  <div class="flex items-center">
+    <Icon class="size-8 mr-1" name="blog/sst" />
+    <a href="https://sst.dev/" target="_blank">SST</a>
+  </div>
+</div>

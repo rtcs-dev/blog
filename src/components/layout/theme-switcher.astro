@@ -1,5 +1,5 @@
 ---
-import { Icon } from "astro-icon/components";
+import ThemeAwareIcon from "../ui/theme-aware-icon.astro";
 ---
 
 <button
@@ -7,8 +7,11 @@ import { Icon } from "astro-icon/components";
   id="theme-button"
   class="rounded-lg p-4 ml-2 bg-accent"
 >
-  <Icon class="size-4 dark:hidden" name="theme/moon" />
-  <Icon class="size-4 hidden dark:block" name="theme/sun" />
+  <ThemeAwareIcon
+    class="size-4"
+    darkIconSrc="theme/sun"
+    lightIconSrc="theme/moon"
+  />
 </button>
 
 <script>

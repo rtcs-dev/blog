@@ -1,0 +1,101 @@
+---
+title: Open-sourcing rtcs.dev
+description: The story of transforming rtcs.dev from a cloned blog template to an MIT licensed project.
+date: 2024-10-22
+image: "/assets/images/posts/open-sourcing-rtcs.jpg"
+keywords: "open-source, blog, astro, sst, cloudflare, plausible"
+---
+import BlogStackShowcase from '../../components/blog-post/blog-stack-showcase.astro';
+
+## TL;DR
+
+You can now browse the source code for this blog on <a href="https://github.com/rtcs-dev/blog" target="_blank">github</a>.
+
+## 1. Reasoning
+
+When I started this project close to a year ago, the goal was always to publish the code so that it may help others who are trying to build a personal brand.
+<br />
+This will also allow me to directly reference the source code in posts and it will motivate me to maintain the quality of it at the highest level.
+
+### 1.1 Timing
+
+I started this blog from a <a href="https://github.com/uzzii-21/astro-portfolio" target="_blank">template</a>, and while that helped me publish it fast and see if I enjoy technical writing, I held off on open-sourcing it because I did not feel that I could call it mine.
+<br />
+I kept some of the key elements I liked from the old implementation but made some improvements that reflect my way of working and my aesthetic.
+
+## 2. Technical details
+
+### 2.1 Stack
+<BlogStackShowcase />
+<br />
+
+Main benefits:
+
+- Astro's plugin system makes it really easy to start with vanilla web technologies and sprinkle interactive components authored with React (or other frameworks where needed).
+- Tailwind's been a highly contested tool in the field of web dev. I haven't used it at a large scale yet but I have made good use of it for personal projects and I like it.
+- Authoring content with MDX gives me the most control over the level of customization.
+- The old version of this blog was deployed using SST v2 and now I upgraded to v3 (or ion). The defaults allow you to deploy very fast, but you also have access to the base infrastructure elements in case you want to go deeper which I appreciate a lot.
+
+### 2.2 Design system
+
+One of the biggest pain points in the previous version was not having the main colors of the theme centralized and set according to the color preference (dark or light). This resulted in a lot of markup looking like this:
+
+```html
+<p class="text-black dark:text-white">Hi!</p>
+```
+
+In the newer version, every color in the theme has both a light and a dark variant, and I don't have to repeat myself as often.
+
+```css
+@layer base {
+  :root {
+    --background: #ffffff;
+    // ...other light theme colors
+  }
+
+  .dark {
+    --background: #0a0a0a;
+    // ...other dark theme colors
+  }
+}
+```
+
+And of course, the tailwind color theme is extended in order for me to be able to reference these colors easily:
+
+```js
+export default {
+  darkMode: ["class"],
+  theme: {
+    extend: {
+      // ...
+      colors: {
+        // ....
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+          "blog-foreground": "hsl(var(--primary-blog-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+      },
+    },
+  },
+  // ...
+};
+
+```
+
+As a starter, I used the boilerplate <a href="https://ui.shadcn.com/themes" target="_blank">shadcn</a> generates and just kept the tailwind configuration and the CSS variables.
+
+## 3. Conclusion
+
+I plan to continue improving the look & feel of the blog in the future, especially now that I have a sturdy foundation to build on.
+
+<br />
+
+Shout-outs:
+
+-  <a href="https://ibelick.com/more" target="_blank">Julien Thibeaut</a> - I used his <a href="https://bg.ibelick.com/">background</a> and <a href="https://www.logoshaper.co/">logo</a> tools to add life to the site.
+-  <a href="https://ui.shadcn.com/themes" target="_blank">shadcn</a> - completely changed how I think about composability and package publishing. Even though I am not using React for this blog yet, I still benefited from using a theme preset.

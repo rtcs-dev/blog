@@ -13,7 +13,7 @@ const { title, description, image, id, date } = Astro.props;
       <FormattedDate class="text-muted-foreground" date={date} />
       <h2>{title}</h2>
       <p class="text-muted-foreground">{description}</p>
-      <p class="text-lg text-primary">Read the article</p>
+      <p class="text-lg text-primary hover:underline">Read the article</p>
     </div>
     <div class="max-h-[300px] max-w-[300px]">
       <img

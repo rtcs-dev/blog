@@ -1,0 +1,15 @@
+---
+import { cn } from "@/lib/utils";
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  lightIconSrc: string;
+  darkIconSrc: string;
+  class?: string;
+}
+
+const { lightIconSrc, darkIconSrc, class: className = "" } = Astro.props;
+---
+
+<Icon class={cn("dark:hidden", className)} name={lightIconSrc} />
+<Icon class={cn("hidden dark:block", className)} name={darkIconSrc} />

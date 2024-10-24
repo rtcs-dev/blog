@@ -9,7 +9,7 @@ type Props = CollectionEntry<"posts">["data"];
 const { title, description, date } = Astro.props;
 ---
 
-<DefaultLayout headProps={{ title, description }}>
+<DefaultLayout headProps={{ title: `${title} | Robert Tabacaru`, description }}>
   <DottedBackground />
   <div class="text-center my-12">
     <h1 class="title">{title}</h1>
