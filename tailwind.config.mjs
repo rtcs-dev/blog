@@ -59,6 +59,9 @@ export default {
         inter: ["Inter Variable", "sans-serif"],
         openSans: ["Open Sans Variable", "sans-serif"],
       },
+      listStyleType: {
+        square: "square",
+      },
     },
   },
   plugins: [tailwindAnimate],

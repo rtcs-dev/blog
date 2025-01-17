@@ -1,0 +1,24 @@
+---
+import apiLayersDark from "@/images/async-context/api-layers-dark.webp";
+import apiLayersLight from "@/images/async-context/api-layers-light.webp";
+import { cn } from "@/lib/utils";
+
+const commonStyles =
+  "rounded-lg border-2 border-muted w-full cursor-pointer my-4";
+---
+
+<a href={apiLayersDark.src} target="_blank">
+  <img
+    src={apiLayersDark.src}
+    alt="Sample e-commerce app flow diagram"
+    class={cn(commonStyles, "hidden dark:inline-block")}
+  />
+</a>
+
+<a href={apiLayersLight.src} target="_blank">
+  <img
+    src={apiLayersLight.src}
+    alt="Sample e-commerce app flow diagram"
+    class={cn(commonStyles, "dark:hidden")}
+  />
+</a>

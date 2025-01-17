@@ -1,0 +1,295 @@
+---
+title: Async context is node's most underrated feature
+description: "A dive into the use cases for asynchronous storage in Node.js: transactional context, logging and more."
+date: 2025-02-10
+imageLight: "/assets/images/posts/async-storage-light.png"
+imageDark: "/assets/images/posts/async-storage-dark.png"
+keywords: "async local storage, node.js, performance, scalability, context"
+---
+import ContextApplication from '../../components/blog-post/context-application.astro';
+
+## 1. The need for context on the server
+
+Node.js is an excellent tool for asynchronous work. Its event loop enables non-blocking I/O operations, which is really helpful when designing APIs or web services in general.
+<br />
+
+Async context is a store that stays coherent through asynchronous operations.
+<br />
+
+To understand the need for it, let's think about the possible things our server might need to do for each request it processes:
+
+- Assign a unique id to every request, which might need to be used to:
+  - propagate it to downstream services.
+  - show it in logs for that requests.
+- Read/write to a database:
+  - in the lifecycle of a single request, we might need to trigger a database transaction to ensure that any fault will not leave the database in an inconsistent state.
+- Act differently based on the permissions of the user making the current request.
+<br />
+
+There are many ways to structure node.js applications, but more often than not (hopefully) the logic for handling requests is divided into multiple layers. Let's think of an e-commerce backend as an example:
+
+<ContextApplication />
+
+Several questions arise:
+- what happens when a deeply nested method needs to access information about the user making the request?
+- how do we ensure that DB operations can be executed both inside and outside the context of a transaction?
+<br />
+The simplest solution to this problem is to just pass around a lot of properties as function parameters (prop drilling). Let's see how we would build a method
+that creates an order and can be called both from inside and outside of a database transaction:
+
+```typescript
+// order.service.ts
+import { Repository, EntityManager } from 'typeorm';
+import { orderRepo } from './repos/order.repository';
+import { Order } from './entities/order.entity';
+
+export async function placeOrder(
+  placeOrderInput: PlaceOrderInput,
+  // entityManager is passed when the order should be created as part of another transaction
+  entityManager?: EntityManager,
+): Promise<Order> {
+  // Decide which repository to use: either from the entity manager or the default one
+  const repository = entityManager
+    ? entityManager.getRepository(Order)
+    : orderRepo;
+
+  // Create the order entity instance
+  const order = repository.create(placeOrderInput);
+
+  // Save the order entity to the database
+  return await repository.save(order);
+}
+```
+
+Over time, this can lead to a lot of duplicate code and functions with complicated signatures. What if it was possible, for each individual request, to propagate "state" across the application without having to pass it explicitly?
+
+<br />
+**Spoiler alert**: It is possible. It's called <a class="text-primary hover:underline" href="https://nodejs.org/api/async_context.html#class-asynclocalstorage" target="_blank">AsyncLocalStorage</a>.
+
+## 2. How to use AsyncLocalStorage
+
+### Instantiation
+
+```typescript
+// context.ts
+import { AsyncLocalStorage } from 'async_hooks';
+
+// this instantiates the store
+export const correlationIdContext = new AsyncLocalStorage<string>();
+```
+
+- This needs to be instantiated only once, and, as we will see, we still have some more work to do to actually provide a value inside our application. 
+
+<br />
+
+### Running code inside the context boundary
+
+```typescript
+import express from "express";
+import { randomUUID } from 'crypto';
+
+import { correlationIdContext } from "./context";
+import * as orderService from "./order.service";
+
+const app = express();
+
+const withCorrelationId = (correlationId: string, cb: Function) => {
+  return correlationIdContext.run(correlationId, cb);
+}
+
+app.use((req, res, next) => {
+  withCorrelationId(randomUUID(), next);
+});
+
+app.post("/order", async (req, res) => {
+  const placeOrderResponse = await orderService.placeOrder({items: ["A really nice shirt"]});
+  res.send(placeOrderResponse);
+});
+
+app.listen(3000, () => {
+  console.log("Listening on port 3000")
+});
+```
+
+- Above is some sample boilerplate that you might find in any express application (picked it because it's popular).
+- calling `run(correlationId, cb)` from the context object is the most important piece of code. It:
+  - populates the store with the value passed in the first parameter: `correlationId` in our case.
+  - executes the callback and ensures that the function itself and any other function (sync or async) called from inside of it has access to the store. 
+
+<br />
+### Accessing the store
+
+Let's look at the example order service implementation and log a message at the start of the function. 
+
+```typescript
+// order.service.ts
+import { Repository, EntityManager } from 'typeorm';
+import * as orderRepo from './repos/order.repository';
+import { Order } from './entities/order.entity';
+import { correlationIdContext } from "./context";
+
+const logWithCorrelationId = (message: string) => {
+  const correlationId = correlationIdContext.getStore();
+  console.log(`[${correlationId}] ${message}`)
+}
+
+export async function placeOrder(
+  placeOrderInput: PlaceOrderInput,
+  // entityManager is passed when the order should be created as part of another transaction
+  entityManager?: EntityManager,
+): Promise<Order> {
+  logWithCorrelationId("Placing an order!");
+  // Decide which repository to use: either from the entity manager or the default one
+  const repository = entityManager
+    ? entityManager.getRepository(Order)
+    : orderRepo;
+
+  // Create the order entity instance
+  const order = repository.create(placeOrderInput);
+
+  // Save the order entity to the database
+  return await repository.save(order);
+}
+```
+- When called, the function will log: `[d37f9027-6f1e-4170-9ebf-a3471adb6fb0] Placing an order!`
+- `correlationIdContext.getStore()` yields the current value in the store.
+- If your server is handling subsequent requests each one will have it's own isolated context.
+  
+## 3. Going beyond theory
+
+While correlation id logging is a great example to show off how `AsyncLocalStorage` works, we did mention some other interesting use-cases. 
+
+Doing an in-depth dive on all of them would make this a really long post, but the least I can do is provide you with some good resources to help you when you're building your next project.
+
+### <a href="https://terminal.shop" target="_blank">terminal.shop</a>
+
+Terminal is an open-source (<a href="https://github.com/terminaldotshop/terminal" target="_blank">code here</a>) coffee shop that you can only access through the terminal. 
+<br />
+What does it have to do with the topic at hand? They use context elegantly to solve some of the issues we raised at the beginning of the post.
+
+```typescript
+// context.ts
+import { AsyncLocalStorage } from "node:async_hooks";
+
+export function createContext<T>() {
+  const storage = new AsyncLocalStorage<T>();
+  return {
+    use() {
+      const result = storage.getStore();
+      if (!result) {
+        throw new Error("No context available"); // ensures you don't get unexpected results by accessing context where you shouldn't
+      }
+      return result;
+    },
+    with<R>(value: T, fn: () => R) {
+      return storage.run<R>(value, fn);
+    },
+  };
+}
+```
+
+**Using context to handle database transactions**:
+
+```typescript
+// transaction.ts
+type TxOrDb = Transaction | typeof db;
+
+// initializing the context
+const TransactionContext = createContext<{
+  tx: Transaction;
+  effects: (() => void | Promise<void>)[];
+}>();
+
+// mostly used for READ operations:
+// - if a transaction is already underway, use that context
+// - if not, just make the query without a transaction
+export async function useTransaction<T>(callback: (trx: TxOrDb) => Promise<T>) {
+  try {
+    const { tx } = TransactionContext.use();
+    return callback(tx);
+  } catch {
+    return callback(db);
+  }
+}
+
+// a nice utility that allows certain side-effects to be executed after the transaction is committed.
+export async function afterTx(effect: () => any | Promise<any>) {
+  try {
+    const { effects } = TransactionContext.use();
+    effects.push(effect);
+  } catch {
+    await effect();
+  }
+}
+
+// the actual utility that creates a transaction if one doesn't exist
+export async function createTransaction<T>(
+  callback: (tx: Transaction) => Promise<T>,
+  isolationLevel?: MySqlTransactionConfig["isolationLevel"],
+): Promise<T> {
+  try {
+    const { tx } = TransactionContext.use();
+    return callback(tx);
+  } catch {
+    const effects: (() => void | Promise<void>)[] = [];
+    const result = await db.transaction(
+      async (tx) => {
+        return TransactionContext.with({ tx, effects }, () => callback(tx));
+      },
+      {
+        isolationLevel: isolationLevel || "read committed",
+      },
+    );
+    await Promise.all(effects.map((x) => x()));
+    return result as T;
+  }
+}
+```
+
+**In action:**
+
+```typescript
+// this is a "stripped down" version inspired from the terminal.shop implementation 
+function placeOrder() {
+  return createTransaction(async (tx) => {
+    await tx.insert(orderTable).values({
+      // order info
+    });
+    await tx.insert(orderItemTable).values(
+      items.map((item) => ({
+        // order item info
+      })),
+    );
+    await tx.delete(cartItemTable).where(eq(cartItemTable.userID, userID));
+    await afterTx(() =>
+      bus.publish(Resource.Bus, Event.Created, { orderID }),
+    );
+    return orderID;
+  });
+}
+```
+
+This might seem difficult to understand or even overkill at first, but the value of using `AsyncLocalStorage` becomes more and more obvious in highly complex apps.
+<br />
+
+Whether you are placing an order as a standalone action or as a side-effect in a more complex flow, having the transactional context will ensure that data is persisted atomically and any errors result in rollbacks.
+
+I definitely recommend you check their repo out to see more!
+<br />
+
+Of course, if you don't want to implement this logic by hand, there are libraries + framework-specific guides for working with async context:
+- <a href="https://docs.nestjs.com/recipes/async-local-storage" target="_blank">Nest.js docs</a>
+- <a href="https://www.npmjs.com/package/typeorm-transactional" target="_blank">typeorm-transactional</a>
+- <a href="https://papooch.github.io/nestjs-cls/" target="_blank">NestJS CLS</a>
+
+## 4. Conclusions
+
+If my experience of building frontend apps with React has taught me anything, it's that not everything needs to be in a global context. 
+
+This is also true on the backend, be mindful with your context, don't bloat it with information, it might lead to performance issues and code that is hard to maintain.
+
+<br />
+I hope this material helped showcase the potential issues you can solve by leveraging `AsyncLocalStorage`. It's also my first post of 2025, which is shaping up to be a very exciting year, especially for this blog.
+
+<br />
+More good things coming soon. 👀

@@ -27,7 +27,7 @@ blockquote {
 }
 
 code {
-  @apply py-1 px-2 rounded-sm;
+  @apply py-1 pr-2 rounded-sm;
 }
 
 pre {
@@ -41,6 +41,10 @@ article code:not(pre code) {
 article ul,
 ol {
   @apply list-disc list-inside marker:text-primary;
+}
+
+article ul ul {
+  @apply list-square ml-4;
 }
 
 article a {

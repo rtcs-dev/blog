@@ -4,7 +4,8 @@ export const Post = z.object({
   title: z.string(),
   description: z.string(),
   date: z.coerce.date(),
-  image: z.string(),
+  imageDark: z.string(),
+  imageLight: z.string(),
   keywords: z.string().optional(),
 });
 
