@@ -1,10 +1,12 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import FormattedDate from "../ui/formatted-date.astro";
+import { cn } from "@/lib/utils";
 
 type Props = CollectionEntry<"posts">["data"] & { id: string };
 
-const { title, description, image, id, date } = Astro.props;
+const { title, description, imageDark, imageLight, id, date } = Astro.props;
+const imgClass = "w-full h-full object-cover rounded-2xl";
 ---
 
 <a href={`posts/${id}`}>
@@ -17,8 +19,13 @@ const { title, description, image, id, date } = Astro.props;
     </div>
     <div class="max-h-[300px] max-w-[300px]">
       <img
-        class="w-full h-full object-cover rounded-2xl"
-        src={image}
+        class={cn(imgClass, "dark:hidden")}
+        src={imageLight}
+        alt=`blog-post-${id}`
+      />
+      <img
+        class={cn(imgClass, "hidden dark:inline-block")}
+        src={imageDark}
         alt=`blog-post-${id}`
       />
     </div>
