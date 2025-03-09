@@ -33,7 +33,7 @@ Mixins can be really useful when you want to share some cross-cutting functional
 
 ## The "simplest" mixin
 
-```typescript
+```typescript title = "user.ts"
 class User {
   constructor(protected readonly name: string) {}
 }
@@ -66,7 +66,7 @@ passed as an argument to functions and also returned from them.
 
 So let's refactor the previous example and take advantage of these aspects.
 
-```typescript
+```typescript title = "user.ts"
 interface ClassType<T = any> extends Function {
   new (...args: any[]): T;
 }
@@ -118,7 +118,7 @@ for validation.
 
 I also want to have a strict configuration when deploying to production. Here's how I achieve that:
 
-```typescript
+```typescript title = "postgres.schema.ts"
 import { IsUrl } from "class-validator";
 
 type Env = "development" | "production";
@@ -150,7 +150,7 @@ If we look at the definition I provided at the beginning of the article, then no
 
 If you've ever implemented auth inside a NestJS app, you've probably used the `@nestjs/passport` package:
 
-```typescript
+```typescript title="jwt-auth.guard.ts"
 import { Injectable } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 
@@ -178,7 +178,8 @@ Let's look at an end-to-end example that uses `@nestjs/typeorm` to create a pipe
 if the id used in a request exists in the database:
 
 ```typescript
-// base.entity.ts - simple base class that all entities extend
+// base.entity.ts 
+// simple base class that all entities extend
 import {
   CreateDateColumn,
   PrimaryGeneratedColumn,
@@ -198,7 +199,7 @@ export class BaseEntity {
 ```
 
 ```typescript
-// user.entity.ts - user entity definition
+// user.entity.ts
 import { BaseEntity } from "../../shared/base.entity";
 import { Entity, Column } from "typeorm";
 
@@ -251,6 +252,7 @@ export const EntityExistsPipe = <EntityCls extends BaseEntity>(
 ```
 
 ```typescript
+// users.controller.ts
 // actual usage
 @Controller("users")
 export class UsersController {
@@ -342,6 +344,7 @@ export class UsersService extends CrudService(User) {
 ```
 
 ```typescript
+// users.controller.ts
 // actual usage
 @Controller('users')
 export class UsersController {

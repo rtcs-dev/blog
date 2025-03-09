@@ -41,13 +41,13 @@ Main benefits:
 
 One of the biggest pain points in the previous version was not having the main colors of the theme centralized and set according to the color preference (dark or light). This resulted in a lot of markup looking like this:
 
-```html
+```html title="post.astro"
 <p class="text-black dark:text-white">Hi!</p>
 ```
 
 In the newer version, every color in the theme has both a light and a dark variant, and I don't have to repeat myself as often.
 
-```css
+```css title="globals.css"
 @layer base {
   :root {
     --background: #ffffff;
@@ -63,7 +63,7 @@ In the newer version, every color in the theme has both a light and a dark varia
 
 And of course, the tailwind color theme is extended in order for me to be able to reference these colors easily:
 
-```js
+```js title="tailwind.config.js"
 export default {
   darkMode: ["class"],
   theme: {
