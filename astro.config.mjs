@@ -6,6 +6,8 @@ import tailwind from "@astrojs/tailwind";
 import icon from "astro-icon";
 import aws from "astro-sst";
 
+import expressiveCode from "astro-expressive-code";
+
 // https://astro.build/config
 export default defineConfig({
   site: "https://rtcs.dev",
@@ -15,6 +17,12 @@ export default defineConfig({
     serverRoutes: ["/api/*"],
   }),
   integrations: [
+    expressiveCode({
+      themeCssSelector: (theme) => {
+        const isDarkTheme = theme.name === "github-dark";
+        return isDarkTheme ? ".dark *" : ":not(.dark *)";
+      },
+    }),
     mdx(),
     sitemap(),
     tailwind({
@@ -24,13 +32,5 @@ export default defineConfig({
   ],
   redirects: {
     "/hub": "/blog",
-  },
-  markdown: {
-    shikiConfig: {
-      themes: {
-        light: "catppuccin-latte",
-        dark: "github-dark",
-      },
-    },
   },
 });

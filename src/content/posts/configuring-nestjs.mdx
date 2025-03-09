@@ -30,7 +30,6 @@ that you can view <a href="https://docs.nestjs.com/techniques/configuration" tar
 The easiest way to get everything set up is to run:
 
 ```bash
-
 $ npm i -g @nestjs/cli
 
 $ nest new my-project
@@ -58,6 +57,7 @@ export class AppModule {}
 You could also specify custom/multiple env file paths if you wish:
 
 ```typescript
+// app.module.ts
 ConfigModule.forRoot({
   envFilePath: ['.env.development.local', '.env.development'],
 });
@@ -139,6 +139,7 @@ const dbUser = this.configService.get<string>('POSTGRES_USER', 'postgres');
 As you can see, you can even pass a generic parameter to specify a type for the result. The problem is that, by default, all properties from the environment are parsed as strings, and to handle other value types such as numbers or comma-separated values that you might want to parse into an array would probably be done through custom getters such as the one below:
 
 ```typescript
+// config.service.ts
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -154,6 +155,7 @@ export class ConfigService {
 You can even provide a type for the config service to have autocompletion:
 
 ```typescript
+// db-config.service.ts
 export class DbConfigService {
   constructor(private configService: ConfigService<{ POSTGRES_PORT: string }>) {}
   // ...
@@ -311,6 +313,7 @@ export class PostgresSchema {
 #### A note on implicit conversion:
 
 ```typescript
+// validate.ts
 // implementation of "validate" found on nest docs
 export function validate(config: Record<string, unknown>) {
   const validatedConfig = plainToInstance(

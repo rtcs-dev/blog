@@ -84,7 +84,7 @@ export const correlationIdContext = new AsyncLocalStorage<string>();
 
 ### Running code inside the context boundary
 
-```typescript
+```typescript title="app.ts"
 import express from "express";
 import { randomUUID } from 'crypto';
 
@@ -248,7 +248,7 @@ export async function createTransaction<T>(
 
 **In action:**
 
-```typescript
+```typescript title="order.ts"
 // this is a "stripped down" version inspired from the terminal.shop implementation 
 function placeOrder() {
   return createTransaction(async (tx) => {
