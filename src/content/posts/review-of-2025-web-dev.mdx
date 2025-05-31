@@ -1,0 +1,124 @@
+---
+title: A review of the web ecosystem in 2025
+description: The web ecosystem is in a constant state of change. Let's chat about React Server Components, shadcn/ui, vite and more.
+date: 2025-06-01
+imageLight: "/assets/images/posts/web-review-2025-light.png"
+imageDark: "/assets/images/posts/web-review-2025-dark.png"
+---
+
+The web development landscape has undergone significant transformation in recent years. Let's explore the key trends and technologies that have shaped the ecosystem and where it's at now that we have reached the middle of 2025.
+
+## React Server Components (RSC): 
+
+**React Server Components** promised to revolutionize we build React applications. RSCs are components that run exclusively on the server (on request) or during build time. The most notable enhancement is that they can be async and call backend code without leaking it to the client.
+
+
+Let's look at an example from the <a href="https://react.dev/reference/rsc/server-components" target="_blank">
+official react docs</a>:
+
+```tsx
+import db from './database';
+
+async function Note({id}) {
+  // NOTE: loads *during* render.
+  const note = await db.notes.get(id);
+  return (
+    <div>
+      <Author id={note.authorId} />
+      <p>{note}</p>
+    </div>
+  );
+}
+```
+
+The neat part about this is that we can ship these kind of components without needing client-side hydration, which is really cool!
+
+<br/>
+
+Along with RSCs we also got server functions, which can be used both on forms (server actions) but also imported in client components in order to make it easier to invoke server logic without needing to define an API layer.
+
+Web developers who keep up to date with the ecosystem know that the introduction of RSCs (specifically in the Next.js app router since it was the first mainstream framework to embrace the pattern) caused a lot of confusion. 
+
+<br/>
+The docs have certainly evolved since RSCs have been initially introduced and there are a lot of good posts to read if you want to learn how they work:<a href="https://www.joshwcomeau.com/react/server-components/" target="_blank">
+Making Sense of React Server Components</a> by Josh Comeau and <a href="https://overreacted.io/react-for-two-computers/" target="_blank">
+React for Two Computers</a> by Dan Abramov are two of my favourites. 
+
+<br />
+
+I think that part of the criticism that RSCs attracted is because people expected it to be a silver bullet. I personally still prefer <a href="https://astro.build/" target="_blank">
+Astro</a> for building content-driven sites (such as this one!) and <a href="https://reactrouter.com/" target="_blank">
+React Router</a> in SPA mode for apps with complex client-side interactions. (and lately I've been playing around with <a href="https://tanstack.com/router/latest" target="_blank">
+Tanstack Router</a> as well)
+
+<br />
+
+I am still open to using RSCs and eager to see how the React Router team implements them.
+
+## From component libraries to component distribution systems: shadcn/ui leading the way
+
+The component library landscape has seen a paradigm shift, with shadcn/ui emerging as a game-changer. Its copy-paste approach and focus on developer ownership has influenced how we think about UI libraries:
+
+- **Customization first**: Full control over components and their styling:
+  - All components are composable, so you can easily override their styles when needed. This is especially refreshing if you've ever worked with libraries such as <a href="https://mui.com/material-ui/" target="_blank">Material UI</a> and found yourself in a battle to override some base styles.
+- **No hidden complexity**: Components live in your codebase, so it's straightforward to add new variants and make changes.
+- **Sensible defaults on top of Radix (or others!)**: Picking an established unstyled component library such and adding some default styling instead of building another component library was a great choice. It's important to note that the anyone can define a schema for distributing a component and use other libraries such as <a href="https://react-spectrum.adobe.com/react-aria/index.html"  target="_blank">React Aria</a>.
+
+```tsx 
+// card.tsx
+// An example of a card built from multiple composable components
+function Card() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Card Title</CardTitle>
+        <CardDescription>Card Description</CardDescription>
+        <CardAction>Card Action</CardAction>
+      </CardHeader>
+      <CardContent>
+        <p>Card Content</p>
+      </CardContent>
+      <CardFooter>
+        <p>Card Footer</p>
+      </CardFooter>
+    </Card>
+  );
+}
+```
+
+<br />
+
+I've been using the shadcn CLI for all of my new projects, even when I am not using React. I also look to <a href="https://21st.dev/?tab=home"  target="_blank">21st.dev</a>, <a href="https://magicui.design/"  target="_blank">Magic UI</a> and <a href="https://v0.dev/"  target="_blank">v0</a> to quickly prototype pages and experiment with different ideas. It's truly great.
+
+## Vite: the mainstream build tool
+
+Having worked with `webpack` before, I find the ease of configuring `vite` so refreshing. The plugin system is great!
+
+Not much more I can say here, it's been adopted by multiple frameworks (and meta-frameworks) and it's popularity is justified.
+
+## Tanstack: almost the full picture
+
+<a href="https://tanstack.com/" target="_blank">Tanstack</a> libraries are present in most of the projects I work on. Querying, tables, routing, forms (alpha), Tanstack Start as a full-stack framework (beta) and more!
+
+`react-query` especially is undeniably one of the best things to happen to React. 
+
+## Conclusions
+
+Web development is always evolving, and not every new thing is a step in the right direction. I always try to curb my enthusiasm for new tech and look at it critically.
+
+<br />
+
+The ecosystem feels less chaotic than before, and some standards are emerging that I think will remain in place for the years to come. AI is and will become an even more important factor to consider when picking a stack, so converging on a set of technologies and packages is more important than ever: 
+- <a href="https://justfuckingusereact.com/" target="_blank">React</a> still has the largest ecosystem.
+- LLMs love <a href="https://tailwindcss.com/" target="_blank">tailwind</a>.
+- <a href="https://astro.build/" target="_blank">Astro</a> allows you to start from vanilla and sprinkle React whenever you need it. The plugin ecosystem is also very healthy and it's easy to deploy anywhere.
+- Prototyping is faster than ever with AI tools.
+
+<br />
+
+Beyond frontend, node.js and bun are both evolving nicely, monorepos are getting easier to setup and <a href="https://biomejs.dev/" target="_blank">biome</a> is making moves towards becoming the standard for linting/formatting.
+
+<br />
+
+The tools we have at our disposal as web developers are getting better and better, and it's our job to leverage them to ship great experiences to our users 😉. 
+
