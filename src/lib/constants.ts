@@ -5,8 +5,8 @@ export const SITE_DESCRIPTION = `Fullstack web development projects, posts and i
 
 export const SOCIALS = {
   facebook: "https://www.facebook.com/robert.tabacaru.3/",
-  twitter: "https://twitter.com/robbyyt99",
+  twitter: "https://x.com/rtcsdev",
   github: "https://github.com/robbyyt",
-  email: "rtabacaru@gmail.com",
+  email: "rtabacaru99@gmail.com",
   linkedin: "https://www.linkedin.com/in/rtabacaru/",
 };
