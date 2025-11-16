@@ -6,7 +6,7 @@ export default $config({
       removal: input?.stage === "production" ? "retain" : "remove",
       home: "aws",
       providers: {
-        cloudflare: "5.41.0",
+        cloudflare: "6.11.0",
         aws: {
           profile:
             input.stage === "production" ? "rtcs-blog-prod" : "rtcs-blog-dev",

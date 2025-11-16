@@ -1,5 +1,7 @@
 ---
 import ThemeAwareIcon from "../ui/theme-aware-icon.astro";
+import SunIcon from "@/icons/theme/sun.svg";
+import MoonIcon from "@/icons/theme/moon.svg";
 ---
 
 <button
@@ -9,8 +11,8 @@ import ThemeAwareIcon from "../ui/theme-aware-icon.astro";
 >
   <ThemeAwareIcon
     class="size-4"
-    darkIconSrc="theme/sun"
-    lightIconSrc="theme/moon"
+    darkIcon={SunIcon}
+    lightIcon={MoonIcon}
   />
 </button>
 

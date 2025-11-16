@@ -3,9 +3,9 @@ import type { Resume, Experience } from "@/lib/types/resume.types";
 const P5: Experience = {
   name: "Globant (formerly Pentalog)",
   startDate: new Date("January 2021"),
+  endDate: new Date("January 2025"),
   position: "Fullstack web developer",
-  endDate: "present",
-  url: "https://www.pentalog.com/",
+  url: "https://www.globant.com/",
   summary: [
     "A role with a lot of depth and challenges that has helped me grow a lot as a developer and a leader.",
   ],

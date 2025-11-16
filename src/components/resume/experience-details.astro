@@ -1,13 +1,30 @@
 ---
-import { Icon } from "astro-icon/components";
 import type { Mission, Experience } from "@/lib/types/resume.types";
 import BulletedList from "../ui/bulleted-list.astro";
+import AwsIcon from "@/icons/resume/aws.svg";
+import NestIcon from "@/icons/resume/nest.svg";
+import NextIcon from "@/icons/resume/next.svg";
+import NodeIcon from "@/icons/resume/node.svg";
+import ReactIcon from "@/icons/resume/react.svg";
+import TerraformIcon from "@/icons/resume/terraform.svg";
+import WcIcon from "@/icons/resume/wc.svg";
 
 import { format } from "date-fns";
+import type { SvgComponent } from "astro/types";
 
 interface Props extends Pick<Experience, "summary" | "highlights" | "stack"> {
   missions: Mission[];
 }
+
+const iconMap: Record<string, SvgComponent> = {
+  "resume/aws": AwsIcon,
+  "resume/nest": NestIcon,
+  "resume/next": NextIcon,
+  "resume/node": NodeIcon,
+  "resume/react": ReactIcon,
+  "resume/terraform": TerraformIcon,
+  "resume/wc": WcIcon,
+};
 
 const { summary, highlights, missions, stack } = Astro.props;
 ---
@@ -59,12 +76,15 @@ const { summary, highlights, missions, stack } = Astro.props;
       <div>
         <p class="font-semibold text-lg mb-2">Technologies</p>
         <div class="grid grid-cols-3 md:flex md:flex-wrap gap-4">
-          {stack.map(({ name: techName, src: iconFileName }) => (
-            <div class="inline-flex gap-1">
-              <Icon class="size-6" name={iconFileName} />
-              <span>{techName}</span>
-            </div>
-          ))}
+          {stack.map(({ name: techName, src: iconFileName }) => {
+            const IconComponent = iconMap[iconFileName];
+            return (
+              <div class="inline-flex gap-1">
+                {IconComponent && <IconComponent class="size-6" />}
+                <span>{techName}</span>
+              </div>
+            );
+          })}
         </div>
       </div>
     )
