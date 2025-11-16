@@ -1,31 +1,36 @@
 ---
-import { Icon } from "astro-icon/components";
 import ThemeAwareIcon from "../ui/theme-aware-icon.astro";
+import AstroDarkIcon from "@/icons/blog/astro-dark.svg";
+import AstroLightIcon from "@/icons/blog/astro-light.svg";
+import TailwindIcon from "@/icons/blog/tailwind.svg";
+import MdxDarkIcon from "@/icons/blog/mdx-dark.svg";
+import MdxLightIcon from "@/icons/blog/mdx-light.svg";
+import SstIcon from "@/icons/blog/sst.svg";
 ---
 
 <div class="flex items-center gap-4 flex-wrap">
   <div class="flex items-center">
     <ThemeAwareIcon
       class="size-8 mr-1"
-      darkIconSrc="blog/astro-dark"
-      lightIconSrc="blog/astro-light"
+      darkIcon={AstroDarkIcon}
+      lightIcon={AstroLightIcon}
     />
     <a href="https://astro.build/" target="_blank">Astro</a>
   </div>
   <div class="flex items-center">
-    <Icon class="size-8 mr-1" name="blog/tailwind" />
+    <TailwindIcon class="size-8 mr-1" />
     <a href="https://tailwindcss.com/" target="_blank">Tailwind</a>
   </div>
   <div class="flex items-center">
     <ThemeAwareIcon
       class="size-8 mr-1"
-      darkIconSrc="blog/mdx-dark"
-      lightIconSrc="blog/mdx-light"
+      darkIcon={MdxDarkIcon}
+      lightIcon={MdxLightIcon}
     />
     <a href="https://astro.build/" target="_blank">MDX</a>
   </div>
   <div class="flex items-center">
-    <Icon class="size-8 mr-1" name="blog/sst" />
+    <SstIcon class="size-8 mr-1" />
     <a href="https://sst.dev/" target="_blank">SST</a>
   </div>
 </div>

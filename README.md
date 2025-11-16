@@ -17,7 +17,7 @@ The `src` directory contains the following structure:
 - `components`: both re-usable and page specific components.
 - `layouts`: different page layout components.
 - `styles`: CSS files.
-- `icons`: SVG assets for `astro-icon`.
+- `icons`: SVG assets imported directly as Astro components.
 - `lib`: business logic, constants (that don't belong in content collections) and schemas.
 
 ## Getting Started
