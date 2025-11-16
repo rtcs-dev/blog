@@ -9,7 +9,8 @@
     "preview": "astro preview",
     "start": "astro dev",
     "sso": "aws sso login --sso-session=rtcs",
-    "sst": "sst"
+    "sst": "sst",
+    "convert-images": "node --experimental-strip-types scripts/convert-images-to-webp.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.5",
@@ -32,6 +33,7 @@
   },
   "devDependencies": {
     "prettier": "^3.3.3",
-    "prettier-plugin-astro": "^0.14.1"
+    "prettier-plugin-astro": "^0.14.1",
+    "sharp": "^0.33.0"
   }
 }
