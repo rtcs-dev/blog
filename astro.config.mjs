@@ -2,8 +2,8 @@
 import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
 import sitemap from "@astrojs/sitemap";
-import tailwind from "@astrojs/tailwind";
 import aws from "astro-sst";
+import tailwindcss from "@tailwindcss/vite";
 
 import expressiveCode from "astro-expressive-code";
 
@@ -12,6 +12,9 @@ export default defineConfig({
   site: "https://rtcs.dev",
   output: "server",
   adapter: aws(),
+  vite: {
+    plugins: [tailwindcss()],
+  },
   integrations: [
     expressiveCode({
       themeCssSelector: (theme) => {
@@ -21,9 +24,6 @@ export default defineConfig({
     }),
     mdx(),
     sitemap(),
-    tailwind({
-      applyBaseStyles: false,
-    }),
   ],
   redirects: {
     "/hub": "/blog",

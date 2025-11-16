@@ -1,3 +1,5 @@
+@reference '../styles/globals.css';
+
 footer .feather * {
   @apply fill-transparent stroke-foreground;
   transition: fill 250ms linear;
