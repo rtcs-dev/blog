@@ -11,10 +11,7 @@ import expressiveCode from "astro-expressive-code";
 export default defineConfig({
   site: "https://rtcs.dev",
   output: "server",
-  adapter: aws({
-    deploymentStrategy: "regional",
-    serverRoutes: ["/api/*"],
-  }),
+  adapter: aws(),
   integrations: [
     expressiveCode({
       themeCssSelector: (theme) => {

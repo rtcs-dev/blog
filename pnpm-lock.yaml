@@ -33,8 +33,8 @@ importers:
         specifier: ^0.40.2
         version: 0.40.2(astro@5.15.8(aws4fetch@1.0.20)(jiti@1.21.6)(rollup@4.34.9)(typescript@5.6.2)(yaml@2.5.1))
       astro-sst:
-        specifier: 2.45.2
-        version: 2.45.2
+        specifier: 3.1.4
+        version: 3.1.4
       class-variance-authority:
         specifier: ^0.7.0
         version: 0.7.0
@@ -45,8 +45,8 @@ importers:
         specifier: ^4.1.0
         version: 4.1.0
       sst:
-        specifier: 3.9.33
-        version: 3.9.33
+        specifier: 3.17.23
+        version: 3.17.23
       tailwind-merge:
         specifier: ^2.5.2
         version: 2.5.2
@@ -131,10 +131,6 @@ packages:
   '@astrojs/telemetry@3.3.0':
     resolution: {integrity: sha512-UFBgfeldP06qu6khs/yY+q1cDAaArM2/7AEIqQ9Cuvf7B1hNLq0xDrZkct+QoIGyjq56y8IaE2I3CTvG99mlhQ==}
     engines: {node: 18.20.8 || ^20.3.0 || >=22.0.0}
-
-  '@astrojs/webapi@3.0.0':
-    resolution: {integrity: sha512-+/Wruju2Ho99z0jI8zxMFGBkKKG97RzR/srSaColejUDrczkAjR3HjULKTVfDdIpvtvFZLyl7OMBmHKQazfeZg==}
-    deprecated: This package is not used by Astro any more and is no longer maintained. In Astro 3.0 polyfills are part of a core module.
 
   '@astrojs/yaml2ts@0.2.1':
     resolution: {integrity: sha512-CBaNwDQJz20E5WxzQh4thLVfhB3JEEGz72wRA+oJp6fQR37QLAqXZJU0mHC+yqMOQ6oj0GfRPJrz6hjf+zm6zA==}
@@ -349,10 +345,6 @@ packages:
 
   '@expressive-code/plugin-text-markers@0.40.2':
     resolution: {integrity: sha512-/XoLjD67K9nfM4TgDlXAExzMJp6ewFKxNpfUw4F7q5Ecy+IU3/9zQQG/O70Zy+RxYTwKGw2MA9kd7yelsxnSmw==}
-
-  '@fastify/busboy@2.1.1':
-    resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
-    engines: {node: '>=14'}
 
   '@fontsource-variable/inter@5.1.0':
     resolution: {integrity: sha512-Wj2dUGP0vUpxRGQTXQTCNJO+aLcFcQm+gUPXfj/aS877bQkEPBPv9JvZJpwdm2vzelt8NTZ+ausKlBCJjh2XIg==}
@@ -941,8 +933,8 @@ packages:
     peerDependencies:
       astro: ^4.0.0-beta || ^5.0.0-beta || ^3.3.0
 
-  astro-sst@2.45.2:
-    resolution: {integrity: sha512-Zrrip/9VP5kvoQJ+Kj2tJA1h7mQ3ShAsfKXMqVcz8vqMqCsFjEZPLHDu8zYTGMr3WOX8r3vzY6u5nOeaKFg8ZQ==}
+  astro-sst@3.1.4:
+    resolution: {integrity: sha512-tVb/z6xm8pQRaJS1Tt8df04fGUuWCBZaWjW+h1ofdT/SpYwBVRIPAB1YDYQG/Bl+UdHOdD9cdDO2SKYfhsxjvA==}
 
   astro@5.15.8:
     resolution: {integrity: sha512-QiiRnNPdxCcAGO2UlO07o+QeGgRfEC5Dlm0x35WPB/ixFK1T2bsNB6KaXri70cVkYY1GYgoRtrWv3HCR26o9aw==}
@@ -2457,8 +2449,8 @@ packages:
     resolution: {integrity: sha512-A3We5UfEjG8Z7VkDv6uItWw6HY2bBSBJT1KtVESn6EOoOr2jAxNhxWCLY3jDE2WcuHXByWju74ck3ZgLwL8xmA==}
     engines: {node: '>= 18'}
 
-  set-cookie-parser@2.7.1:
-    resolution: {integrity: sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==}
+  set-cookie-parser@2.7.2:
+    resolution: {integrity: sha512-oeM1lpU/UvhTxw+g3cIfxXHyJRc/uidd3yK1P242gzHds0udQBYzs3y8j4gCCW+ZJ7ad0yctld8RYO+bdurlvw==}
 
   set-function-length@1.2.2:
     resolution: {integrity: sha512-pgRc4hJ4/sNjWCSS9AmnS40x3bNMDTknHgL5UaMBTMyJnU90EgWh1Rz+MC9eFu4BuN/UwZjKQuY/1v3rM7HMfg==}
@@ -2536,33 +2528,48 @@ packages:
   space-separated-tokens@2.0.2:
     resolution: {integrity: sha512-PEGlAwrG8yXGXRjW32fGbg66JAlOAwbObuqVoJpv/mRgoWDQfgH1wDPvtzWyUSNAXBGSk8h755YDbbcEy3SH2Q==}
 
-  sst-darwin-arm64@3.9.33:
-    resolution: {integrity: sha512-FMfVrkGc+VwP1OaS7LkgthwHoE4WsRzxaJMyxWYjKoENvtxSwKgody1jkm4xDfOz7AtBVNzODdBzp2PKGBHC0g==}
+  sst-darwin-arm64@3.17.23:
+    resolution: {integrity: sha512-R6kvmF+rUideOoU7KBs2SdvrIupoE+b+Dor/eq9Uo4Dojj7KvYDZI/EDm8sSCbbcx/opiWeyNqKtlnLEdCxE6g==}
     cpu: [arm64]
     os: [darwin]
 
-  sst-darwin-x64@3.9.33:
-    resolution: {integrity: sha512-2Cyqv9Fgiy4wqqzDCiA7ReYafU3WAfS8i/IyDwCmgub+XRph0IijZZqk37xHyDbJapVWzx84FHD1mEC0F2IUjg==}
+  sst-darwin-x64@3.17.23:
+    resolution: {integrity: sha512-WW4P1S35iYCifQXxD+sE3wuzcN+LHLpuKMaNoaBqEcWGZnH3IPaDJ7rpLF0arkDAo/z3jZmWWzOCkr0JuqJ8vQ==}
     cpu: [x64]
     os: [darwin]
 
-  sst-linux-arm64@3.9.33:
-    resolution: {integrity: sha512-JVpMNrfBMJ5P8sJUshVXz8A/qj/vTZVhBTE9d83mv1be5QnWGuom4G5fYLzeUCLXRJDpWghMSbNWB8eXDX43Gg==}
+  sst-linux-arm64@3.17.23:
+    resolution: {integrity: sha512-TjtNqgIh7RlAWgPLFCAt0mXvIB+J7WjmRvIRrAdX0mXsndOiBJ/DMOgXSLVsIWHCfPj8MIEot/hWpnJgXgIeag==}
     cpu: [arm64]
     os: [linux]
 
-  sst-linux-x64@3.9.33:
-    resolution: {integrity: sha512-+CCDKE93gAuXsa0ErQq+OIXiFjlOeD9dUg25uoCZC2KQsWkTGP7rySIF9Dl4DGg5ct6jY1JDELU8CN608SIyAw==}
+  sst-linux-x64@3.17.23:
+    resolution: {integrity: sha512-qdqJiEbYfCjZlI3F/TA6eoIU7JXVkEEI/UMILNf2JWhky0KQdCW2Xyz+wb6c0msVJCWdUM/uj+1DaiP2eXvghw==}
     cpu: [x64]
     os: [linux]
 
-  sst-linux-x86@3.9.33:
-    resolution: {integrity: sha512-Mu6GCujp5do6/DZt7rusFxcVj4QFDVC5Uh+dsPSn0+EwBx0UoEzpzQMWq8el0HdOeTqRkeIr9hEi1KpKHIpC9Q==}
+  sst-linux-x86@3.17.23:
+    resolution: {integrity: sha512-aGmUujIvoNlmAABEGsOgfY1rxD9koC6hN8bnTLbDI+oI/u/zjHYh50jsbL0p3TlaHpwF/lxP3xFSuT6IKp+KgA==}
     cpu: [x86]
     os: [linux]
 
-  sst@3.9.33:
-    resolution: {integrity: sha512-hi4bOsnWpTRemTc9jGCY9riVd3eIb175nRsIW1uzlSQS9uwmK8r1cnDGQIl4nHc2AsS+VUvWnTDgEokG0N6wjg==}
+  sst-win32-arm64@3.17.23:
+    resolution: {integrity: sha512-ZxdkGqYDrrZGz98rijDCN+m5yuCcwD6Bc9/6hubLsvdpNlVorUqzpg801Ec97xSK0nIC9g6pNiRyxAcsQQstUg==}
+    cpu: [arm64]
+    os: [win32]
+
+  sst-win32-x64@3.17.23:
+    resolution: {integrity: sha512-yc9cor4MS49Ccy2tQCF1tf6M81yLeSGzGL+gjhUxpVKo2pN3bxl3w70eyU/mTXSEeyAmG9zEfbt6FNu4sy5cUA==}
+    cpu: [x64]
+    os: [win32]
+
+  sst-win32-x86@3.17.23:
+    resolution: {integrity: sha512-DIp3s54IpNAfdYjSRt6McvkbEPQDMxUu6RUeRAd2C+FcTJgTloon/ghAPQBaDgu2VoVgymjcJARO/XyfKcCLOQ==}
+    cpu: [x86]
+    os: [win32]
+
+  sst@3.17.23:
+    resolution: {integrity: sha512-TwKgUgDnZdc1Swe+bvCNeyO4dQnYz5cTodMpYj3jlXZdK9/KNz0PVxT1f0u5E76i1pmilXrUBL/f7iiMPw4RDg==}
     hasBin: true
 
   statuses@2.0.1:
@@ -2701,10 +2708,6 @@ packages:
 
   uncrypto@0.1.3:
     resolution: {integrity: sha512-Ql87qFHB3s/De2ClA9e0gsnS6zXG27SkTiSJwjCc9MebbfapQfuPzumMIUMi38ezPZVNFcHI9sUIepeQfw8J8Q==}
-
-  undici@5.28.4:
-    resolution: {integrity: sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==}
-    engines: {node: '>=14.0'}
 
   unicode-properties@1.4.1:
     resolution: {integrity: sha512-CLjCCLQ6UuMxWnbIylkisbRj31qxHPAurvena/0iwSVbQ2G1VY5/HjV0IRabOEbDHlzZlRdCrD4NhB0JtU40Pg==}
@@ -3244,10 +3247,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@astrojs/webapi@3.0.0':
-    dependencies:
-      undici: 5.28.4
-
   '@astrojs/yaml2ts@0.2.1':
     dependencies:
       yaml: 2.5.1
@@ -3398,8 +3397,6 @@ snapshots:
   '@expressive-code/plugin-text-markers@0.40.2':
     dependencies:
       '@expressive-code/core': 0.40.2
-
-  '@fastify/busboy@2.1.1': {}
 
   '@fontsource-variable/inter@5.1.0': {}
 
@@ -3644,8 +3641,8 @@ snapshots:
       express-rate-limit: 7.5.0(express@5.0.1)
       pkce-challenge: 4.1.0
       raw-body: 3.0.0
-      zod: 3.24.2
-      zod-to-json-schema: 3.24.3(zod@3.24.2)
+      zod: 3.25.76
+      zod-to-json-schema: 3.24.6(zod@3.25.76)
     transitivePeerDependencies:
       - supports-color
 
@@ -3955,10 +3952,9 @@ snapshots:
       astro: 5.15.8(aws4fetch@1.0.20)(jiti@1.21.6)(rollup@4.34.9)(typescript@5.6.2)(yaml@2.5.1)
       rehype-expressive-code: 0.40.2
 
-  astro-sst@2.45.2:
+  astro-sst@3.1.4:
     dependencies:
-      '@astrojs/webapi': 3.0.0
-      set-cookie-parser: 2.7.1
+      set-cookie-parser: 2.7.2
 
   astro@5.15.8(aws4fetch@1.0.20)(jiti@1.21.6)(rollup@4.34.9)(typescript@5.6.2)(yaml@2.5.1):
     dependencies:
@@ -4111,7 +4107,7 @@ snapshots:
     dependencies:
       bytes: 3.1.2
       content-type: 1.0.5
-      debug: 4.4.0
+      debug: 4.4.3
       http-errors: 2.0.0
       iconv-lite: 0.5.2
       on-finished: 2.4.1
@@ -4562,7 +4558,7 @@ snapshots:
 
   finalhandler@2.1.0:
     dependencies:
-      debug: 4.4.0
+      debug: 4.4.3
       encodeurl: 2.0.0
       escape-html: 1.0.3
       on-finished: 2.4.1
@@ -6034,7 +6030,7 @@ snapshots:
 
   send@1.1.0:
     dependencies:
-      debug: 4.4.0
+      debug: 4.4.3
       destroy: 1.2.0
       encodeurl: 2.0.0
       escape-html: 1.0.3
@@ -6058,7 +6054,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  set-cookie-parser@2.7.1: {}
+  set-cookie-parser@2.7.2: {}
 
   set-function-length@1.2.2:
     dependencies:
@@ -6208,22 +6204,31 @@ snapshots:
 
   space-separated-tokens@2.0.2: {}
 
-  sst-darwin-arm64@3.9.33:
+  sst-darwin-arm64@3.17.23:
     optional: true
 
-  sst-darwin-x64@3.9.33:
+  sst-darwin-x64@3.17.23:
     optional: true
 
-  sst-linux-arm64@3.9.33:
+  sst-linux-arm64@3.17.23:
     optional: true
 
-  sst-linux-x64@3.9.33:
+  sst-linux-x64@3.17.23:
     optional: true
 
-  sst-linux-x86@3.9.33:
+  sst-linux-x86@3.17.23:
     optional: true
 
-  sst@3.9.33:
+  sst-win32-arm64@3.17.23:
+    optional: true
+
+  sst-win32-x64@3.17.23:
+    optional: true
+
+  sst-win32-x86@3.17.23:
+    optional: true
+
+  sst@3.17.23:
     dependencies:
       aws-sdk: 2.1692.0
       aws4fetch: 1.0.18
@@ -6231,11 +6236,14 @@ snapshots:
       opencontrol: 0.0.6
       openid-client: 5.6.4
     optionalDependencies:
-      sst-darwin-arm64: 3.9.33
-      sst-darwin-x64: 3.9.33
-      sst-linux-arm64: 3.9.33
-      sst-linux-x64: 3.9.33
-      sst-linux-x86: 3.9.33
+      sst-darwin-arm64: 3.17.23
+      sst-darwin-x64: 3.17.23
+      sst-linux-arm64: 3.17.23
+      sst-linux-x64: 3.17.23
+      sst-linux-x86: 3.17.23
+      sst-win32-arm64: 3.17.23
+      sst-win32-x64: 3.17.23
+      sst-win32-x86: 3.17.23
     transitivePeerDependencies:
       - supports-color
 
@@ -6387,10 +6395,6 @@ snapshots:
   ultrahtml@1.6.0: {}
 
   uncrypto@0.1.3: {}
-
-  undici@5.28.4:
-    dependencies:
-      '@fastify/busboy': 2.1.1
 
   unicode-properties@1.4.1:
     dependencies:
