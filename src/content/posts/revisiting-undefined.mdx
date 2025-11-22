@@ -1,0 +1,409 @@
+---
+title: Revisiting undefined
+description: "A deep dive into JavaScript's undefined: understanding its semantic value, leveraging it for PATCH endpoints, contrasting with Java alternatives, and exploring both its usefulness and pitfalls."
+date: 2025-11-23
+imageLight: "/assets/images/posts/undefined-light.webp"
+imageDark: "/assets/images/posts/undefined-dark.webp"
+keywords: "node.js, javascript, java, undefined, PATCH endpoint, zod, spring, API design"
+---
+
+## 1. A bad first impression
+
+When I first started learning Javascript, I was confused by `undefined`. Why do we need it when we have `null`? 
+
+They both seemed to represent "nothing", so what is the point of having two ways to express the same concept?
+<br />
+
+This pre-conception that it was redundant plus the occasional `cannot read property of undefined` errors (and other issues) made me dislike it.
+<br />
+
+I eventually realized that it can be useful, and, after spending the better part of this year writing Java, I've come to miss it a little bit. (not too much though 😆)
+
+<br />
+
+## 2. Understanding the semantic value of `undefined`
+
+The key insight is that `undefined` and `null` represent different concepts:
+<br />
+
+- **`undefined`**: "This property doesn't exist" or "This value wasn't provided"
+- **`null`**: "This property exists, and its value is explicitly null"
+<br />
+
+This distinction becomes clear when you think about JSON. In JSON, you can't represent `undefined`— properties are either present or absent. But you can represent `null`:
+<br />
+
+```json
+{
+  "name": "John Doe",
+  "bio": null
+}
+```
+
+In this JSON object, `name` is present with a string value, `bio` is present with a `null` value, and `email` is absent entirely. When this JSON is parsed into a Javascript object, the semantic difference matters:
+<br />
+
+```typescript
+const user = JSON.parse('{"name": "John Doe", "bio": null}');
+
+console.log(user.name);    // "John Doe"
+console.log(user.bio);     // null
+console.log(user.email);   // undefined
+```
+
+Here, `user.bio` is `null` (the property exists and was explicitly set to null), while `user.email` is `undefined` (the property doesn't exist in the object).
+<br />
+
+To see how useful this distinction is, let's try implementing a PATCH endpoint.
+
+## 3. Leveraging undefined for simple patch operations
+
+We'll be using Zod in this example because it's my favorite validation library. 
+It will also help showcase how we can derive types from the validation schemas, ensuring types and runtime validation logic don't drift apart.
+<br />
+
+Let's say we have the following schema for a user:
+
+```typescript
+// user.schema.ts
+import { z } from 'zod';
+
+export const userSchema = z.object({
+  id: z.string(),
+  name: z.string().min(1),
+  email: z.string().email(),
+  bio: z.string().nullable(),
+  avatarUrl: z.string().url().nullable(),
+});
+
+export type User = z.infer<typeof userSchema>;
+```
+
+From this, we can derive a partial version which we will use to validate PATCH payloads using Zod's `.partial()` method:
+
+```typescript
+// patch-user.schema.ts
+import { z } from 'zod';
+import { userSchema } from './user.schema';
+
+// Derive partial schema from user schema
+export const patchUserSchema = userSchema.omit({ id: true }).partial();
+
+export type PatchUserInput = z.infer<typeof patchUserSchema>;
+```
+
+Let's look at how this might be handled:
+
+```typescript
+// user.controller.ts
+import { z } from 'zod';
+import { patchUserSchema, PatchUserInput } from './patch-user.schema';
+import { userRepository } from './user.repository';
+
+export async function patchUser(
+  userId: string,
+  updates: PatchUserInput // we assume the input has been validated by zod already
+) {
+  const user = await userRepository.findById(userId);
+  
+  if (!user) {
+    throw new UserNotFoundException(userId);
+  }
+  
+  // Filter out undefined values - only update fields that were provided
+  // Note that this is still a required step as otherwise we'd be overriding fields and setting them as undefined
+  const updatedValues = Object.fromEntries(
+    Object.entries(updates).filter(([_, value]) => value !== undefined)
+  );
+  
+  // Apply updates
+  Object.assign(user, updatedValues);
+  
+  return userRepository.save(user);
+}
+```
+
+**Note:** We could also not use the existing user at all and use the input to build an update query only with the fields that were provided!
+
+<br />
+Let's look at some example requests:
+
+```json
+{
+  "name": "John Doe" // update the name
+}
+```
+
+Would only update the name.
+
+```json
+{
+  "name": "John Doe", // update the name
+  "bio": null // set the bio to null
+}
+```
+<br />
+
+The beauty of this approach is that it's very simple to interact with the API and the business layer is simple as well, and it's also fully type-safe because we validated the input.
+
+If the object we're updating has complex rules (inter-dependent fields, etc..) we might still need to perform a validation after applying the changes to ensure they are still respected.
+
+## 4. Implementing PATCH in Java
+
+In Java (or other languages) there's no `undefined`. Let's look at how that impacts us when we want to implement PATCH.
+<br />
+
+### 4.1 Using ObjectNode
+
+Consider the following record with validation decorators that could be used for the payload to our PATCH endpoint:
+
+```java
+public record PatchUserRequest(
+    @NotBlank(message = "Name cannot be blank")
+    String name,
+    
+    @Email(message = "Email must be valid")
+    String email,
+    
+    @Nullable
+    String bio,
+    
+    @Nullable
+    @URL(message = "Avatar URL must be valid")
+    String avatarUrl
+) {}
+```
+
+When a client sends a PATCH request, fields not provided in the request body will be `null` in the deserialized object, just like fields explicitly set to `null`. 
+
+This means we lose the semantic distinction between "field was omitted" and "field was explicitly set to null"—both become `null` in Java. To work around this limitation, we need to use `ObjectNode`:
+
+<br />
+
+```java
+@PatchMapping("/users/{id}")
+public ResponseEntity<User> updateUser(
+    @PathVariable String id,
+    @RequestBody ObjectNode updates
+) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException(id));
+    
+    // Check if field was present in request
+    if (updates.has("name")) {
+        user.setName(updates.get("name").asText());
+    }
+    
+    if (updates.has("bio")) {
+        JsonNode bioNode = updates.get("bio");
+        if (bioNode.isNull()) {
+            user.setBio(null);
+        } else {
+            user.setBio(bioNode.asText());
+        }
+    }
+    
+    if (updates.has("email")) {
+        user.setEmail(updates.get("email").asText());
+    }
+    
+    // ... repeat for each field
+    
+    return ResponseEntity.ok(userRepository.save(user));
+}
+```
+
+**Shortcomings:**
+- **Verbose**: You need to manually check each field's presence with `has()`
+- **Doesn't scale**: As your entity grows, you're writing repetitive boilerplate
+- **No type safety**: `ObjectNode` is untyped, so you lose compile-time checks
+- **Manual validation**: You have to perform validation before persisting to the database to ensure no business rules were violated.
+<br />
+
+### 4.2 Using the JSON Patch RFC
+
+Alternatively, you could use the JSON Patch RFC (RFC 6902), which Spring supports:
+
+```java
+@PatchMapping("/users/{id}")
+public ResponseEntity<User> updateUser(
+    @PathVariable String id,
+    @RequestBody JsonPatch patch
+) {
+    User user = userRepository.findById(id)
+        .orElseThrow(() -> new UserNotFoundException(id));
+    
+    // Convert user to JsonNode
+    ObjectMapper mapper = new ObjectMapper();
+    JsonNode userNode = mapper.valueToTree(user);
+    
+    // Apply patch operations
+    JsonNode patched = patch.apply(userNode);
+    
+    // Convert back to User entity
+    User updated = mapper.treeToValue(patched, User.class);
+    
+    return ResponseEntity.ok(userRepository.save(updated));
+}
+```
+
+The request body would look like:
+
+```json
+[
+  { "op": "replace", "path": "/name", "value": "New Name" },
+  { "op": "replace", "path": "/bio", "value": null }
+]
+```
+
+**Shortcomings:**
+- **Complex for clients**: The JSON Patch format is more verbose than a simple object
+- **Manual validation**: You have to perform validation before persisting to the database to ensure no business rules were violated.
+<br />
+
+## 5. You might need the RFC anyway
+
+*<small>This section is more about the JSON Patch RFC than `undefined`. I got sucked down this rabbit hole when writing this post and thought you might be interested as well 😉. Feel free to skip ahead to the [next section](#6-undefined-can-also-be-a-footgun) to see why  `undefined` can be dangerous.</small>*
+
+<br />
+
+Sometimes, even with `undefined` available, you might still need the JSON Patch RFC. Let's assume our User entity had an array of roles:
+
+```java
+public class User {
+    private String id;
+    private String name;
+    private String email;
+    private String bio;
+    private String avatarUrl;
+    private List<String> roles;
+    
+}
+```
+
+If we used a simple JSON object as a payload, it would be hard to model the behavior of "adding" or "removing" a role. With a partial update approach, we'd have to send the entire array:
+
+```json
+{
+  "roles": ["admin", "user", "moderator"]
+}
+```
+
+This requires the client to know the current state of the roles array, send all roles (including ones that shouldn't change), and makes it easy to accidentally overwrite roles if there's a race condition.
+
+With an array of operations using the JSON Patch RFC, modeling these operations becomes much easier:
+
+```json
+[
+  { "op": "add", "path": "/roles/-", "value": "moderator" },
+  { "op": "remove", "path": "/roles/0" }
+]
+```
+
+The JSON Patch RFC provides operations like `add`, `remove`, `replace`, `move`, `copy`, and `test`, which give you fine-grained control over array and object modifications. This is especially useful when dealing with collections where you need to express operations like "add item X" or "remove item Y" rather than "replace entire collection with Z".
+
+<br />
+However, there's an important limitation: the `remove` operation can only remove items by their index, not by their value. According to <a href="https://datatracker.ietf.org/doc/html/rfc6902" target="_blank">RFC 6902</a>, the `remove` operation requires a specific path to the item, which means you can't directly say "remove the role with value 'admin'" — you must know its position in the array (`/roles/0`). 
+
+<br />
+This becomes particularly problematic with concurrent operations: if another request modifies the array between when you read it and when you apply the patch, the index you're targeting might point to a different item, leading to incorrect updates.
+
+One workaround is to refactor arrays into hash maps (objects), where you can remove items by their key rather than by index:
+
+```json
+// Instead of:
+{
+  "roles": ["admin", "user"]
+}
+
+// Use:
+{
+  "roles": {
+    "admin": true,
+    "user": true
+  }
+}
+
+// Then you can remove a role with:
+{
+  "op": "remove",
+  "path": "/roles/admin"
+}
+```
+
+However, this workaround might not be ideal because it requires changing your data model just to adapt a standard, rather than using the data structure that best represents your domain.
+<br />
+
+## 6. Undefined can also be a footgun
+
+While `undefined` can be useful, there's a reason people learning js or transitioning from other languages find it annoying.
+
+It's a different type of "nothing" that can be a source of bugs if not handled carefully.
+
+Consider this implementation with TypeORM:
+
+```typescript
+export async function findUserById(userId: string) {
+  
+  // Whoops, no validation of the userId string
+
+  return userRepository.findOne({
+    where: {
+      id: userId // undefined
+    }
+  });
+}
+```
+
+If `userId` is `undefined`, TypeORM treats it as a matching condition and just fetches a record from the users table and returns it, rather than returning `null` as some might expect.
+
+To fix, we could assert that the string passed is not `undefined` (or null), or use TypeORM's `Equal()` function, which properly handles `undefined`:
+
+```typescript
+import { Equal } from 'typeorm';
+
+export async function findUserById(userId: string) {
+  const user = await userRepository.findOne({
+    where: {
+      id: Equal(userId)
+    }
+  });
+  
+  return user;
+}
+```
+
+A mistake like this can lead to sensitive user data being leaked or casually dropping an entire table if used incorrectly with deletes. The example I showcased is with `typeorm` but other popular ORMs such as Prisma have dedicated docs
+for how `undefined` is handled. (Read more <a href="https://www.prisma.io/docs/orm/prisma-client/special-fields-and-types/null-and-undefined" target="_blank" rel="noopener noreferrer">here</a>)
+
+<br />
+
+## 7. Conclusions
+
+It's good to know all of the tools that you have at your disposal when programming in a language. 
+<br />
+
+`undefined` is a valid semantic concept that the Javascript ecosystem has leveraged since the very beginning when you could only use the language in the browser.
+<br />
+
+Now that it is also a popular choice on the server, the stakes are higher. It is one thing for a front-end
+application to crash because `undefined` was not handled properly, it's an entirely different thing to delete
+an entire table.
+
+<br />
+Looking at the examples above, one can argue that it's very easy to prevent them from happening by adding some simple validations. And they'd be totally right.
+
+<br />
+The biggest problem is that an issue like this is very easy to miss, and the impact is much higher compared to the case where `null` would've been used instead.
+
+<br />
+Javascript is a language that tries to be very flexible. Having `undefined` is a testament to that. However, flexibility means that there's always a lot of things to be careful about, especially dealing with its "special" values. (Don't get me started on `NaN` and `Infinity`)
+
+<br />
+I am aware that this is a topic that's been debated heavily online and most people who've used JS have a strong opinion on it.
+
+My opinion is that `undefined`'s shortcomings get less and less relevant in teams that know how to live with it. Modern teams that use `typescript` (with a strict config), validate unknown inputs at runtime (with tools like `zod`), protect their database from mutations without where clauses and write comprehensive test suites will be able to leverage `undefined` without losing sleep. 
+
+<br />
+
+See you on `nextPost?.getDate()`!

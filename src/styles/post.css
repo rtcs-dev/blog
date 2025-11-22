@@ -1,5 +1,9 @@
 @reference '../styles/globals.css';
 
+html {
+  scroll-behavior: smooth;
+}
+
 .title:not(.expressive-code *) {
   @apply font-bold text-center leading-normal;
   @apply dark:bg-gradient-to-br dark:from-primary dark:via-blog-title-accent dark:to-primary bg-clip-text text-transparent bg-primary;
