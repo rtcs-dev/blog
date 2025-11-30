@@ -1,0 +1,46 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "rtcs",
+  "homepage": "https://rtcs.dev",
+  "items": [
+    {
+      "name": "chunk",
+      "title": "Chunk",
+      "description": "Splits an array into multiple arrays, each containing a maximum of 'chunkSize' elements.",
+      "type": "registry:utils",
+      "files": [
+        {
+          "path": "registry/default/utils/array/chunk.ts",
+          "type": "registry:utils"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "deep-partial",
+      "title": "DeepPartial",
+      "description": "A utility type that recursively makes all properties of a type optional, including nested objects, arrays, Maps, and Sets.",
+      "type": "registry:types",
+      "files": [
+        {
+          "path": "registry/default/types/deep-partial.ts",
+          "type": "registry:types"
+        }
+      ],
+      "dependencies": []
+    },
+    {
+      "name": "deep-key-paths",
+      "title": "DeepKeyPaths",
+      "description": "A utility type that extracts all nested key paths from an object type as a union of string literals, including array indices in both dot and bracket notation.",
+      "type": "registry:types",
+      "files": [
+        {
+          "path": "registry/default/types/deep-key-paths.ts",
+          "type": "registry:types"
+        }
+      ],
+      "dependencies": []
+    }
+  ]
+}
