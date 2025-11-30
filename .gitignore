@@ -29,4 +29,8 @@ pnpm-debug.log*
 # internal docs
 .docs/
 
+# wrangler
 .wrangler/
+
+# coverage
+coverage/

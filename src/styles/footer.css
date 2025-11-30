@@ -11,20 +11,20 @@ footer .feather * {
 
 .footer-icons:not(.email-icon):hover * {
   stroke: var(--icon-color-light, var(--icon-color));
-  @apply dark:fill-[var(--icon-color)] dark:stroke-accent-foreground;
+  @apply dark:fill-(--icon-color) dark:stroke-accent-foreground;
 }
 
 .footer-icons:not(.email-icon).hover * {
   stroke: var(--icon-color-light, var(--icon-color));
-  @apply dark:fill-[var(--icon-color)] dark:stroke-accent-foreground;
+  @apply dark:fill-(--icon-color) dark:stroke-accent-foreground;
 }
 
 .footer-icons.email-icon:hover * {
   stroke: var(--icon-color-light, var(--icon-color));
-  @apply dark:text-[var(--icon-color)];
+  @apply dark:text-(--icon-color);
 }
 
 .footer-icons.email-icon.hover * {
   stroke: var(--icon-color-light, var(--icon-color));
-  @apply text-[var(--icon-color)];
+  @apply text-(--icon-color);
 }
