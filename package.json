@@ -8,23 +8,23 @@
     "dev": "astro dev",
     "preview": "astro preview",
     "start": "astro dev",
-    "sso": "aws sso login --sso-session=rtcs",
-    "sst": "sst",
+    "login": "wrangler login",
+    "deploy": "astro build && wrangler deploy",
+    "deploy:preview": "astro build && wrangler dev",
     "convert-images": "node --experimental-strip-types scripts/convert-images-to-webp.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.5",
+    "@astrojs/cloudflare": "^12.6.12",
     "@astrojs/mdx": "4.3.10",
     "@astrojs/sitemap": "^3.6.0",
     "@fontsource-variable/inter": "^5.1.0",
     "@fontsource-variable/open-sans": "^5.1.0",
     "astro": "5.15.8",
     "astro-expressive-code": "^0.40.2",
-    "astro-sst": "3.1.4",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
-    "sst": "3.17.23",
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "^4.1.17",
     "tailwindcss-animate": "^1.0.7",
@@ -35,6 +35,7 @@
     "@tailwindcss/vite": "^4.1.17",
     "prettier": "^3.3.3",
     "prettier-plugin-astro": "^0.14.1",
-    "sharp": "^0.33.0"
+    "sharp": "^0.33.0",
+    "wrangler": "^4.51.0"
   }
 }
