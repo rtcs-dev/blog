@@ -6,7 +6,7 @@
 
 This repository contains the source code for the [rtcs blog](https://rtcs.dev).
 
-It is built using Astro, Tailwind CSS, and MDX. The blog is deployed on AWS using SST.
+It is built using Astro, Tailwind CSS, and MDX. The blog is deployed on Cloudflare Workers.
 
 ## Directory Structure
 
@@ -26,17 +26,19 @@ The `src` directory contains the following structure:
 
 - `node` (version 20 or latest recommended)
 - `pnpm`
-- `sst` (v3) - only if you want to deploy it using SST.
 
 Clone the repository, install the dependencies, and make it yours!
 
-## Deployment using SST
+## Deployment using Cloudflare Workers
 
-- Follow the guide at https://sst.dev/docs/iam-credentials/ to set up IAM credentials locally for AWS.
-- Make sure you have a cloudflare account + API token
-  - To quickly create one go [here](https://dash.cloudflare.com/profile/api-tokens?permissionGroupKeys=%5B%7B%22key%22%3A%22account_settings%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22dns%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22memberships%22%2C%22type%22%3A%22read%22%7D%2C%7B%22key%22%3A%22user_details%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_kv_storage%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_r2%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_routes%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_scripts%22%2C%22type%22%3A%22edit%22%7D%2C%7B%22key%22%3A%22workers_tail%22%2C%22type%22%3A%22read%22%7D%5D&name=sst&accountId=*&zoneId=all)
-- Copy the contents of `.env.sample` into a `.env` file or set them directly from the command line.
-- Run `sst deploy` (while setting the right stage according to your needs)
-  - development deployments don't use cloudflare at the moment
+### Prerequisites
 
-> NOTE: The Cloudflare setup can be avoided by using Route 53 for DNS and hosting all resources on AWS.
+1. Create a Cloudflare account if you don't have one
+2. Install the Wrangler CLI (already included as a dev dependency)
+3. Authenticate with Cloudflare: `npx wrangler login`
+
+### Deploying
+
+1. Build the site: `pnpm build`
+2. Deploy to Cloudflare Workers: `pnpm deploy`
+   - Or use `pnpm deploy:preview` to preview locally before deploying
