@@ -5,24 +5,17 @@ import sitemap from "@astrojs/sitemap";
 import tailwindcss from "@tailwindcss/vite";
 import expressiveCode from "astro-expressive-code";
 import cloudflare from "@astrojs/cloudflare";
+import svgr from "vite-plugin-svgr";
+import react from "@astrojs/react";
 
 // https://astro.build/config
 export default defineConfig({
   site: "https://rtcs.dev",
   adapter: cloudflare(),
   vite: {
-    plugins: [tailwindcss()],
+    plugins: [tailwindcss(), svgr()],
   },
-  integrations: [
-    expressiveCode({
-      themeCssSelector: (theme) => {
-        const isDarkTheme = theme.name === "github-dark";
-        return isDarkTheme ? ".dark *" : ":not(.dark *)";
-      },
-    }),
-    mdx(),
-    sitemap(),
-  ],
+  integrations: [expressiveCode(), mdx(), sitemap(), react()],
   redirects: {
     "/hub": "/blog",
   },
