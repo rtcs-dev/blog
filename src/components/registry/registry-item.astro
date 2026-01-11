@@ -12,7 +12,7 @@ interface Props {
 }
 
 const { item } = Astro.props;
-const registryUrl = `${Astro.url.origin}/registry/${item.name}.json`;
+const registryUrl = `${Astro.url.origin}/r/${item.name}.json`;
 ---
 
 <div class="border rounded-lg p-6">
