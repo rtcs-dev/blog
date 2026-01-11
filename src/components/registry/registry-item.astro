@@ -1,0 +1,46 @@
+---
+import { CommandTabs } from "./command-tabs";
+
+interface Props {
+  item: {
+    name: string;
+    title: string;
+    description: string;
+    type: string;
+    dependencies?: string[];
+  };
+}
+
+const { item } = Astro.props;
+const registryUrl = `${Astro.url.origin}/registry/${item.name}.json`;
+---
+
+<div class="border rounded-lg p-6">
+  <div class="flex items-start justify-between mb-4">
+    <div class="flex-1">
+      <div class="flex items-center gap-3 mb-2">
+        <p class="text-xl font-semibold">
+          {item.title}
+        </p>
+        <span class="text-xs px-2 py-1 bg-muted rounded">
+          {item.type.replace("registry:", "")}
+        </span>
+      </div>
+      <p class="text-muted-foreground text-sm mb-4">
+        {item.description}
+      </p>
+    </div>
+  </div>
+
+  <!-- Installation Command -->
+  <div class="mb-4">
+    <CommandTabs registryUrl={registryUrl} client:load />
+  </div>
+
+  <!-- View Source Link -->
+  <div class="flex items-center gap-4 text-sm">
+    <a href={`/registry/${item.name}`} class="text-primary hover:underline">
+      View Source
+    </a>
+  </div>
+</div>
