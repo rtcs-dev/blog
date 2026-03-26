@@ -135,6 +135,42 @@
   * {
     @apply border-border;
   }
+
+  /*
+    Route navigations: short crossfade. Theme toggle adds data-theme-vt="ripple"
+    for a circular reveal from the click point (same idea as astro-theme-toggle,
+    without the dependency).
+  */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation-duration: 0.18s;
+      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    html[data-theme-vt="ripple"]::view-transition-old(root) {
+      animation: none;
+    }
+
+    html[data-theme-vt="ripple"]::view-transition-new(root) {
+      animation: theme-ripple-in 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+  }
+
+  @keyframes theme-ripple-in {
+    from {
+      clip-path: circle(0px at var(--theme-ripple-x) var(--theme-ripple-y));
+    }
+
+    to {
+      clip-path: circle(var(--theme-ripple-r) at var(--theme-ripple-x) var(--theme-ripple-y));
+    }
+  }
+
   body {
     @apply bg-background text-foreground;
   }

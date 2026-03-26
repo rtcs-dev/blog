@@ -26,13 +26,48 @@ import MoonIcon from "@/icons/theme/moon.svg";
 
   document.documentElement.classList[isDark ? "add" : "remove"]("dark");
 
-  const handleSwitcherclick = () => {
+  function cleanupThemeRipple(root: HTMLElement) {
+    root.removeAttribute("data-theme-vt");
+    root.style.removeProperty("--theme-ripple-x");
+    root.style.removeProperty("--theme-ripple-y");
+    root.style.removeProperty("--theme-ripple-r");
+  }
+
+  const handleSwitcherclick = (event: MouseEvent) => {
     const theme = getThemePreference();
     const shouldSwitchToDark = theme !== "dark";
 
-    document.documentElement.classList[shouldSwitchToDark ? "add" : "remove"](
-      "dark",
-    );
+    const applyTheme = () => {
+      document.documentElement.classList[shouldSwitchToDark ? "add" : "remove"](
+        "dark",
+      );
+    };
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+
+    const root = document.documentElement;
+
+    if (!prefersReducedMotion && document.startViewTransition) {
+      const x = event.clientX;
+      const y = event.clientY;
+      const r =
+        Math.hypot(
+          Math.max(x, innerWidth - x),
+          Math.max(y, innerHeight - y),
+        ) + 8;
+
+      root.style.setProperty("--theme-ripple-x", `${x}px`);
+      root.style.setProperty("--theme-ripple-y", `${y}px`);
+      root.style.setProperty("--theme-ripple-r", `${r}px`);
+      root.dataset.themeVt = "ripple";
+
+      const vt = document.startViewTransition(applyTheme);
+      void vt.finished.finally(() => cleanupThemeRipple(root));
+    } else {
+      applyTheme();
+    }
   };
 
   themeButton.addEventListener("click", handleSwitcherclick);

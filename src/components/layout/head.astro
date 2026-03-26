@@ -3,6 +3,7 @@ import "@fontsource-variable/inter";
 import "@fontsource-variable/open-sans";
 import "@/styles/globals.css";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/constants";
+import { ClientRouter } from "astro:transitions";
 
 export interface Props {
   title?: string;
@@ -25,6 +26,7 @@ const {
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <meta name="generator" content={Astro.generator} />
+  <ClientRouter />
 
   <!-- Canonical URL -->
   <link rel="canonical" href={canonicalURL} />
@@ -51,4 +53,29 @@ const {
     src="https://analytics.ahrefs.com/analytics.js"
     data-key="3KsnmQeO5G3z4Bb5hHFgKw"
     async></script>
+
+  <script>
+    import { getThemePreference } from "@/lib/theme";
+
+    /** Apply stored theme to the *incoming* HTML before root attrs are copied — avoids light flash. */
+    function patchIncomingDocumentTheme(event: Event) {
+      const e = event as CustomEvent<{ newDocument?: Document }> & {
+        newDocument?: Document;
+      };
+      const doc = e.newDocument ?? e.detail?.newDocument;
+      if (!doc) return;
+      const isDark = getThemePreference() === "dark";
+      doc.documentElement.classList.toggle("dark", isDark);
+    }
+
+    function syncThemeOnLiveDocument() {
+      document.documentElement.classList.toggle(
+        "dark",
+        getThemePreference() === "dark",
+      );
+    }
+
+    document.addEventListener("astro:before-swap", patchIncomingDocumentTheme);
+    document.addEventListener("astro:after-swap", syncThemeOnLiveDocument);
+  </script>
 </head>
