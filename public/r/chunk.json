@@ -1,0 +1,15 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chunk",
+  "type": "registry:lib",
+  "title": "Chunk",
+  "description": "Splits an array into multiple arrays, each containing a maximum of 'chunkSize' elements.",
+  "dependencies": [],
+  "files": [
+    {
+      "path": "registry/default/lib/chunk.ts",
+      "content": "/**\n * Implementation credit: https://github.com/toss/es-toolkit/blob/main/src/array/chunk.ts\n */\n\n/**\n * Splits an array into smaller arrays of a specified length.\n *\n * This function takes an input array and divides it into multiple smaller arrays,\n * each of a specified length. If the input array cannot be evenly divided,\n * the final sub-array will contain the remaining elements.\n *\n * @template T The type of elements in the array.\n * @param {T[]} arr - The array to be chunked into smaller arrays.\n * @param {number} size - The size of each smaller array. Must be a positive integer.\n * @returns {T[][]} A two-dimensional array where each sub-array has a maximum length of `size`.\n * @throws {Error} Throws an error if `size` is not a positive integer.\n *\n * @example\n * // Splits an array of numbers into sub-arrays of length 2\n * chunk([1, 2, 3, 4, 5], 2);\n * // Returns: [[1, 2], [3, 4], [5]]\n *\n * @example\n * // Splits an array of strings into sub-arrays of length 3\n * chunk(['a', 'b', 'c', 'd', 'e', 'f', 'g'], 3);\n * // Returns: [['a', 'b', 'c'], ['d', 'e', 'f'], ['g']]\n */\nexport function chunk<T>(arr: readonly T[], size: number): T[][] {\n  if (!Number.isInteger(size) || size <= 0) {\n    throw new Error(\"Size must be an integer greater than zero.\");\n  }\n\n  const chunkLength = Math.ceil(arr.length / size);\n  const result: T[][] = Array(chunkLength);\n\n  for (let index = 0; index < chunkLength; index++) {\n    const start = index * size;\n    const end = start + size;\n\n    result[index] = arr.slice(start, end);\n  }\n\n  return result;\n}\n",
+      "type": "registry:lib"
+    }
+  ]
+}
