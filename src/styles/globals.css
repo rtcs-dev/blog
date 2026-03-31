@@ -72,25 +72,26 @@
 
 @layer base {
   :root {
+    /* White page — #4b5563 ink */
     --background: #ffffff;
-    --foreground: 20 14.3% 4.1%;
+    --foreground: 218 14% 34%;
     --card: 0 0% 100%;
-    --card-foreground: 20 14.3% 4.1%;
+    --card-foreground: 218 14% 34%;
     --popover: 0 0% 100%;
-    --popover-foreground: 20 14.3% 4.1%;
+    --popover-foreground: 218 14% 34%;
     --primary: 24.6 95% 53.1%;
     --primary-foreground: 60 9.1% 97.8%;
-    --primary-blog-foreground: 222deg 22% 5%;
-    --secondary: 60 4.8% 95.9%;
-    --secondary-foreground: 24 9.8% 10%;
-    --muted: 60 4.8% 95.9%;
-    --muted-foreground: 25 5.3% 44.7%;
-    --accent: 60 4.8% 95.9%;
-    --accent-foreground: 24 9.8% 10%;
+    --primary-blog-foreground: 218 14% 34%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 218 14% 34%;
+    --muted: 220 14% 94%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 220 14% 94%;
+    --accent-foreground: 218 14% 34%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 60 9.1% 97.8%;
-    --border: 20 5.9% 90%;
-    --input: 20 5.9% 90%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
     --ring: 24.6 95% 53.1%;
     --radius: 0.5rem;
     --chart-1: 12 76% 61%;
@@ -143,7 +144,9 @@
   */
   @media (prefers-reduced-motion: no-preference) {
     html {
-      transition: background-color 0.2s ease, color 0.2s ease;
+      transition:
+        background-color 0.2s ease,
+        color 0.2s ease;
     }
 
     ::view-transition-old(root),
@@ -167,12 +170,14 @@
     }
 
     to {
-      clip-path: circle(var(--theme-ripple-r) at var(--theme-ripple-x) var(--theme-ripple-y));
+      clip-path: circle(
+        var(--theme-ripple-r) at var(--theme-ripple-x) var(--theme-ripple-y)
+      );
     }
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground antialiased;
   }
 
   h1,
