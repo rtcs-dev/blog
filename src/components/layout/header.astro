@@ -2,15 +2,24 @@
 import { Image } from "astro:assets";
 import Container from "./container.astro";
 
-import ThemeSwitcher from "./theme-switcher.astro";
+import { ThemeSwitcher } from "./theme-switcher";
+
+const navItems = [
+  { href: "/resume", label: "Resume" },
+  { href: "/blog", label: "Blog" },
+  { href: "/registry", label: "Registry" },
+];
 ---
 
 <header
   transition:persist="site-header"
   class="flex items-center sticky z-10 top-0 h-[80px] mb-4 sm:mb-8 backdrop-blur-md"
 >
-  <Container class="flex items-center justify-between flex-1">
-    <a class="text-2xl text-foreground font-semibold" href="/">
+  <Container class="grid grid-cols-3 items-center flex-1">
+    <a
+      class="justify-self-start text-2xl text-foreground font-semibold"
+      href="/"
+    >
       <Image
         src="/assets/logo/orange-256x256.png"
         alt={"rtcs logo"}
@@ -19,58 +28,21 @@ import ThemeSwitcher from "./theme-switcher.astro";
         height="50"
       />
     </a>
-    <nav>
-      <ul class="flex items-center">
-        <li>
-          <a class="p-4 block text-md" href="/resume">Resume</a>
-        </li>
-        <li>
-          <a class="p-4 block text-md" href="/blog">Blog</a>
-        </li>
-        <li>
-          <button id="contact-button" class="p-4 block text-md">Contact</button>
-        </li>
-        <li>
-          <ThemeSwitcher />
-        </li>
+    <nav class="justify-self-center">
+      <ul class="flex items-center gap-4">
+        {
+          navItems.map(({ href, label }) => (
+            <li>
+              <a class="text-md" href={href}>
+                {label}
+              </a>
+            </li>
+          ))
+        }
       </ul>
     </nav>
+    <div class="justify-self-end">
+      <ThemeSwitcher client:load />
+    </div>
   </Container>
 </header>
-
-<script>
-  async function highlightContactInfo() {
-    const contactSection = document.querySelector<HTMLDivElement>("#contact");
-
-    if (!contactSection) return;
-
-    window.scrollTo({ top: contactSection.offsetTop, behavior: "smooth" });
-
-    const icons = document.querySelectorAll("#contact .footer-icons");
-    const timeoutPromises: Promise<void>[] = [];
-
-    icons.forEach((icon, index) => {
-      const timeout = new Promise<void>((resolve) =>
-        setTimeout(() => {
-          icon.classList.add("hover");
-          resolve();
-        }, 500 * index),
-      );
-
-      timeoutPromises.push(timeout);
-    });
-
-    await Promise.all(timeoutPromises);
-
-    setTimeout(() => {
-      icons.forEach((icon) => {
-        icon.classList.remove("hover");
-      });
-    }, 500);
-  }
-
-  const contactLink = document.querySelector("#contact-button");
-  if (contactLink) {
-    contactLink.addEventListener("click", highlightContactInfo);
-  }
-</script>
