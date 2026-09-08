@@ -46,8 +46,8 @@
 
   --color-blog-title-accent: var(--blog-title-gradient-accent);
 
-  --font-inter: Inter Variable, sans-serif;
-  --font-open-sans: Open Sans Variable, sans-serif;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "IBM Plex Sans Variable", ui-sans-serif, system-ui, sans-serif;
 
   --list-style-type-square: square;
 }
@@ -138,23 +138,10 @@
   }
 
   /*
-    Route navigations: short crossfade. Theme toggle adds data-theme-vt="ripple"
-    for a circular reveal from the click point (same idea as astro-theme-toggle,
-    without the dependency).
+    Theme toggle adds data-theme-vt="ripple" for a circular reveal from the
+    click point. Route navigations do not animate.
   */
   @media (prefers-reduced-motion: no-preference) {
-    html {
-      transition:
-        background-color 0.2s ease,
-        color 0.2s ease;
-    }
-
-    ::view-transition-old(root),
-    ::view-transition-new(root) {
-      animation-duration: 0.18s;
-      animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
     html[data-theme-vt="ripple"]::view-transition-old(root) {
       animation: none;
     }
@@ -177,7 +164,7 @@
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background font-sans text-foreground antialiased;
   }
 
   h1,
@@ -186,7 +173,7 @@
   h4,
   h5,
   h6 {
-    @apply font-open-sans mb-2;
+    @apply font-heading mb-2;
   }
 
   h1 {
