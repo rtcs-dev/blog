@@ -44,7 +44,7 @@ export function CommandTabs({ registryUrl }: CommandTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
       <div className="flex items-center justify-between mb-2">
-        <TabsList className="bg-transparent p-0 h-auto gap-0">
+        <TabsList variant="line">
           {Object.keys(commands).map((pm) => (
             <TabsTrigger key={pm} value={pm}>
               {pm}

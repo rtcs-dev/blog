@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { type ComponentProps, useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
 
 import { ThemeSwitcher } from "./theme-switcher";
@@ -9,6 +9,18 @@ const navItems = [
   { href: "/blog", label: "Blog" },
   { href: "/registry", label: "Registry" },
 ];
+
+const navLinkClass =
+  "text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:text-foreground focus-visible:underline focus-visible:outline-none motion-reduce:transition-none";
+
+function NavLink({
+  className,
+  ...props
+}: ComponentProps<"a">) {
+  return (
+    <a className={cn(navLinkClass, className)} {...props} />
+  );
+}
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -58,9 +70,7 @@ export function SiteHeader() {
           <ul className="hidden items-center justify-self-center gap-4 md:flex">
             {navItems.map(({ href, label }) => (
               <li key={href}>
-                <a className="text-md" href={href}>
-                  {label}
-                </a>
+                <NavLink href={href}>{label}</NavLink>
               </li>
             ))}
           </ul>
@@ -106,9 +116,9 @@ export function SiteHeader() {
         <ul className="mx-auto flex max-w-[1112px] flex-col gap-6 p-6">
           {navItems.map(({ href, label }) => (
             <li key={href}>
-              <a
-                className="text-md"
+              <NavLink
                 href={href}
+                className="block"
                 onClick={() => {
                   if (window.location.pathname === href) {
                     setMenuOpen(false);
@@ -116,7 +126,7 @@ export function SiteHeader() {
                 }}
               >
                 {label}
-              </a>
+              </NavLink>
             </li>
           ))}
         </ul>
