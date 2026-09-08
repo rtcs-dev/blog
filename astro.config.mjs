@@ -11,7 +11,11 @@ import react from "@astrojs/react";
 // https://astro.build/config
 export default defineConfig({
   site: "https://rtcs.dev",
-  adapter: cloudflare(),
+  session: false,
+  adapter: cloudflare({
+    prerenderEnvironment: "node",
+    imageService: "compile",
+  }),
   vite: {
     plugins: [tailwindcss(), svgr()],
   },
