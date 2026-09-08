@@ -192,3 +192,26 @@
     @apply text-xl;
   }
 }
+
+@layer components {
+  .site-header-blur {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+
+  .site-header-surface {
+    background-color: color-mix(
+      in oklab,
+      var(--background) 20%,
+      transparent
+    );
+  }
+
+  .site-header-menu {
+    border-bottom: 1px solid
+      color-mix(in oklab, hsl(var(--foreground)) 10%, transparent);
+    box-shadow:
+      0 4px 6px -1px rgb(0 0 0 / 10%),
+      0 2px 4px -2px rgb(0 0 0 / 10%);
+  }
+}

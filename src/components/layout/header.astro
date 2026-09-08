@@ -1,48 +1,10 @@
 ---
-import { Image } from "astro:assets";
-import Container from "./container.astro";
-
-import { ThemeSwitcher } from "./theme-switcher";
-
-const navItems = [
-  { href: "/resume", label: "Resume" },
-  { href: "/blog", label: "Blog" },
-  { href: "/registry", label: "Registry" },
-];
+import { SiteHeader } from "./site-header";
 ---
 
 <header
   transition:persist="site-header"
-  class="flex items-center sticky z-10 top-0 h-[80px] mb-4 sm:mb-8 backdrop-blur-md"
+  class="sticky top-0 z-10 mb-4 sm:mb-8"
 >
-  <Container class="grid grid-cols-3 items-center flex-1">
-    <a
-      class="justify-self-start text-2xl text-foreground font-semibold"
-      href="/"
-    >
-      <Image
-        src="/assets/logo/orange-256x256.png"
-        alt={"rtcs logo"}
-        loading="eager"
-        width="50"
-        height="50"
-      />
-    </a>
-    <nav class="justify-self-center">
-      <ul class="flex items-center gap-4">
-        {
-          navItems.map(({ href, label }) => (
-            <li>
-              <a class="text-md" href={href}>
-                {label}
-              </a>
-            </li>
-          ))
-        }
-      </ul>
-    </nav>
-    <div class="justify-self-end">
-      <ThemeSwitcher client:load />
-    </div>
-  </Container>
+  <SiteHeader client:load />
 </header>

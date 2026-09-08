@@ -23,6 +23,24 @@ const {
 <!-- Global Metadata -->
 <head>
   <meta charset="utf-8" />
+  <script is:inline>
+    (() => {
+      let theme;
+
+      try {
+        theme = localStorage.getItem("theme");
+      } catch {
+        // Fall back to the operating-system preference when storage is unavailable.
+      }
+
+      const isDark =
+        theme === "dark" ||
+        (!theme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+
+      document.documentElement.classList.toggle("dark", isDark);
+      document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+    })();
+  </script>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <meta name="generator" content={Astro.generator} />
@@ -66,13 +84,13 @@ const {
       if (!doc) return;
       const isDark = getThemePreference() === "dark";
       doc.documentElement.classList.toggle("dark", isDark);
+      doc.documentElement.style.colorScheme = isDark ? "dark" : "light";
     }
 
     function syncThemeOnLiveDocument() {
-      document.documentElement.classList.toggle(
-        "dark",
-        getThemePreference() === "dark",
-      );
+      const isDark = getThemePreference() === "dark";
+      document.documentElement.classList.toggle("dark", isDark);
+      document.documentElement.style.colorScheme = isDark ? "dark" : "light";
     }
 
     document.addEventListener("astro:before-swap", patchIncomingDocumentTheme);

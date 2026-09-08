@@ -24,6 +24,7 @@ export function ThemeSwitcher() {
     const isDark = theme === "dark";
 
     document.documentElement.classList[isDark ? "add" : "remove"]("dark");
+    document.documentElement.style.colorScheme = isDark ? "dark" : "light";
 
     const observer = new MutationObserver(() => {
       const isDarkMode = document.documentElement.classList.contains("dark");
@@ -46,6 +47,9 @@ export function ThemeSwitcher() {
       document.documentElement.classList[shouldSwitchToDark ? "add" : "remove"](
         "dark",
       );
+      document.documentElement.style.colorScheme = shouldSwitchToDark
+        ? "dark"
+        : "light";
     };
 
     const prefersReducedMotion = window.matchMedia(
