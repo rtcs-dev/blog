@@ -1,10 +1,11 @@
-import * as React from "react";
+import { useMemo, useRef, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 import CopyIcon from "@/icons/actions/copy.svg?react";
 import CheckMarkIcon from "@/icons/actions/check-mark.svg?react";
 
@@ -13,11 +14,12 @@ interface CommandTabsProps {
 }
 
 export function CommandTabs({ registryUrl }: CommandTabsProps) {
-  const [activeTab, setActiveTab] = React.useState("npm");
-  const [copied, setCopied] = React.useState(false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [activeTab, setActiveTab] = useState("npm");
+  const [copied, setCopied] = useState(false);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const commands = React.useMemo<Record<string, string>>(
+  const commands = useMemo<Record<string, string>>(
     () => ({
       npm: `npx shadcn@latest add ${registryUrl}`,
       pnpm: `pnpm dlx shadcn@latest add ${registryUrl}`,
@@ -33,8 +35,10 @@ export function CommandTabs({ registryUrl }: CommandTabsProps) {
     try {
       await navigator.clipboard.writeText(inputRef.current.value);
       setCopied(true);
+      setTooltipOpen(true);
       setTimeout(() => {
         setCopied(false);
+        setTooltipOpen(false);
       }, 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
@@ -51,20 +55,22 @@ export function CommandTabs({ registryUrl }: CommandTabsProps) {
             </TabsTrigger>
           ))}
         </TabsList>
-        <Tooltip>
+        <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
           <TooltipTrigger asChild>
-            <button
+            <Button
               type="button"
               onClick={handleCopy}
-              className="p-1.5 hover:bg-muted/50 rounded transition-colors"
-              aria-label="Copy command"
+              variant="ghost"
+              size="icon-sm"
+              className="cursor-pointer"
+              aria-label={copied ? "Command copied" : "Copy command"}
             >
               {copied ? (
-                <CheckMarkIcon className="w-4 h-4 text-muted-foreground" />
+                <CheckMarkIcon className="text-muted-foreground" />
               ) : (
-                <CopyIcon className="w-4 h-4 text-muted-foreground" />
+                <CopyIcon className="text-muted-foreground" />
               )}
-            </button>
+            </Button>
           </TooltipTrigger>
           <TooltipContent>{copied ? "Copied!" : "Copy command"}</TooltipContent>
         </Tooltip>
