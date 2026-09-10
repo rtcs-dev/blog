@@ -1,10 +1,171 @@
 ---
-import { SiteHeader } from "./site-header";
+import { Menu, X } from "lucide-react";
+import MoonIcon from "@/icons/theme/moon.svg";
+import SunIcon from "@/icons/theme/sun.svg";
+
+const navItems = [
+  { href: "/resume", label: "Resume" },
+  { href: "/blog", label: "Blog" },
+  { href: "/registry", label: "Registry" },
+];
 ---
 
-<header
-  transition:persist="site-header"
-  class="sticky top-0 z-10 mb-4 sm:mb-8"
->
-  <SiteHeader client:load />
+<header transition:persist="site-header" class="sticky top-0 z-10 mb-4 sm:mb-8">
+  <nav class="group" data-site-nav>
+    <div class="site-header-blur">
+      <div
+        class="mx-auto grid h-[80px] max-w-[1112px] grid-cols-2 items-center px-6 md:grid-cols-3"
+      >
+        <a
+          class="justify-self-start text-2xl font-semibold text-foreground"
+          href="/"
+        >
+          <img
+            src="/assets/logo/orange-256x256.png"
+            alt="rtcs logo"
+            width="50"
+            height="50"
+            loading="eager"
+          />
+        </a>
+
+        <ul class="hidden items-center justify-self-center gap-4 md:flex">
+          {
+            navItems.map(({ href, label }) => (
+              <li>
+                <a
+                  class="text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:text-foreground focus-visible:underline focus-visible:outline-none motion-reduce:transition-none"
+                  href={href}
+                >
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="flex items-center justify-self-end">
+          <button
+            type="button"
+            aria-label="theme-button"
+            id="theme-button"
+            class="grid size-12 cursor-pointer place-items-center rounded-lg"
+          >
+            <MoonIcon class="size-4 dark:hidden" />
+            <SunIcon class="hidden size-4 dark:block" />
+          </button>
+          <button
+            type="button"
+            aria-label="Open Menu"
+            aria-expanded="false"
+            aria-controls="mobile-navigation"
+            data-menu-toggle
+            class="relative size-12 cursor-pointer rounded-lg outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:hidden"
+          >
+            <Menu
+              className="pointer-events-none m-auto size-6 duration-200 ease-in-out group-data-[state=active]:rotate-180 group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 motion-reduce:transition-none"
+            />
+            <X
+              className="pointer-events-none absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200 ease-in-out group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 motion-reduce:transition-none"
+            />
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="mobile-navigation"
+      class="site-header-blur site-header-surface site-header-menu invisible pointer-events-none fixed inset-x-0 top-[80px] z-10 origin-top -translate-y-2 scale-y-95 opacity-0 transition-[opacity,transform,visibility] duration-200 ease-out motion-reduce:transition-none group-data-[state=active]:visible group-data-[state=active]:pointer-events-auto group-data-[state=active]:translate-y-0 group-data-[state=active]:scale-y-100 group-data-[state=active]:opacity-100 md:hidden"
+    >
+      <ul class="mx-auto flex max-w-[1112px] flex-col gap-6 p-6">
+        {
+          navItems.map(({ href, label }) => (
+            <li>
+              <a
+                class="block text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:text-foreground focus-visible:underline focus-visible:outline-none motion-reduce:transition-none"
+                href={href}
+              >
+                {label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </nav>
 </header>
+
+<script>
+  import { getThemePreference } from "@/lib/theme";
+
+  type ViewTransitionDocument = Document & {
+    startViewTransition?: (callback: () => void) => {
+      finished: Promise<void>;
+    };
+  };
+
+  const nav = document.querySelector<HTMLElement>("[data-site-nav]");
+  const menuButton =
+    document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
+
+  menuButton?.addEventListener("click", () => {
+    const open = nav?.dataset.state !== "active";
+    if (nav) nav.dataset.state = open ? "active" : "";
+    menuButton.setAttribute("aria-expanded", String(open));
+    menuButton.setAttribute("aria-label", open ? "Close Menu" : "Open Menu");
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape" || nav?.dataset.state !== "active") return;
+    nav.dataset.state = "";
+    menuButton?.setAttribute("aria-expanded", "false");
+    menuButton?.setAttribute("aria-label", "Open Menu");
+  });
+
+  document
+    .querySelector("#theme-button")
+    ?.addEventListener("click", (event) => {
+      const shouldSwitchToDark = getThemePreference() !== "dark";
+      const root = document.documentElement;
+      const applyTheme = () => {
+        root.classList[shouldSwitchToDark ? "add" : "remove"]("dark");
+        root.style.colorScheme = shouldSwitchToDark ? "dark" : "light";
+        localStorage.setItem("theme", shouldSwitchToDark ? "dark" : "light");
+      };
+
+      const transitionDocument = document as ViewTransitionDocument;
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (
+        !reduceMotion &&
+        transitionDocument.startViewTransition &&
+        event instanceof MouseEvent
+      ) {
+        const x = event.clientX;
+        const y = event.clientY;
+        const radius =
+          Math.hypot(
+            Math.max(x, innerWidth - x),
+            Math.max(y, innerHeight - y),
+          ) + 8;
+
+        root.style.setProperty("--theme-ripple-x", `${x}px`);
+        root.style.setProperty("--theme-ripple-y", `${y}px`);
+        root.style.setProperty("--theme-ripple-r", `${radius}px`);
+        root.dataset.themeVt = "ripple";
+
+        const transition = transitionDocument.startViewTransition(applyTheme);
+        void transition.finished.finally(() => {
+          root.removeAttribute("data-theme-vt");
+          root.style.removeProperty("--theme-ripple-x");
+          root.style.removeProperty("--theme-ripple-y");
+          root.style.removeProperty("--theme-ripple-r");
+        });
+        return;
+      }
+
+      applyTheme();
+    });
+</script>

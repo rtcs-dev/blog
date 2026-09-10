@@ -42,12 +42,15 @@
     "tailwind-merge": "^2.5.2",
     "tailwindcss": "^4.3.3",
     "tailwindcss-animate": "^1.0.7",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "vgpu": "^0.4.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
     "@tailwindcss/vite": "^4.3.3",
+    "@vgpu/wgsl": "0.4.1",
     "@vitest/coverage-v8": "^5.0.0",
+    "@webgpu/types": "^0.1.72",
     "prettier": "^3.3.3",
     "prettier-plugin-astro": "^0.14.1",
     "shadcn": "^2.5.0",

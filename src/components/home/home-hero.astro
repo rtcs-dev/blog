@@ -1,38 +1,297 @@
 ---
-import BulletedList from "../ui/bulleted-list.astro";
+import { ArrowRight, FileText } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { typographyVariants } from "@/components/ui/typography";
 ---
 
-<section id="hero" class="flex flex-col min-h-[70vh] gap-8">
-  <h1 class="font-semibold text-center sm:text-left">Robert Tabacaru</h1>
-  <div class="flex flex-col gap-4 text-secondary-foreground">
-    <div>
-      <h5 class="font-semibold">About me</h5>
-      <BulletedList class="text-lg">
-        <li>👨🏻‍💻 Fullstack software engineer, web enthusiast</li>
-        <li>📚 BSc in Computer Science, MSc in Information Security</li>
-        <li>⛵️ Skipper, with a deep passion for nature and sports</li>
-      </BulletedList>
+<section id="hero" class="home-hero">
+  <div class="hero-copy">
+    <h1
+      class={typographyVariants({
+        variant: "display",
+        className: "max-w-[650px]",
+      })}
+    >
+      Hi, I’m <span class="text-primary">Robert.</span>
+    </h1>
+
+    <p
+      class={typographyVariants({
+        variant: "bodyLarge",
+        tone: "muted",
+        className: "mt-8 max-w-[620px]",
+      })}
+    >
+      I’m a fullstack engineer and information security graduate with an
+      occasional itch to go down rabbit holes and write technical blog posts.
+    </p>
+
+    <div class="hero-actions">
+      <a
+        class={buttonVariants({
+          variant: "default",
+          size: "lg",
+          className: "rounded-full",
+        })}
+        href="/blog"
+      >
+        Read my blog
+        <ArrowRight data-icon="inline-end" strokeWidth={2} />
+      </a>
+      <a
+        class={buttonVariants({
+          variant: "outline",
+          size: "lg",
+          className: "rounded-full",
+        })}
+        href="/resume"
+      >
+        <FileText data-icon="inline-start" strokeWidth={2} />
+        View résumé
+      </a>
     </div>
-    <div>
-      <h5 class="font-semibold">About rtcs</h5>
-      <p>
-        My favourite part about tech (and especially the web) is the community.
-        I love exchanging ideas with peers and challenging the status quo.
-        <br />
-        This portfolio is my first contribution to the open-source community and
-        I will use it to share the most interesting stuff I come across in my journey.
-        <br />
-        <br />
-        To have a deeper look at my career you can check out <a
-          class="text-primary underline decoration-dotted"
-          href="/resume">my resume</a
-        >.
-        <br />
-        To see my ongoing projects and blog posts you can visit <a
-          class="text-primary underline decoration-dotted"
-          href="/blog">the blog</a
-        >.
-      </p>
+  </div>
+
+  <div class="hero-visual">
+    <div class="logo-orbit" data-logo-orbit data-ready="false">
+      <canvas aria-hidden="true"></canvas>
+      <div class="logo-fallback" aria-hidden="true"></div>
+      <div class="logo-mark" aria-hidden="true">
+        <img src="/assets/logo/orange-1200x1200.svg" alt="" />
+      </div>
     </div>
   </div>
 </section>
+
+<section class="home-manifesto" aria-label="About rtcs">
+  <p class={typographyVariants({ variant: "label", tone: "primary" })}>
+    About rtcs
+  </p>
+  <p
+    class={typographyVariants({
+      variant: "lede",
+      className: "max-w-[680px]",
+    })}
+  >
+    My favourite part about tech (and especially the web) is the community. I
+    love exchanging ideas with peers and challenging the status quo. This
+    portfolio is my first contribution to the open-source community and I will
+    use it to share the most interesting stuff I come across in my journey.
+  </p>
+  <a
+    class={typographyVariants({ variant: "body", tone: "muted" })}
+    href="/blog"
+  >
+    Explore all writing <ArrowRight size={16} />
+  </a>
+</section>
+
+<script>
+  import { mountLogoOrbit } from "./logo-orbit";
+
+  let disposeLogo: (() => void) | undefined;
+
+  const startLogo = async () => {
+    disposeLogo?.();
+    const host = document.querySelector<HTMLElement>("[data-logo-orbit]");
+    if (host) disposeLogo = await mountLogoOrbit(host);
+  };
+
+  void startLogo();
+  document.addEventListener("astro:page-load", startLogo);
+  document.addEventListener("astro:before-swap", () => disposeLogo?.());
+</script>
+
+<style>
+  .home-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(340px, 0.98fr);
+    align-items: center;
+    gap: clamp(3rem, 7vw, 7.5rem);
+    min-height: calc(100svh - 9rem);
+    padding: clamp(2rem, 7vh, 5.5rem) 0 clamp(4.5rem, 10vh, 8rem);
+  }
+
+  .hero-copy {
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  .hero-visual {
+    position: relative;
+    min-width: 0;
+  }
+
+  :global(.logo-orbit) {
+    position: relative;
+    aspect-ratio: 0.88;
+    width: 100%;
+    min-height: 440px;
+    overflow: hidden;
+    border: 1px solid rgb(65 42 24 / 10%);
+    border-radius: clamp(1.5rem, 3vw, 2.75rem);
+    background: #f6f3ef;
+    box-shadow:
+      0 34px 90px -35px rgb(65 42 24 / 25%),
+      0 0 0 1px rgb(255 132 32 / 4%);
+    isolation: isolate;
+  }
+
+  :global(.dark) :global(.logo-orbit) {
+    border-color: rgb(255 255 255 / 9%);
+    background: #08090d;
+    box-shadow:
+      0 34px 90px -35px rgb(20 10 0 / 48%),
+      0 0 0 1px rgb(255 132 32 / 5%);
+  }
+
+  .logo-orbit canvas,
+  .logo-fallback {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    inset: 0;
+  }
+
+  .logo-orbit canvas {
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 500ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .logo-orbit[data-ready="true"] canvas {
+    opacity: 1;
+  }
+
+  .logo-fallback {
+    z-index: 0;
+    background:
+      linear-gradient(rgb(65 42 24 / 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(65 42 24 / 0.035) 1px, transparent 1px),
+      radial-gradient(circle at 50% 45%, rgb(255 91 16 / 12%), transparent 38%),
+      #f6f3ef;
+    background-size: 28px 28px, 28px 28px, auto, auto;
+  }
+
+  :global(.dark) .logo-fallback {
+    background:
+      linear-gradient(rgb(255 255 255 / 0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.025) 1px, transparent 1px),
+      radial-gradient(circle at 50% 45%, rgb(255 91 16 / 22%), transparent 38%),
+      #08090d;
+    background-size: 28px 28px, 28px 28px, auto, auto;
+  }
+
+  .logo-mark {
+    position: absolute;
+    z-index: 2;
+    width: 54%;
+    aspect-ratio: 1;
+    animation: logo-breathe 4.8s ease-in-out infinite alternate;
+    inset: 50% auto auto 50%;
+    filter: drop-shadow(0 0 28px rgb(255 92 16 / 38%));
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    will-change: transform, opacity;
+  }
+
+  .logo-mark img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    pointer-events: auto;
+    touch-action: none;
+    user-select: none;
+    will-change: transform;
+  }
+
+  .logo-mark img[data-dragging="true"] {
+    cursor: grabbing;
+  }
+
+  @keyframes logo-breathe {
+    from {
+      opacity: 0.9;
+      transform: translate(-50%, -50%) scale(0.985);
+    }
+
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  .home-manifesto {
+    display: grid;
+    grid-template-columns: 0.45fr 1.55fr auto;
+    align-items: start;
+    gap: 2rem;
+    border-top: 1px solid hsl(var(--border));
+    border-bottom: 1px solid hsl(var(--border));
+    padding: clamp(2.5rem, 6vw, 4.5rem) 0;
+  }
+
+  .home-manifesto a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+    transition: color 150ms ease;
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .home-manifesto a:hover {
+      color: hsl(var(--primary));
+    }
+  }
+
+  @media (max-width: 820px) {
+    .home-hero {
+      grid-template-columns: 1fr;
+      gap: 3.5rem;
+      min-height: auto;
+      padding-top: 3rem;
+    }
+
+    :global(.logo-orbit) {
+      aspect-ratio: 1.05;
+      min-height: 390px;
+    }
+
+    .home-manifesto {
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+    }
+  }
+
+  @media (max-width: 520px) {
+    .home-hero {
+      padding-top: 1.25rem;
+    }
+
+    :global(.logo-orbit) {
+      min-height: 340px;
+      border-radius: 1.5rem;
+    }
+
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .home-manifesto a,
+    .logo-orbit canvas {
+      transition: none;
+    }
+
+    .logo-mark {
+      animation: none;
+    }
+  }
+</style>

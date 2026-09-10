@@ -80,6 +80,9 @@ importers:
       typescript:
         specifier: ^5.6.2
         version: 5.6.2
+      vgpu:
+        specifier: ^0.4.1
+        version: 0.4.1
     devDependencies:
       '@tailwindcss/postcss':
         specifier: ^4.3.3
@@ -87,9 +90,15 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.3.3
         version: 4.3.3(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))
+      '@vgpu/wgsl':
+        specifier: 0.4.1
+        version: 0.4.1(@vgpu/adapter-node@0.4.1)
       '@vitest/coverage-v8':
         specifier: ^5.0.0
         version: 5.0.0(vitest@5.0.0)
+      '@webgpu/types':
+        specifier: ^0.1.72
+        version: 0.1.72
       prettier:
         specifier: ^3.3.3
         version: 3.3.3
@@ -1454,6 +1463,10 @@ packages:
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
 
+  '@modelcontextprotocol/core@2.0.0':
+    resolution: {integrity: sha512-pJCEwGG7Lfr/+PQp9ZTwKXNeO5wzbfKL7H3MYpCorM4oFBoQrdjnBgEoqG+RjhsvS1FKrDbKux+M1HhlnGWqcA==}
+    engines: {node: '>=20'}
+
   '@modelcontextprotocol/sdk@1.25.2':
     resolution: {integrity: sha512-LZFeo4F9M5qOhC/Uc1aQSrBHxMrvxett+9KLHt7OhcExtoiRN9DKgbZffMP/nxjutWDQpfMDfP3nkHI4X9ijww==}
     engines: {node: '>=18'}
@@ -1463,6 +1476,10 @@ packages:
     peerDependenciesMeta:
       '@cfworker/json-schema':
         optional: true
+
+  '@modelcontextprotocol/server@2.0.0':
+    resolution: {integrity: sha512-YhHWdHfpFMQfd0prsEnxKeS3Qz3ytIGmsS0sth4KDjnacIT7hxk6hXHkJ9KysxlkvTM+WZAtQbbcUhdoP4Hvtw==}
+    engines: {node: '>=20'}
 
   '@mswjs/interceptors@0.40.0':
     resolution: {integrity: sha512-EFd6cVbHsgLa6wa4RljGj6Wk75qoHxUSyc5asLyyPSyuhIcdS2Q3Phw6ImS1q+CkALthJRShiYfKANcQMuMqsQ==}
@@ -2685,6 +2702,26 @@ packages:
   '@ungap/structured-clone@1.2.0':
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
 
+  '@vgpu/adapter-mock@0.4.1':
+    resolution: {integrity: sha512-4w6FHutvlno5nAYt/SYDB5TJlXVwL7liZeBo79jKkjOKJoIrtTO8jf9ny9M5lrLcdpzKdBcdLY1UPJRHZ+DbkQ==}
+
+  '@vgpu/adapter-node@0.4.1':
+    resolution: {integrity: sha512-fZgokRT/oTodHqCgyrqtKOrqw7TO+1qxW8gcW5A30wcKnjjAj+4sRHytaJTQkJCYDpZeOHp7B2lhvAxrv1zINg==}
+
+  '@vgpu/core@0.4.1':
+    resolution: {integrity: sha512-cWETNNvNrobCjGGKbWxujEjNgH8QCz+sTbz3zecKtq/P6V5iB8f6tFrKGmQNvc084R+XJLOAoLY/gGCo8KTbTQ==}
+
+  '@vgpu/wgsl-std@0.4.1':
+    resolution: {integrity: sha512-K6qB9qTBXP/G0uhiJZ9cKt0MEH/bHFrcD0t3+xyjkA7QxNPMXqx7LniMHMIz3T0pC47ujCLaBRyOuHwyOqV0EA==}
+
+  '@vgpu/wgsl@0.4.1':
+    resolution: {integrity: sha512-wcK3y+bSVkFhcDPxbGKVNi1tATGA8TdqdmrAuBtRhv2LXi2cEgK5VOZ5k4y5G7yX5+4T5mml9nGO3fQdGDD6WQ==}
+    peerDependencies:
+      '@vgpu/adapter-node': '>=0.1.6 <1.0.0'
+    peerDependenciesMeta:
+      '@vgpu/adapter-node':
+        optional: true
+
   '@vitejs/plugin-react@5.2.0':
     resolution: {integrity: sha512-YmKkfhOAi3wsB1PhJq5Scj3GXMn3WvtQ/JC0xoopuHoXSdmtdStOpFrYaT1kie2YgFBcIe64ROzMYRjCrYOdYw==}
     engines: {node: ^20.19.0 || >=22.12.0}
@@ -2747,6 +2784,9 @@ packages:
 
   '@vscode/l10n@0.0.18':
     resolution: {integrity: sha512-KYSIHVmslkaCDyw013pphY+d7x1qV8IZupYfeIfzNA+nsaWHbn5uPuQRvdRFsa9zFzGeudPuoGoZ1Op4jrJXIQ==}
+
+  '@webgpu/types@0.1.72':
+    resolution: {integrity: sha512-0cF7RFM2edNoiIS1ODJp0/Gzv4/xSXhwoR0YCza+OWpJWtn4wmo9DvK91aLlH9+uUnwIriP7ZiC3WitmyhuzBw==}
 
   accepts@2.0.0:
     resolution: {integrity: sha512-5cvg6CtKwfgdmVqY1WIiXKc3Q1bkRqGLi+2W/6ao+6Y7gu/RCwRuAhGEzh5B4KlszSuTLgZYuqFqo5bImjNKng==}
@@ -4096,9 +4136,17 @@ packages:
     resolution: {integrity: sha512-qcJu88Q2IWqJsDD529JKMdwGm/dvInW4HvQnRwiH9JtihJvzGOscDtHE3x1pBKeUOTysQ8kVmLnJ2kJu7yhcGA==}
     engines: {node: '>=12'}
 
+  pixelmatch@7.2.0:
+    resolution: {integrity: sha512-xhcb4yHu9sM/G7foGzoLtXYcC0zHEaOXXjRKhGup0fw78Nf2Tkiapv4EQyMzrbcmQPsllAI7DbFY2UT7PlI9Pg==}
+    hasBin: true
+
   pkce-challenge@5.0.1:
     resolution: {integrity: sha512-wQ0b/W4Fr01qtpHlqSqspcj3EhBvimsdh0KlHhH8HRZnMsEa0ea2fTULOXOS9ccQr3om+GcGRk4e+isrZWV8qQ==}
     engines: {node: '>=16.20.0'}
+
+  pngjs@7.0.0:
+    resolution: {integrity: sha512-LKWqWJRhstyYo9pGvgor/ivk2w94eSjE3RGVuzLGlr3NmD8bf7RcYGze1mNdEHRP6TRP6rMuDHk5t44hnTRyow==}
+    engines: {node: '>=14.19.0'}
 
   postcss-nested@6.2.0:
     resolution: {integrity: sha512-HQbt28KulC5AJzG+cZtj9kvKB93CFCdLvog1WFLf1D+xmMvPGlBstkpTEZfK5+AN9hfJocyBFCNiqyS48bpgzQ==}
@@ -4795,6 +4843,15 @@ packages:
   vfile@6.0.3:
     resolution: {integrity: sha512-KzIbH/9tXat2u30jf+smMwFCsno4wHVdNmzFyL+T/L3UGqqk6JKfVqOFOZEpZSHADH1k40ab6NUIXZq422ov3Q==}
 
+  vgpu@0.4.1:
+    resolution: {integrity: sha512-Kq2W2Y7Z0hZnSp4Hdf3jaoVL7oHjFypZapwGcMYYVkTfRXqAISmklGl3yd6wmte8yFwOhAkhJErPKZjWJBGpzA==}
+    hasBin: true
+    peerDependencies:
+      three: '>=0.180.0 <0.200.0'
+    peerDependenciesMeta:
+      three:
+        optional: true
+
   vite-plugin-svgr@4.5.0:
     resolution: {integrity: sha512-W+uoSpmVkSmNOGPSsDCWVW/DDAyv+9fap9AZXBvWiQqrboJ08j2vh0tFxTD/LjwqwAd3yYSVJgm54S/1GhbdnA==}
     peerDependencies:
@@ -4993,6 +5050,12 @@ packages:
   web-streams-polyfill@3.3.3:
     resolution: {integrity: sha512-d2JWLCivmZYTSIoge9MsgFCZrt571BikcWGYkjC1khllbTeDlGqZ2D8vD8E/lJa8WGWbb7Plm8/XJYV7IJHZZw==}
     engines: {node: '>= 8'}
+
+  webgpu@0.4.0:
+    resolution: {integrity: sha512-F5pimn3Aoi0zWjuRdiVs5TnrUwSzD2lESBohsIUsqyitWkGRQlXU2fhV6ycXlQTa1bvAf3sjqiUpBEpmSQ5ptA==}
+
+  wgpu-matrix@3.4.2:
+    resolution: {integrity: sha512-IfZFbG7olEYBD76VCZy2TzqM57GKy3LT++AZh37tMHPPByO6R2h61zXGBZFNPi2IzxNivNi8y5dvze5PjaczjA==}
 
   which@2.0.2:
     resolution: {integrity: sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==}
@@ -6268,6 +6331,10 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
+  '@modelcontextprotocol/core@2.0.0':
+    dependencies:
+      zod: 4.5.4
+
   '@modelcontextprotocol/sdk@1.25.2(hono@4.11.3)(zod@3.25.76)':
     dependencies:
       '@hono/node-server': 1.19.8(hono@4.11.3)
@@ -6289,6 +6356,11 @@ snapshots:
     transitivePeerDependencies:
       - hono
       - supports-color
+
+  '@modelcontextprotocol/server@2.0.0':
+    dependencies:
+      '@modelcontextprotocol/core': 2.0.0
+      zod: 4.5.4
 
   '@mswjs/interceptors@0.40.0':
     dependencies:
@@ -7485,6 +7557,33 @@ snapshots:
 
   '@ungap/structured-clone@1.2.0': {}
 
+  '@vgpu/adapter-mock@0.4.1(@vgpu/adapter-node@0.4.1)':
+    dependencies:
+      '@vgpu/core': 0.4.1(@vgpu/adapter-node@0.4.1)
+    transitivePeerDependencies:
+      - '@vgpu/adapter-node'
+
+  '@vgpu/adapter-node@0.4.1':
+    dependencies:
+      '@vgpu/core': 0.4.1(@vgpu/adapter-node@0.4.1)
+      webgpu: 0.4.0
+    transitivePeerDependencies:
+      - supports-color
+
+  '@vgpu/core@0.4.1(@vgpu/adapter-node@0.4.1)':
+    dependencies:
+      '@vgpu/wgsl': 0.4.1(@vgpu/adapter-node@0.4.1)
+    transitivePeerDependencies:
+      - '@vgpu/adapter-node'
+
+  '@vgpu/wgsl-std@0.4.1': {}
+
+  '@vgpu/wgsl@0.4.1(@vgpu/adapter-node@0.4.1)':
+    dependencies:
+      '@vgpu/wgsl-std': 0.4.1
+    optionalDependencies:
+      '@vgpu/adapter-node': 0.4.1
+
   '@vitejs/plugin-react@5.2.0(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0))':
     dependencies:
       '@babel/core': 7.29.7
@@ -7576,6 +7675,8 @@ snapshots:
       vscode-uri: 2.1.2
 
   '@vscode/l10n@0.0.18': {}
+
+  '@webgpu/types@0.1.72': {}
 
   accepts@2.0.0:
     dependencies:
@@ -8939,7 +9040,13 @@ snapshots:
 
   picomatch@4.0.7: {}
 
+  pixelmatch@7.2.0:
+    dependencies:
+      pngjs: 7.0.0
+
   pkce-challenge@5.0.1: {}
+
+  pngjs@7.0.0: {}
 
   postcss-nested@6.2.0(postcss@8.5.28):
     dependencies:
@@ -9781,6 +9888,22 @@ snapshots:
       '@types/unist': 3.0.3
       vfile-message: 4.0.2
 
+  vgpu@0.4.1:
+    dependencies:
+      '@modelcontextprotocol/server': 2.0.0
+      '@vgpu/adapter-mock': 0.4.1(@vgpu/adapter-node@0.4.1)
+      '@vgpu/adapter-node': 0.4.1
+      '@vgpu/core': 0.4.1(@vgpu/adapter-node@0.4.1)
+      '@vgpu/wgsl': 0.4.1(@vgpu/adapter-node@0.4.1)
+      '@vgpu/wgsl-std': 0.4.1
+      '@webgpu/types': 0.1.72
+      pixelmatch: 7.2.0
+      pngjs: 7.0.0
+      wgpu-matrix: 3.4.2
+      zod: 4.5.4
+    transitivePeerDependencies:
+      - supports-color
+
   vite-plugin-svgr@4.5.0(rollup@4.34.9)(typescript@5.6.2)(vite@8.2.2(@types/node@24.13.3)(esbuild@0.28.2)(jiti@2.7.0)(yaml@2.9.0)):
     dependencies:
       '@rollup/pluginutils': 5.3.0(rollup@4.34.9)
@@ -9936,6 +10059,15 @@ snapshots:
       defaults: 1.0.4
 
   web-streams-polyfill@3.3.3: {}
+
+  webgpu@0.4.0:
+    dependencies:
+      '@webgpu/types': 0.1.72
+      debug: 4.4.3
+    transitivePeerDependencies:
+      - supports-color
+
+  wgpu-matrix@3.4.2: {}
 
   which@2.0.2:
     dependencies:

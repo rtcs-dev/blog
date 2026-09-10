@@ -5,6 +5,12 @@
       "source": "shadcn/ui",
       "sourceType": "github",
       "computedHash": "507f011a70e8b3ae242bdc0bb5b39fd91a1d4049a0f3c281991ccf84973d591c"
+    },
+    "vgpu": {
+      "source": "vercel-labs/vgpu",
+      "sourceType": "github",
+      "skillPath": "skills/vgpu/SKILL.md",
+      "computedHash": "c1fc06bfba28bfee65989e15e49fcf33bfb74648e0e098a17e926b151498305a"
     }
   }
 }
