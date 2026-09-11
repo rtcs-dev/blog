@@ -1,5 +1,6 @@
 ---
 import { Menu, X } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
 import MoonIcon from "@/icons/theme/moon.svg";
 import SunIcon from "@/icons/theme/sun.svg";
 
@@ -29,14 +30,11 @@ const navItems = [
           />
         </a>
 
-        <ul class="hidden items-center justify-self-center gap-4 md:flex">
+        <ul class="hidden items-center justify-self-center gap-1 md:flex">
           {
             navItems.map(({ href, label }) => (
               <li>
-                <a
-                  class="text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:text-foreground focus-visible:underline focus-visible:outline-none motion-reduce:transition-none"
-                  href={href}
-                >
+                <a class={buttonVariants({ variant: "nav" })} href={href}>
                   {label}
                 </a>
               </li>
@@ -45,30 +43,29 @@ const navItems = [
         </ul>
 
         <div class="flex items-center justify-self-end">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon-lg"
             aria-label="theme-button"
             id="theme-button"
-            class="grid size-12 cursor-pointer place-items-center rounded-lg"
           >
-            <MoonIcon class="size-4 dark:hidden" />
-            <SunIcon class="hidden size-4 dark:block" />
-          </button>
-          <button
+            <MoonIcon class="dark:hidden" />
+            <SunIcon class="hidden dark:block" />
+          </Button>
+          <Button
             type="button"
+            variant="ghost"
+            size="icon-lg"
             aria-label="Open Menu"
             aria-expanded="false"
             aria-controls="mobile-navigation"
             data-menu-toggle
-            class="relative size-12 cursor-pointer rounded-lg outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 md:hidden"
+            className="relative md:hidden"
           >
-            <Menu
-              className="pointer-events-none m-auto size-6 duration-200 ease-in-out group-data-[state=active]:rotate-180 group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 motion-reduce:transition-none"
-            />
-            <X
-              className="pointer-events-none absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200 ease-in-out group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 motion-reduce:transition-none"
-            />
-          </button>
+            <Menu className="duration-200 ease-in-out group-data-[state=active]:rotate-180 group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 motion-reduce:transition-none" />
+            <X className="absolute inset-0 m-auto -rotate-180 scale-0 opacity-0 duration-200 ease-in-out group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 motion-reduce:transition-none" />
+          </Button>
         </div>
       </div>
     </div>
@@ -77,14 +74,11 @@ const navItems = [
       id="mobile-navigation"
       class="site-header-blur site-header-surface site-header-menu invisible pointer-events-none fixed inset-x-0 top-[80px] z-10 origin-top -translate-y-2 scale-y-95 opacity-0 transition-[opacity,transform,visibility] duration-200 ease-out motion-reduce:transition-none group-data-[state=active]:visible group-data-[state=active]:pointer-events-auto group-data-[state=active]:translate-y-0 group-data-[state=active]:scale-y-100 group-data-[state=active]:opacity-100 md:hidden"
     >
-      <ul class="mx-auto flex max-w-[1112px] flex-col gap-6 p-6">
+      <ul class="mx-auto flex max-w-[1112px] flex-col items-start gap-1 p-6">
         {
           navItems.map(({ href, label }) => (
             <li>
-              <a
-                class="block text-muted-foreground transition-colors duration-150 hover:text-foreground focus-visible:text-foreground focus-visible:underline focus-visible:outline-none motion-reduce:transition-none"
-                href={href}
-              >
+              <a class={buttonVariants({ variant: "nav" })} href={href}>
                 {label}
               </a>
             </li>

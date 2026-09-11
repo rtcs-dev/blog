@@ -1,5 +1,6 @@
 ---
 import { SOCIALS } from "@/lib/constants";
+import { buttonVariants } from "@/components/ui/button";
 import "@/styles/footer.css";
 import GithubIcon from "@/icons/social/github.svg";
 import LinkedInIcon from "@/icons/social/linkedin.svg";
@@ -12,10 +13,12 @@ import EmailIcon from "@/icons/social/email.svg";
   <div>
     <p>
       <a
+        class={buttonVariants({ variant: "link" })}
         target="_blank"
-        class="text-primary hover:underline"
-        href="https://github.com/rtcs-dev/blog">see source code</a
+        href="https://github.com/rtcs-dev/blog"
       >
+        see source code
+      </a>
     </p>
   </div>
   <div class="grid grid-cols-5 gap-4" id="contact">

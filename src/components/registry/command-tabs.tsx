@@ -4,6 +4,7 @@ import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
+  TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
 import CopyIcon from "@/icons/actions/copy.svg?react";
@@ -55,25 +56,30 @@ export function CommandTabs({ registryUrl }: CommandTabsProps) {
             </TabsTrigger>
           ))}
         </TabsList>
-        <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
-          <TooltipTrigger asChild>
-            <Button
-              type="button"
-              onClick={handleCopy}
-              variant="ghost"
-              size="icon-sm"
-              className="cursor-pointer"
-              aria-label={copied ? "Command copied" : "Copy command"}
+        <TooltipProvider>
+          <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  onClick={handleCopy}
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={copied ? "Command copied" : "Copy command"}
+                />
+              }
             >
               {copied ? (
                 <CheckMarkIcon className="text-muted-foreground" />
               ) : (
                 <CopyIcon className="text-muted-foreground" />
               )}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>{copied ? "Copied!" : "Copy command"}</TooltipContent>
-        </Tooltip>
+            </TooltipTrigger>
+            <TooltipContent>
+              {copied ? "Copied!" : "Copy command"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       {Object.keys(commands).map((pm) => (
         <TabsContent key={pm} value={pm} className="mt-0">
