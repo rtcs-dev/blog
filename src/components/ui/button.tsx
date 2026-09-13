@@ -74,7 +74,7 @@ function ButtonArrow({
       className="relative inline-grid size-4 overflow-hidden"
       aria-hidden="true"
     >
-      <Icon className="-translate-x-full transition-transform duration-200 ease-out will-change-transform motion-reduce:transition-none group-focus-visible/button:translate-x-0 fine-pointer:group-hover/button:translate-x-0" />
+      <Icon className="transition-transform duration-200 ease-out will-change-transform motion-reduce:transition-none fine-pointer:-translate-x-full group-focus-visible/button:translate-x-0 fine-pointer:group-hover/button:translate-x-0" />
     </span>
   )
 }

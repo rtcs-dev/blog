@@ -102,6 +102,13 @@ const navItems = [
   const menuButton =
     document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
 
+  const closeMenu = () => {
+    if (!nav || nav.dataset.state !== "active") return;
+    nav.dataset.state = "";
+    menuButton?.setAttribute("aria-expanded", "false");
+    menuButton?.setAttribute("aria-label", "Open Menu");
+  };
+
   menuButton?.addEventListener("click", () => {
     const open = nav?.dataset.state !== "active";
     if (nav) nav.dataset.state = open ? "active" : "";
@@ -109,12 +116,17 @@ const navItems = [
     menuButton.setAttribute("aria-label", open ? "Close Menu" : "Open Menu");
   });
 
-  document.addEventListener("keydown", (event) => {
-    if (event.key !== "Escape" || nav?.dataset.state !== "active") return;
-    nav.dataset.state = "";
-    menuButton?.setAttribute("aria-expanded", "false");
-    menuButton?.setAttribute("aria-label", "Open Menu");
+  nav?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeMenu);
   });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    closeMenu();
+  });
+
+  document.addEventListener("astro:page-load", closeMenu);
+  document.addEventListener("astro:after-swap", closeMenu);
 
   document
     .querySelector("#theme-button")
