@@ -7,11 +7,11 @@ type Props = CollectionEntry<"posts">["data"] & { id: string };
 
 const { title, imageLight, imageDark, id, date } = Astro.props;
 const imgClass =
-  "absolute w-full h-full object-cover -z-10 inset-0 align-middle rounded-2x";
+  "absolute w-full h-full object-cover -z-10 inset-0 align-middle rounded-2xl";
 ---
 
 <article
-  class="isolate overflow-hidden relative flex justify-end flex-col rounded-2xl text-muted-foreground px-8 pt-80 pb-8"
+  class="isolate relative flex flex-col justify-end overflow-hidden rounded-2xl px-8 pt-80 pb-8 text-muted-foreground ring-1 ring-border"
 >
   <img
     class={cn(imgClass, "dark:hidden")}

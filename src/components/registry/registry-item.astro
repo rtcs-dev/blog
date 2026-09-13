@@ -1,4 +1,5 @@
 ---
+import { buttonVariants } from "@/components/ui/button";
 import { CommandTabs } from "./command-tabs";
 
 interface Props {
@@ -39,7 +40,10 @@ const registryUrl = `${Astro.url.origin}/r/${item.name}.json`;
 
   <!-- View Source Link -->
   <div class="flex items-center gap-4 text-sm">
-    <a href={`/registry/${item.name}`} class="text-primary hover:underline">
+    <a
+      class={buttonVariants({ variant: "link" })}
+      href={`/registry/${item.name}`}
+    >
       View Source
     </a>
   </div>

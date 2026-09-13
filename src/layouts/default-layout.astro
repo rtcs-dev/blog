@@ -12,9 +12,9 @@ type Props = {
 const { headProps } = Astro.props;
 ---
 
-<html lang="en">
+<html lang="en" transition:animate="none">
   <Head {...headProps} />
-  <body class="font-inter">
+  <body>
     <Background />
     <Header />
     <Container>

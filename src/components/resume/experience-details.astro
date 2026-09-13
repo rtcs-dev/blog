@@ -11,19 +11,46 @@ import WcIcon from "@/icons/resume/wc.svg";
 
 import { format } from "date-fns";
 import type { SvgComponent } from "astro/types";
+import { cn } from "@/lib/utils";
 
 interface Props extends Pick<Experience, "summary" | "highlights" | "stack"> {
   missions: Mission[];
 }
 
-const iconMap: Record<string, SvgComponent> = {
-  "resume/aws": AwsIcon,
-  "resume/nest": NestIcon,
-  "resume/next": NextIcon,
-  "resume/node": NodeIcon,
-  "resume/react": ReactIcon,
-  "resume/terraform": TerraformIcon,
-  "resume/wc": WcIcon,
+type TechnologyIcon = {
+  component: SvgComponent;
+  className: string;
+};
+
+const iconMap: Record<string, TechnologyIcon> = {
+  "resume/aws": {
+    component: AwsIcon,
+    className: "text-[#ff9900]",
+  },
+  "resume/nest": {
+    component: NestIcon,
+    className: "text-[#e0234e]",
+  },
+  "resume/next": {
+    component: NextIcon,
+    className: "text-black dark:text-white",
+  },
+  "resume/node": {
+    component: NodeIcon,
+    className: "text-[#339933]",
+  },
+  "resume/react": {
+    component: ReactIcon,
+    className: "text-[#149eca] dark:text-[#61dafb]",
+  },
+  "resume/terraform": {
+    component: TerraformIcon,
+    className: "text-[#844fba] dark:text-[#a78bfa]",
+  },
+  "resume/wc": {
+    component: WcIcon,
+    className: "text-[#29abe2] dark:text-[#5cc8f2]",
+  },
 };
 
 const { summary, highlights, missions, stack } = Astro.props;
@@ -77,10 +104,16 @@ const { summary, highlights, missions, stack } = Astro.props;
         <p class="font-semibold text-lg mb-2">Technologies</p>
         <div class="grid grid-cols-3 md:flex md:flex-wrap gap-4">
           {stack.map(({ name: techName, src: iconFileName }) => {
-            const IconComponent = iconMap[iconFileName];
+            const icon = iconMap[iconFileName];
+            const IconComponent = icon?.component;
             return (
               <div class="inline-flex gap-1">
-                {IconComponent && <IconComponent class="size-6" />}
+                {IconComponent && (
+                  <IconComponent
+                    aria-hidden="true"
+                    class={cn("size-6", icon.className)}
+                  />
+                )}
                 <span>{techName}</span>
               </div>
             );

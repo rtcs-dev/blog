@@ -4,6 +4,7 @@ import { getCollection } from "astro:content";
 import { basename } from "node:path";
 import { Code } from "astro-expressive-code/components";
 import { CommandTabs } from "@/components/registry/command-tabs";
+import { buttonVariants } from "@/components/ui/button";
 
 export async function getStaticPaths() {
   const registryItems = await getCollection("registry");
@@ -53,8 +54,8 @@ const files = item.data.files.map((file) => {
   <div class="max-w-4xl mx-auto">
     <div class="mb-8">
       <a
+        class={buttonVariants({ variant: "ghost", className: "mb-4" })}
         href="/registry"
-        class="text-muted-foreground hover:text-foreground mb-4 inline-block"
       >
         ← Back to Registry
       </a>
@@ -62,8 +63,8 @@ const files = item.data.files.map((file) => {
       <p class="text-muted-foreground mb-4">{item.data.description}</p>
       <div class="flex items-center gap-4 text-sm">
         <a
+          class={buttonVariants({ variant: "link" })}
           href={`/r/${name}.json`}
-          class="text-primary hover:underline"
           target="_blank"
           rel="noopener noreferrer"
         >

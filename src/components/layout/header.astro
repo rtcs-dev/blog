@@ -1,76 +1,177 @@
 ---
-import { Image } from "astro:assets";
-import Container from "./container.astro";
+import { Menu, X } from "lucide-react";
+import { Button, buttonVariants } from "@/components/ui/button";
+import MoonIcon from "@/icons/theme/moon.svg";
+import SunIcon from "@/icons/theme/sun.svg";
 
-import ThemeSwitcher from "./theme-switcher.astro";
+const navItems = [
+  { href: "/resume", label: "Resume" },
+  { href: "/blog", label: "Blog" },
+  { href: "/registry", label: "Registry" },
+];
 ---
 
-<header
-  transition:persist="site-header"
-  class="flex items-center sticky z-10 top-0 h-[80px] mb-4 sm:mb-8 backdrop-blur-md"
->
-  <Container class="flex items-center justify-between flex-1">
-    <a class="text-2xl text-foreground font-semibold" href="/">
-      <Image
-        src="/assets/logo/orange-256x256.png"
-        alt={"rtcs logo"}
-        loading="eager"
-        width="50"
-        height="50"
-      />
-    </a>
-    <nav>
-      <ul class="flex items-center">
-        <li>
-          <a class="p-4 block text-md" href="/resume">Resume</a>
-        </li>
-        <li>
-          <a class="p-4 block text-md" href="/blog">Blog</a>
-        </li>
-        <li>
-          <button id="contact-button" class="p-4 block text-md">Contact</button>
-        </li>
-        <li>
-          <ThemeSwitcher />
-        </li>
+<header transition:persist="site-header" class="sticky top-0 z-10 mb-4 sm:mb-8">
+  <nav class="group" data-site-nav>
+    <div class="site-header-blur">
+      <div
+        class="mx-auto grid h-[80px] max-w-[1112px] grid-cols-2 items-center px-6 md:grid-cols-3"
+      >
+        <a
+          class="justify-self-start text-2xl font-semibold text-foreground"
+          href="/"
+        >
+          <img
+            src="/assets/logo/orange-256x256.png"
+            alt="rtcs logo"
+            width="50"
+            height="50"
+            loading="eager"
+          />
+        </a>
+
+        <ul class="hidden items-center justify-self-center gap-1 md:flex">
+          {
+            navItems.map(({ href, label }) => (
+              <li>
+                <a class={buttonVariants({ variant: "nav" })} href={href}>
+                  {label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+
+        <div class="flex items-center justify-self-end">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-lg"
+            aria-label="theme-button"
+            id="theme-button"
+          >
+            <MoonIcon class="dark:hidden" />
+            <SunIcon class="hidden dark:block" />
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-lg"
+            aria-label="Open Menu"
+            aria-expanded="false"
+            aria-controls="mobile-navigation"
+            data-menu-toggle
+            className="relative md:hidden"
+          >
+            <Menu className="duration-200 ease-in-out group-data-[state=active]:rotate-180 group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 motion-reduce:transition-none" />
+            <X className="absolute inset-0 m-auto -rotate-180 scale-0 opacity-0 duration-200 ease-in-out group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 motion-reduce:transition-none" />
+          </Button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      id="mobile-navigation"
+      class="site-header-blur site-header-surface site-header-menu invisible pointer-events-none fixed inset-x-0 top-[80px] z-10 origin-top -translate-y-2 scale-y-95 opacity-0 transition-[opacity,transform,visibility] duration-200 ease-out motion-reduce:transition-none group-data-[state=active]:visible group-data-[state=active]:pointer-events-auto group-data-[state=active]:translate-y-0 group-data-[state=active]:scale-y-100 group-data-[state=active]:opacity-100 md:hidden"
+    >
+      <ul class="mx-auto flex max-w-[1112px] flex-col items-start gap-1 p-6">
+        {
+          navItems.map(({ href, label }) => (
+            <li>
+              <a class={buttonVariants({ variant: "nav" })} href={href}>
+                {label}
+              </a>
+            </li>
+          ))
+        }
       </ul>
-    </nav>
-  </Container>
+    </div>
+  </nav>
 </header>
 
 <script>
-  async function highlightContactInfo() {
-    const contactSection = document.querySelector<HTMLDivElement>("#contact");
+  import { getThemePreference } from "@/lib/theme";
 
-    if (!contactSection) return;
+  type ViewTransitionDocument = Document & {
+    startViewTransition?: (callback: () => void) => {
+      finished: Promise<void>;
+    };
+  };
 
-    window.scrollTo({ top: contactSection.offsetTop, behavior: "smooth" });
+  const nav = document.querySelector<HTMLElement>("[data-site-nav]");
+  const menuButton =
+    document.querySelector<HTMLButtonElement>("[data-menu-toggle]");
 
-    const icons = document.querySelectorAll("#contact .footer-icons");
-    const timeoutPromises: Promise<void>[] = [];
+  const closeMenu = () => {
+    if (!nav || nav.dataset.state !== "active") return;
+    nav.dataset.state = "";
+    menuButton?.setAttribute("aria-expanded", "false");
+    menuButton?.setAttribute("aria-label", "Open Menu");
+  };
 
-    icons.forEach((icon, index) => {
-      const timeout = new Promise<void>((resolve) =>
-        setTimeout(() => {
-          icon.classList.add("hover");
-          resolve();
-        }, 500 * index),
-      );
+  menuButton?.addEventListener("click", () => {
+    const open = nav?.dataset.state !== "active";
+    if (nav) nav.dataset.state = open ? "active" : "";
+    menuButton.setAttribute("aria-expanded", String(open));
+    menuButton.setAttribute("aria-label", open ? "Close Menu" : "Open Menu");
+  });
 
-      timeoutPromises.push(timeout);
+  nav?.querySelectorAll("a").forEach((link) => {
+    link.addEventListener("click", closeMenu);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Escape") return;
+    closeMenu();
+  });
+
+  document.addEventListener("astro:page-load", closeMenu);
+  document.addEventListener("astro:after-swap", closeMenu);
+
+  document
+    .querySelector("#theme-button")
+    ?.addEventListener("click", (event) => {
+      const shouldSwitchToDark = getThemePreference() !== "dark";
+      const root = document.documentElement;
+      const applyTheme = () => {
+        root.classList[shouldSwitchToDark ? "add" : "remove"]("dark");
+        root.style.colorScheme = shouldSwitchToDark ? "dark" : "light";
+        localStorage.setItem("theme", shouldSwitchToDark ? "dark" : "light");
+      };
+
+      const transitionDocument = document as ViewTransitionDocument;
+      const reduceMotion = window.matchMedia(
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+
+      if (
+        !reduceMotion &&
+        transitionDocument.startViewTransition &&
+        event instanceof MouseEvent
+      ) {
+        const x = event.clientX;
+        const y = event.clientY;
+        const radius =
+          Math.hypot(
+            Math.max(x, innerWidth - x),
+            Math.max(y, innerHeight - y),
+          ) + 8;
+
+        root.style.setProperty("--theme-ripple-x", `${x}px`);
+        root.style.setProperty("--theme-ripple-y", `${y}px`);
+        root.style.setProperty("--theme-ripple-r", `${radius}px`);
+        root.dataset.themeVt = "ripple";
+
+        const transition = transitionDocument.startViewTransition(applyTheme);
+        void transition.finished.finally(() => {
+          root.removeAttribute("data-theme-vt");
+          root.style.removeProperty("--theme-ripple-x");
+          root.style.removeProperty("--theme-ripple-y");
+          root.style.removeProperty("--theme-ripple-r");
+        });
+        return;
+      }
+
+      applyTheme();
     });
-
-    await Promise.all(timeoutPromises);
-
-    setTimeout(() => {
-      icons.forEach((icon) => {
-        icon.classList.remove("hover");
-      });
-    }, 500);
-  }
-
-  const contactLink = document.querySelector("#contact-button");
-  if (contactLink) {
-    contactLink.addEventListener("click", highlightContactInfo);
-  }
 </script>

@@ -1,10 +1,12 @@
-import * as React from "react";
+import { useMemo, useRef, useState } from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
+  TooltipProvider,
 } from "@/components/ui/tooltip";
+import { Button } from "@/components/ui/button";
 import CopyIcon from "@/icons/actions/copy.svg?react";
 import CheckMarkIcon from "@/icons/actions/check-mark.svg?react";
 
@@ -13,11 +15,12 @@ interface CommandTabsProps {
 }
 
 export function CommandTabs({ registryUrl }: CommandTabsProps) {
-  const [activeTab, setActiveTab] = React.useState("npm");
-  const [copied, setCopied] = React.useState(false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
+  const [activeTab, setActiveTab] = useState("npm");
+  const [copied, setCopied] = useState(false);
+  const [tooltipOpen, setTooltipOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const commands = React.useMemo<Record<string, string>>(
+  const commands = useMemo<Record<string, string>>(
     () => ({
       npm: `npx shadcn@latest add ${registryUrl}`,
       pnpm: `pnpm dlx shadcn@latest add ${registryUrl}`,
@@ -33,8 +36,10 @@ export function CommandTabs({ registryUrl }: CommandTabsProps) {
     try {
       await navigator.clipboard.writeText(inputRef.current.value);
       setCopied(true);
+      setTooltipOpen(true);
       setTimeout(() => {
         setCopied(false);
+        setTooltipOpen(false);
       }, 2000);
     } catch (err) {
       console.error("Failed to copy:", err);
@@ -44,30 +49,37 @@ export function CommandTabs({ registryUrl }: CommandTabsProps) {
   return (
     <Tabs value={activeTab} onValueChange={setActiveTab}>
       <div className="flex items-center justify-between mb-2">
-        <TabsList className="bg-transparent p-0 h-auto gap-0">
+        <TabsList variant="line">
           {Object.keys(commands).map((pm) => (
             <TabsTrigger key={pm} value={pm}>
               {pm}
             </TabsTrigger>
           ))}
         </TabsList>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              type="button"
-              onClick={handleCopy}
-              className="p-1.5 hover:bg-muted/50 rounded transition-colors"
-              aria-label="Copy command"
+        <TooltipProvider>
+          <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  onClick={handleCopy}
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={copied ? "Command copied" : "Copy command"}
+                />
+              }
             >
               {copied ? (
-                <CheckMarkIcon className="w-4 h-4 text-muted-foreground" />
+                <CheckMarkIcon className="text-muted-foreground" />
               ) : (
-                <CopyIcon className="w-4 h-4 text-muted-foreground" />
+                <CopyIcon className="text-muted-foreground" />
               )}
-            </button>
-          </TooltipTrigger>
-          <TooltipContent>{copied ? "Copied!" : "Copy command"}</TooltipContent>
-        </Tooltip>
+            </TooltipTrigger>
+            <TooltipContent>
+              {copied ? "Copied!" : "Copy command"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
       {Object.keys(commands).map((pm) => (
         <TabsContent key={pm} value={pm} className="mt-0">
