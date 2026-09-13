@@ -1,9 +1,10 @@
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
+import { ArrowRight, type LucideIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded-lg border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 [&_svg[data-icon=inline-end]]:transition-transform [&_svg[data-icon=inline-end]]:duration-150 [&_svg[data-icon=inline-end]]:ease-out motion-reduce:[&_svg[data-icon=inline-end]]:transition-none fine-pointer:hover:[&_svg[data-icon=inline-end]]:translate-x-1 motion-reduce:fine-pointer:hover:[&_svg[data-icon=inline-end]]:translate-x-0",
   {
     variants: {
       variant: {
@@ -62,4 +63,20 @@ function Button({
   )
 }
 
-export { Button, buttonVariants }
+function ButtonArrow({
+  icon: Icon = ArrowRight,
+}: {
+  icon?: LucideIcon
+}) {
+  return (
+    <span
+      data-icon="inline-end"
+      className="relative inline-grid size-4 overflow-hidden"
+      aria-hidden="true"
+    >
+      <Icon className="-translate-x-full transition-transform duration-200 ease-out will-change-transform motion-reduce:transition-none group-focus-visible/button:translate-x-0 fine-pointer:group-hover/button:translate-x-0" />
+    </span>
+  )
+}
+
+export { Button, ButtonArrow, buttonVariants }

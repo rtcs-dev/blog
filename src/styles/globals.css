@@ -4,6 +4,7 @@
 @plugin 'tailwindcss-animate';
 
 @custom-variant dark (&:is(.dark *));
+@custom-variant fine-pointer (@media (hover: hover) and (pointer: fine));
 
 @theme inline {
   --radius-lg: var(--radius);

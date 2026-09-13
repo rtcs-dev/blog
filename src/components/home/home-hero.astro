@@ -1,6 +1,6 @@
 ---
-import { ArrowRight, FileText } from "lucide-react";
-import { buttonVariants } from "@/components/ui/button";
+import { FileText } from "lucide-react";
+import { ButtonArrow, buttonVariants } from "@/components/ui/button";
 import { typographyVariants } from "@/components/ui/typography";
 ---
 
@@ -23,13 +23,14 @@ import { typographyVariants } from "@/components/ui/typography";
       })}
     >
       I’m a fullstack engineer and information security graduate with an
-      occasional itch to go down rabbit holes and write technical blog posts.
+      occasional itch to write technical blog posts on his little corner of the
+      internet.
     </p>
 
     <div class="hero-actions">
       <a class={buttonVariants({ size: "lg" })} href="/blog">
         Read my blog
-        <ArrowRight data-icon="inline-end" />
+        <ButtonArrow />
       </a>
       <a
         class={buttonVariants({ variant: "outline", size: "lg" })}
@@ -69,7 +70,7 @@ import { typographyVariants } from "@/components/ui/typography";
   </p>
   <a class={buttonVariants({ variant: "muted" })} href="/blog">
     Explore all writing
-    <ArrowRight data-icon="inline-end" />
+    <ButtonArrow />
   </a>
 </section>
 
@@ -159,21 +160,27 @@ import { typographyVariants } from "@/components/ui/typography";
 
   .logo-fallback {
     z-index: 0;
-    background:
-      linear-gradient(rgb(65 42 24 / 0.035) 1px, transparent 1px),
+    background: linear-gradient(rgb(65 42 24 / 0.035) 1px, transparent 1px),
       linear-gradient(90deg, rgb(65 42 24 / 0.035) 1px, transparent 1px),
       radial-gradient(circle at 50% 45%, rgb(255 91 16 / 12%), transparent 38%),
       #f6f3ef;
-    background-size: 28px 28px, 28px 28px, auto, auto;
+    background-size:
+      28px 28px,
+      28px 28px,
+      auto,
+      auto;
   }
 
   :global(.dark) .logo-fallback {
-    background:
-      linear-gradient(rgb(255 255 255 / 0.025) 1px, transparent 1px),
+    background: linear-gradient(rgb(255 255 255 / 0.025) 1px, transparent 1px),
       linear-gradient(90deg, rgb(255 255 255 / 0.025) 1px, transparent 1px),
       radial-gradient(circle at 50% 45%, rgb(255 91 16 / 22%), transparent 38%),
       #08090d;
-    background-size: 28px 28px, 28px 28px, auto, auto;
+    background-size:
+      28px 28px,
+      28px 28px,
+      auto,
+      auto;
   }
 
   .logo-mark {
@@ -254,7 +261,6 @@ import { typographyVariants } from "@/components/ui/typography";
       min-height: 340px;
       border-radius: 1.5rem;
     }
-
   }
 
   @media (prefers-reduced-motion: reduce) {
