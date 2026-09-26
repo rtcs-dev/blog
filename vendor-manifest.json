@@ -1,0 +1,11 @@
+{
+  "repos": [
+    {
+      "name": "og.new",
+      "url": "https://github.com/clerk/og.new",
+      "path": ".vendor/og.new",
+      "depth": 1,
+      "notes": "Reference OG image editor (clerk/og.new, original by Fady). Adapted product: apps/og"
+    }
+  ]
+}

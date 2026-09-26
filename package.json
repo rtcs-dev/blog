@@ -3,7 +3,9 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter web dev",
+    "dev:og": "pnpm --filter og dev",
     "build": "pnpm --filter web build",
+    "build:og": "pnpm --filter og build",
     "preview": "pnpm --filter web preview",
     "start": "pnpm --filter web start",
     "test": "pnpm --filter web test",
