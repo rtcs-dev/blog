@@ -1,0 +1,10 @@
+packages:
+  - "apps/*"
+
+onlyBuiltDependencies:
+  - "@vgpu/adapter-node"
+  - esbuild
+  - msw
+  - sharp
+  - webgpu
+  - workerd
