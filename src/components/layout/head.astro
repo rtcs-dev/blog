@@ -1,6 +1,7 @@
 ---
 import "@fontsource-variable/inter";
 import "@fontsource-variable/ibm-plex-sans";
+import "@fontsource-variable/jetbrains-mono";
 import "@/styles/globals.css";
 import { SITE_DESCRIPTION, SITE_TITLE } from "@/lib/constants";
 import { ClientRouter } from "astro:transitions";
@@ -23,6 +24,12 @@ const {
 <!-- Global Metadata -->
 <head>
   <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width,initial-scale=1,viewport-fit=cover"
+  />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="color-scheme" content="light dark" />
   <script is:inline>
     (() => {
       let theme;
@@ -39,9 +46,11 @@ const {
 
       document.documentElement.classList.toggle("dark", isDark);
       document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+      document
+        .querySelector('meta[name="theme-color"]')
+        ?.setAttribute("content", isDark ? "#0a0a0a" : "#ffffff");
     })();
   </script>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <meta name="generator" content={Astro.generator} />
   <ClientRouter />
@@ -73,7 +82,7 @@ const {
     async></script>
 
   <script>
-    import { getThemePreference } from "@/lib/theme";
+    import { getThemePreference, syncBrowserChrome } from "@/lib/theme";
 
     /** Apply stored theme to the *incoming* HTML before root attrs are copied — avoids light flash. */
     function patchIncomingDocumentTheme(event: Event) {
@@ -84,13 +93,13 @@ const {
       if (!doc) return;
       const isDark = getThemePreference() === "dark";
       doc.documentElement.classList.toggle("dark", isDark);
-      doc.documentElement.style.colorScheme = isDark ? "dark" : "light";
+      syncBrowserChrome(isDark, doc);
     }
 
     function syncThemeOnLiveDocument() {
       const isDark = getThemePreference() === "dark";
       document.documentElement.classList.toggle("dark", isDark);
-      document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+      syncBrowserChrome(isDark);
     }
 
     document.addEventListener("astro:before-swap", patchIncomingDocumentTheme);
