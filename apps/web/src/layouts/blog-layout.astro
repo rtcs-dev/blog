@@ -3,10 +3,18 @@ import type { CollectionEntry } from "astro:content";
 import DefaultLayout from "./default-layout.astro";
 import FormattedDate from "@/components/ui/formatted-date.astro";
 import DottedBackground from "@/components/layout/dotted-background.astro";
+import { PostToc, type TocHeading } from "@/components/blog-post/post-toc";
 import "@/styles/post.css";
 
-type Props = CollectionEntry<"posts">["data"];
-const { title, description, date, imageDark } = Astro.props;
+type Props = CollectionEntry<"posts">["data"] & {
+  headings: TocHeading[];
+};
+
+const { title, description, date, imageDark, headings } = Astro.props;
+const tocHeadings = headings.filter(
+  (heading) => heading.depth === 2 || heading.depth === 3,
+);
+const hasToc = tocHeadings.length > 0;
 ---
 
 <DefaultLayout
@@ -24,7 +32,14 @@ const { title, description, date, imageDark } = Astro.props;
       <FormattedDate class="text-muted-foreground" date={date} />
     </p>
   </div>
-  <article class="prose">
-    <slot />
-  </article>
+  <div
+    class:list={[
+      hasToc && "xl:grid xl:grid-cols-[minmax(0,1fr)_13rem] xl:gap-10",
+    ]}
+  >
+    <article class="prose min-w-0">
+      <slot />
+    </article>
+    <PostToc client:load headings={tocHeadings} />
+  </div>
 </DefaultLayout>

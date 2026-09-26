@@ -1,7 +1,13 @@
 @reference '../styles/globals.css';
 
-html {
-  scroll-behavior: smooth;
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+article.prose :is(h2, h3, h4) {
+  scroll-margin-top: 5.5rem;
 }
 
 .title:not(.expressive-code *) {
