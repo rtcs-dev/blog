@@ -76,7 +76,7 @@
 
 @layer base {
   :root {
-    /* White page — #4b5563 ink */
+    /* White page — #4b5563 ink. Keep hex in sync with THEME_BACKGROUNDS. */
     --background: #ffffff;
     --foreground: 218 14% 34%;
     --card: 0 0% 100%;
