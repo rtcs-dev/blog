@@ -34,3 +34,6 @@ pnpm-debug.log*
 
 # coverage
 coverage/
+
+# git worktrees
+.worktrees
