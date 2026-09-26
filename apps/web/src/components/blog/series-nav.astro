@@ -1,0 +1,42 @@
+---
+import type { SeriesMember } from "@/lib/posts/series";
+
+type Props = {
+  name: string;
+  members: SeriesMember[];
+  currentId: string;
+};
+
+const { name, members, currentId } = Astro.props;
+---
+
+{
+  members.length > 0 && (
+    <nav
+      class="mx-auto mb-10 max-w-prose rounded-xl border border-border bg-muted/30 px-5 py-4 text-left"
+      aria-label={`${name} series`}
+    >
+      <p class="mb-2 text-sm font-medium text-muted-foreground">
+        Series · {name}
+      </p>
+      <ol class="list-decimal space-y-1 pl-5 text-sm marker:text-muted-foreground">
+        {members.map((member) => (
+          <li>
+            {member.id === currentId ? (
+              <span class="font-medium text-foreground" aria-current="page">
+                {member.title}
+              </span>
+            ) : (
+              <a
+                class="text-primary hover:underline"
+                href={`/posts/${member.id}`}
+              >
+                {member.title}
+              </a>
+            )}
+          </li>
+        ))}
+      </ol>
+    </nav>
+  )
+}

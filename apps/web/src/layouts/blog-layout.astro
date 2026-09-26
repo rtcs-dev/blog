@@ -4,13 +4,26 @@ import DefaultLayout from "./default-layout.astro";
 import FormattedDate from "@/components/ui/formatted-date.astro";
 import DottedBackground from "@/components/layout/dotted-background.astro";
 import { PostToc, type TocHeading } from "@/components/blog-post/post-toc";
+import SeriesNav from "@/components/blog/series-nav.astro";
+import type { SeriesMember } from "@/lib/posts/series";
 import "@/styles/post.css";
 
 type Props = CollectionEntry<"posts">["data"] & {
   headings: TocHeading[];
+  seriesMembers?: SeriesMember[];
+  currentId?: string;
 };
 
-const { title, description, date, imageDark, headings } = Astro.props;
+const {
+  title,
+  description,
+  date,
+  imageDark,
+  headings,
+  series,
+  seriesMembers,
+  currentId,
+} = Astro.props;
 const tocHeadings = headings.filter(
   (heading) => heading.depth === 2 || heading.depth === 3,
 );
@@ -32,6 +45,15 @@ const hasToc = tocHeadings.length > 0;
       <FormattedDate class="text-muted-foreground" date={date} />
     </p>
   </div>
+  {
+    series && seriesMembers && currentId && (
+      <SeriesNav
+        name={series.name}
+        members={seriesMembers}
+        currentId={currentId}
+      />
+    )
+  }
   <div
     class:list={[
       hasToc && "xl:grid xl:grid-cols-[minmax(0,1fr)_13rem] xl:gap-10",

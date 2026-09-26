@@ -5,7 +5,7 @@ import type { CollectionEntry } from "astro:content";
 
 type Props = CollectionEntry<"posts">["data"] & { id: string };
 
-const { title, imageLight, imageDark, id, date } = Astro.props;
+const { title, imageLight, imageDark, id, date, series } = Astro.props;
 const imgClass =
   "absolute w-full h-full object-cover -z-10 inset-0 align-middle rounded-2xl";
 ---
@@ -31,6 +31,13 @@ const imgClass =
   <div class="text-sm leading-6">
     <FormattedDate class="text-muted-foreground" date={date} />
   </div>
+  {
+    series && (
+      <p class="mt-1 text-xs tracking-wide text-muted-foreground/90">
+        Series · {series.name}
+      </p>
+    )
+  }
   <a href={`/posts/${id}`}>
     <span class="inset-0 absolute w-full h-full"></span>
     <span class="text-foreground">{title}</span>
