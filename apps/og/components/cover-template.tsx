@@ -1,27 +1,50 @@
+import { CoverGradientLayers } from "@/components/cover-gradient-layers"
+import {
+  CUSTOM_LOGO_ID,
+  getLogoPath,
+  isBuiltinLogoId,
+  type LogoId,
+} from "@/lib/logos"
 import { absoluteUrl } from "@/lib/url"
-import { getLogoPath } from "@/lib/logos"
 import { CANVAS, THEMES, type ThemeVariant } from "@/lib/themes"
-import type { LogoId } from "@/lib/logos"
 
 export type CoverRenderInput = {
   title: string
   subtitle: string
   logoId: LogoId
+  customLogoDataUrl?: string | null
   variant: ThemeVariant
   titleSize?: number
   subtitleSize?: number
+}
+
+export function resolveLogoSrc(
+  logoId: LogoId,
+  customLogoDataUrl?: string | null
+): string {
+  if (logoId === CUSTOM_LOGO_ID) {
+    if (!customLogoDataUrl) {
+      return absoluteUrl(getLogoPath("nestjs"))
+    }
+    return customLogoDataUrl
+  }
+  if (isBuiltinLogoId(logoId)) {
+    return absoluteUrl(getLogoPath(logoId))
+  }
+  return absoluteUrl(getLogoPath("nestjs"))
 }
 
 export function CoverTemplate({
   title,
   subtitle,
   logoId,
+  customLogoDataUrl,
   variant,
   titleSize = 64,
   subtitleSize = 32,
 }: CoverRenderInput) {
   const theme = THEMES[variant]
-  const logoUrl = absoluteUrl(getLogoPath(logoId))
+  const logoUrl = resolveLogoSrc(logoId, customLogoDataUrl)
 
   return (
     <div
@@ -37,18 +60,7 @@ export function CoverTemplate({
         position: "relative",
       }}
     >
-      <div
-        style={{
-          height: "100%",
-          width: "100%",
-          position: "absolute",
-          inset: 0,
-          filter: "brightness(100%) contrast(150%)",
-          opacity: theme.noise,
-          backgroundImage: `url('${absoluteUrl("/noise.svg")}')`,
-          backgroundRepeat: "repeat",
-        }}
-      />
+      <CoverGradientLayers variant={variant} />
 
       <div
         style={{

@@ -3,12 +3,20 @@ import path from "path"
 
 import satori from "satori"
 
+import { CoverGradientLayers } from "@/components/cover-gradient-layers"
 import { getFontUrl, getFontsFromParams } from "@/lib/fonts"
-import type { LogoId } from "@/lib/logos"
-import { getLogoPath } from "@/lib/logos"
+import {
+  CUSTOM_LOGO_ID,
+  getLogoPath,
+  isBuiltinLogoId,
+  type LogoId,
+} from "@/lib/logos"
 import { CANVAS, THEMES, type ThemeVariant } from "@/lib/themes"
 
-async function loadLogoDataUrl(logoId: LogoId): Promise<string> {
+async function loadBuiltinLogoDataUrl(logoId: LogoId): Promise<string> {
+  if (!isBuiltinLogoId(logoId)) {
+    throw new Error("Custom logo requires an inlined data URL")
+  }
   const logoPath = getLogoPath(logoId)
   const filePath = path.join(process.cwd(), "public", logoPath)
   const buffer = await readFile(filePath)
@@ -22,17 +30,23 @@ async function loadLogoDataUrl(logoId: LogoId): Promise<string> {
   return `data:${mime};base64,${buffer.toString("base64")}`
 }
 
-async function loadNoiseDataUrl(): Promise<string> {
-  const filePath = path.join(process.cwd(), "public", "noise.svg")
-  const buffer = await readFile(filePath)
-  return `data:image/svg+xml;base64,${buffer.toString("base64")}`
+async function resolveLogoDataUrl(
+  logoId: LogoId,
+  customLogoDataUrl?: string | null
+): Promise<string> {
+  if (logoId === CUSTOM_LOGO_ID) {
+    if (!customLogoDataUrl) {
+      throw new Error("Custom logo data URL is required")
+    }
+    return customLogoDataUrl
+  }
+  return loadBuiltinLogoDataUrl(logoId)
 }
 
 function ServerCover({
   title,
   subtitle,
   logoDataUrl,
-  noiseDataUrl,
   variant,
   titleSize = 64,
   subtitleSize = 32,
@@ -40,7 +54,6 @@ function ServerCover({
   title: string
   subtitle: string
   logoDataUrl: string
-  noiseDataUrl: string
   variant: ThemeVariant
   titleSize?: number
   subtitleSize?: number
@@ -61,18 +74,7 @@ function ServerCover({
         position: "relative",
       }}
     >
-      <div
-        style={{
-          height: "100%",
-          width: "100%",
-          position: "absolute",
-          inset: 0,
-          filter: "brightness(100%) contrast(150%)",
-          opacity: theme.noise,
-          backgroundImage: `url('${noiseDataUrl}')`,
-          backgroundRepeat: "repeat",
-        }}
-      />
+      <CoverGradientLayers variant={variant} />
       <div
         style={{
           display: "flex",
@@ -132,6 +134,7 @@ export async function renderCoverSvg(input: {
   title: string
   subtitle: string
   logoId: LogoId
+  customLogoDataUrl?: string | null
   variant: ThemeVariant
   titleSize?: number
   subtitleSize?: number
@@ -150,15 +153,16 @@ export async function renderCoverSvg(input: {
     })
   )
 
-  const logoDataUrl = await loadLogoDataUrl(input.logoId)
-  const noiseDataUrl = await loadNoiseDataUrl()
+  const logoDataUrl = await resolveLogoDataUrl(
+    input.logoId,
+    input.customLogoDataUrl
+  )
 
   return satori(
     <ServerCover
       title={input.title}
       subtitle={input.subtitle}
       logoDataUrl={logoDataUrl}
-      noiseDataUrl={noiseDataUrl}
       variant={input.variant}
       titleSize={input.titleSize}
       subtitleSize={input.subtitleSize}

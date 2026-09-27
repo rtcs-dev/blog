@@ -19,12 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="min-h-screen bg-background font-sans antialiased">
         <header className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <div>
-            <p className="text-sm font-semibold tracking-tight">OG covers</p>
-            <p className="text-xs text-muted-foreground">
-              Adapted from clerk/og.new · original editor by Fady
-            </p>
-          </div>
+          <p className="text-sm font-semibold tracking-tight">OG covers</p>
         </header>
         <main className="mx-auto max-w-6xl px-4 pb-10">
           <EditorStoreProvider>{children}</EditorStoreProvider>

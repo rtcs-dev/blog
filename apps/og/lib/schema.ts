@@ -1,12 +1,20 @@
 import { z } from "zod"
 
-import type { LogoId } from "./logos"
+import { CUSTOM_LOGO_ID, type LogoId } from "./logos"
 import type { ThemeVariant } from "./themes"
 
-export const coverParamsSchema = z.object({
+const dataUrlLogoSchema = z
+  .string()
+  .regex(
+    /^data:image\/(png|svg\+xml|jpeg|jpg|webp)/i,
+    "Custom logo must be a PNG, SVG, or WebP data URL"
+  )
+
+export const coverParamsObjectSchema = z.object({
   title: z.string().min(1),
   subtitle: z.string(),
-  logoId: z.enum(["nestjs", "nodejs", "blog"]),
+  logoId: z.enum(["nestjs", "nodejs", "blog", CUSTOM_LOGO_ID]),
+  customLogoDataUrl: dataUrlLogoSchema.optional(),
   filename: z
     .string()
     .min(1)
@@ -15,12 +23,25 @@ export const coverParamsSchema = z.object({
     }),
 })
 
-export type CoverParams = z.infer<typeof coverParamsSchema>
+export const coverParamsSchema = coverParamsObjectSchema.superRefine(
+  (value, ctx) => {
+    if (value.logoId === CUSTOM_LOGO_ID && !value.customLogoDataUrl) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Upload a logo before saving with a custom logo",
+        path: ["customLogoDataUrl"],
+      })
+    }
+  }
+)
+
+export type CoverParams = z.infer<typeof coverParamsObjectSchema>
 
 export type CoverTemplate = {
   title: string
   subtitle: string
   logoId: LogoId
+  customLogoDataUrl?: string | null
   variant: ThemeVariant
   titleSize: number
   subtitleSize: number

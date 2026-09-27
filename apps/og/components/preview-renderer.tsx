@@ -14,6 +14,7 @@ export default function PreviewRenderer() {
   const title = useEditorStore((s) => s.title)
   const subtitle = useEditorStore((s) => s.subtitle)
   const logoId = useEditorStore((s) => s.logoId)
+  const customLogoDataUrl = useEditorStore((s) => s.customLogoDataUrl)
   const previewVariant = useEditorStore((s) => s.previewVariant)
   const titleSize = useEditorStore((s) => s.titleSize)
   const subtitleSize = useEditorStore((s) => s.subtitleSize)
@@ -40,6 +41,7 @@ export default function PreviewRenderer() {
           title={title}
           subtitle={subtitle}
           logoId={logoId}
+          customLogoDataUrl={customLogoDataUrl}
           variant={previewVariant}
           titleSize={titleSize}
           subtitleSize={subtitleSize}
@@ -69,6 +71,7 @@ export default function PreviewRenderer() {
     title,
     subtitle,
     logoId,
+    customLogoDataUrl,
     previewVariant,
     titleSize,
     subtitleSize,

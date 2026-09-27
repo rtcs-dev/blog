@@ -1,22 +1,51 @@
 "use client"
 
+import { useRef, useState } from "react"
+
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { LOGOS } from "@/lib/logos"
+import {
+  CUSTOM_LOGO_ID,
+  fileToLogoDataUrl,
+  LOGO_UPLOAD_ACCEPT,
+  LOGOS,
+  type LogoId,
+} from "@/lib/logos"
 import { useEditorStore } from "@/providers/editor-store-provider"
 
 export default function EditorForm() {
   const title = useEditorStore((s) => s.title)
   const subtitle = useEditorStore((s) => s.subtitle)
   const logoId = useEditorStore((s) => s.logoId)
+  const customLogoDataUrl = useEditorStore((s) => s.customLogoDataUrl)
   const filename = useEditorStore((s) => s.filename)
   const previewVariant = useEditorStore((s) => s.previewVariant)
   const setTitle = useEditorStore((s) => s.setTitle)
   const setSubtitle = useEditorStore((s) => s.setSubtitle)
   const setLogoId = useEditorStore((s) => s.setLogoId)
+  const setCustomLogo = useEditorStore((s) => s.setCustomLogo)
+  const clearCustomLogo = useEditorStore((s) => s.clearCustomLogo)
   const setFilename = useEditorStore((s) => s.setFilename)
   const setPreviewVariant = useEditorStore((s) => s.setPreviewVariant)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [uploadError, setUploadError] = useState<string | null>(null)
+
+  async function onLogoUpload(file: File | undefined) {
+    if (!file) return
+    setUploadError(null)
+    try {
+      const dataUrl = await fileToLogoDataUrl(file)
+      setCustomLogo(dataUrl)
+    } catch (error) {
+      setUploadError(
+        error instanceof Error ? error.message : "Failed to upload logo"
+      )
+    } finally {
+      if (fileInputRef.current) fileInputRef.current.value = ""
+    }
+  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -24,9 +53,10 @@ export default function EditorForm() {
         <Label>Logo</Label>
         <RadioGroup
           value={logoId}
-          onValueChange={(value) =>
-            setLogoId(value as typeof logoId)
-          }
+          onValueChange={(value) => {
+            if (value === CUSTOM_LOGO_ID && !customLogoDataUrl) return
+            setLogoId(value as LogoId)
+          }}
           className="grid grid-cols-3 gap-2"
         >
           {LOGOS.map((logo) => (
@@ -46,7 +76,59 @@ export default function EditorForm() {
               <span className="text-xs text-muted-foreground">{logo.label}</span>
             </label>
           ))}
+          {customLogoDataUrl ? (
+            <label className="flex cursor-pointer flex-col items-center gap-2 rounded-md border p-3 has-[[data-state=checked]]:border-foreground">
+              <RadioGroupItem value={CUSTOM_LOGO_ID} className="sr-only" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={customLogoDataUrl}
+                alt="Uploaded logo"
+                width={40}
+                height={40}
+                className="size-10 object-contain"
+              />
+              <span className="text-xs text-muted-foreground">Uploaded</span>
+            </label>
+          ) : null}
         </RadioGroup>
+
+        <div className="flex flex-wrap items-center gap-2 pt-1">
+          <input
+            ref={fileInputRef}
+            id="logo-upload"
+            type="file"
+            accept={LOGO_UPLOAD_ACCEPT}
+            className="sr-only"
+            onChange={(e) => void onLogoUpload(e.target.files?.[0])}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            Upload logo
+          </Button>
+          {customLogoDataUrl ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setUploadError(null)
+                clearCustomLogo()
+              }}
+            >
+              Remove upload
+            </Button>
+          ) : null}
+        </div>
+        <p className="text-xs text-muted-foreground">
+          SVG, PNG, or WebP — used for this cover only (preview + save).
+        </p>
+        {uploadError ? (
+          <p className="text-xs text-destructive">{uploadError}</p>
+        ) : null}
       </div>
 
       <div className="flex flex-col gap-2">

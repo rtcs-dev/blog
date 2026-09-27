@@ -1,12 +1,14 @@
 import { createStore } from "zustand/vanilla"
 
-import type { LogoId } from "@/lib/logos"
+import { CUSTOM_LOGO_ID, type LogoId } from "@/lib/logos"
 import type { ThemeVariant } from "@/lib/themes"
 
 export type EditorState = {
   title: string
   subtitle: string
   logoId: LogoId
+  /** Data URL for a user-uploaded logo when logoId is "custom". */
+  customLogoDataUrl: string | null
   filename: string
   previewVariant: ThemeVariant
   titleSize: number
@@ -18,6 +20,8 @@ export type EditorActions = {
   setTitle: (title: string) => void
   setSubtitle: (subtitle: string) => void
   setLogoId: (logoId: LogoId) => void
+  setCustomLogo: (dataUrl: string) => void
+  clearCustomLogo: () => void
   setFilename: (filename: string) => void
   setPreviewVariant: (variant: ThemeVariant) => void
   updatePreviewSvg: (svg: string) => void
@@ -29,6 +33,7 @@ export const defaultInitState: EditorState = {
   title: "Configuration",
   subtitle: "In NestJS applications",
   logoId: "nestjs",
+  customLogoDataUrl: null,
   filename: "configuring-nest",
   previewVariant: "light",
   titleSize: 64,
@@ -44,6 +49,13 @@ export const createEditorStore = (
     setTitle: (title) => set({ title }),
     setSubtitle: (subtitle) => set({ subtitle }),
     setLogoId: (logoId) => set({ logoId }),
+    setCustomLogo: (customLogoDataUrl) =>
+      set({ logoId: CUSTOM_LOGO_ID, customLogoDataUrl }),
+    clearCustomLogo: () =>
+      set((state) => ({
+        customLogoDataUrl: null,
+        logoId: state.logoId === CUSTOM_LOGO_ID ? "nestjs" : state.logoId,
+      })),
     setFilename: (filename) => set({ filename }),
     setPreviewVariant: (previewVariant) => set({ previewVariant }),
     updatePreviewSvg: (previewSvg) => set({ previewSvg }),

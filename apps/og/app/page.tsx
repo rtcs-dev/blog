@@ -17,7 +17,7 @@ export default function HomePage() {
           <CardTitle>Cover</CardTitle>
           <CardDescription>
             Match existing posts: centered logo, bold title, lighter subtitle,
-            light + dark noise backgrounds.
+            homepage-style light + dark gradients.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-6">

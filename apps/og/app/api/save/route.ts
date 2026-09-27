@@ -6,14 +6,24 @@ import sharp from "sharp"
 import { z } from "zod"
 
 import { renderCoverSvg } from "@/lib/render-cover"
-import { coverParamsSchema } from "@/lib/schema"
+import { coverParamsObjectSchema } from "@/lib/schema"
 
 export const runtime = "nodejs"
 
-const bodySchema = coverParamsSchema.extend({
-  titleSize: z.number().min(24).max(120).optional(),
-  subtitleSize: z.number().min(16).max(64).optional(),
-})
+const bodySchema = coverParamsObjectSchema
+  .extend({
+    titleSize: z.number().min(24).max(120).optional(),
+    subtitleSize: z.number().min(16).max(64).optional(),
+  })
+  .superRefine((value, ctx) => {
+    if (value.logoId === "custom" && !value.customLogoDataUrl) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Upload a logo before saving with a custom logo",
+        path: ["customLogoDataUrl"],
+      })
+    }
+  })
 
 function postsImagesDir() {
   // apps/og → apps/web/public/assets/images/posts
@@ -34,8 +44,15 @@ export async function POST(request: Request) {
       )
     }
 
-    const { title, subtitle, logoId, filename, titleSize, subtitleSize } =
-      parsed.data
+    const {
+      title,
+      subtitle,
+      logoId,
+      customLogoDataUrl,
+      filename,
+      titleSize,
+      subtitleSize,
+    } = parsed.data
     const postsDir = postsImagesDir()
     const rawDir = path.join(postsDir, "_raw")
     await mkdir(rawDir, { recursive: true })
@@ -47,6 +64,7 @@ export async function POST(request: Request) {
         title,
         subtitle,
         logoId,
+        customLogoDataUrl,
         variant,
         titleSize,
         subtitleSize,
