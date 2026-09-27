@@ -29,7 +29,7 @@ description: >-
       "url": "https://github.com/clerk/og.new",
       "path": ".vendor/og.new",
       "depth": 1,
-      "notes": "Reference OG image editor; adapted product lives in apps/og"
+      "notes": "Reference OG image editor; adapted product lives in apps/studio"
     }
   ]
 }

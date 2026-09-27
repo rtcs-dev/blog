@@ -26,7 +26,7 @@ From the monorepo root:
 ```bash
 pnpm --filter studio dev
 # or
-pnpm dev:og
+pnpm dev:studio
 ```
 
 Opens on [http://localhost:3010](http://localhost:3010) (or the next free port).

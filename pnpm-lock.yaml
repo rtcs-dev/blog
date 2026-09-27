@@ -8,7 +8,7 @@ importers:
 
   .: {}
 
-  apps/og:
+  apps/studio:
     dependencies:
       '@radix-ui/react-aspect-ratio':
         specifier: ^1.1.1
