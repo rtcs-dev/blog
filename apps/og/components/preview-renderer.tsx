@@ -1,7 +1,4 @@
-"use client"
-
 import { useEffect } from "react"
-import Image from "next/image"
 import satori from "satori"
 
 import { CoverTemplate } from "@/components/cover-template"
@@ -14,12 +11,15 @@ export default function PreviewRenderer() {
   const title = useEditorStore((s) => s.title)
   const subtitle = useEditorStore((s) => s.subtitle)
   const logoId = useEditorStore((s) => s.logoId)
-  const customLogoDataUrl = useEditorStore((s) => s.customLogoDataUrl)
+  const logos = useEditorStore((s) => s.logos)
   const previewVariant = useEditorStore((s) => s.previewVariant)
   const titleSize = useEditorStore((s) => s.titleSize)
   const subtitleSize = useEditorStore((s) => s.subtitleSize)
   const previewSvg = useEditorStore((s) => s.previewSvg)
   const updatePreviewSvg = useEditorStore((s) => s.updatePreviewSvg)
+
+  const logoPath =
+    logos.find((logo) => logo.id === logoId)?.path ?? "/logos/nestjs.svg"
 
   useEffect(() => {
     let cancelled = false
@@ -40,8 +40,7 @@ export default function PreviewRenderer() {
         <CoverTemplate
           title={title}
           subtitle={subtitle}
-          logoId={logoId}
-          customLogoDataUrl={customLogoDataUrl}
+          logoPath={logoPath}
           variant={previewVariant}
           titleSize={titleSize}
           subtitleSize={subtitleSize}
@@ -70,8 +69,7 @@ export default function PreviewRenderer() {
   }, [
     title,
     subtitle,
-    logoId,
-    customLogoDataUrl,
+    logoPath,
     previewVariant,
     titleSize,
     subtitleSize,
@@ -80,9 +78,8 @@ export default function PreviewRenderer() {
 
   return (
     <AspectRatio ratio={16 / 9}>
-      <Image
+      <img
         alt="Cover preview"
-        priority
         className="h-full w-full object-contain"
         width={CANVAS.width}
         height={CANVAS.height}

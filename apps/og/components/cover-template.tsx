@@ -1,50 +1,26 @@
 import { CoverGradientLayers } from "@/components/cover-gradient-layers"
-import {
-  CUSTOM_LOGO_ID,
-  getLogoPath,
-  isBuiltinLogoId,
-  type LogoId,
-} from "@/lib/logos"
 import { absoluteUrl } from "@/lib/url"
 import { CANVAS, THEMES, type ThemeVariant } from "@/lib/themes"
 
 export type CoverRenderInput = {
   title: string
   subtitle: string
-  logoId: LogoId
-  customLogoDataUrl?: string | null
+  logoPath: string
   variant: ThemeVariant
   titleSize?: number
   subtitleSize?: number
 }
 
-export function resolveLogoSrc(
-  logoId: LogoId,
-  customLogoDataUrl?: string | null
-): string {
-  if (logoId === CUSTOM_LOGO_ID) {
-    if (!customLogoDataUrl) {
-      return absoluteUrl(getLogoPath("nestjs"))
-    }
-    return customLogoDataUrl
-  }
-  if (isBuiltinLogoId(logoId)) {
-    return absoluteUrl(getLogoPath(logoId))
-  }
-  return absoluteUrl(getLogoPath("nestjs"))
-}
-
 export function CoverTemplate({
   title,
   subtitle,
-  logoId,
-  customLogoDataUrl,
+  logoPath,
   variant,
   titleSize = 64,
   subtitleSize = 32,
 }: CoverRenderInput) {
   const theme = THEMES[variant]
-  const logoUrl = resolveLogoSrc(logoId, customLogoDataUrl)
+  const logoUrl = absoluteUrl(logoPath)
 
   return (
     <div
@@ -70,7 +46,6 @@ export function CoverTemplate({
           gap: "1.25rem",
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={logoUrl}
           width={96}

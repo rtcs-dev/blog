@@ -1,4 +1,4 @@
-# og
+# Studio
 
 Local Open Graph / cover image editor for this blog’s publishing workflow.
 
@@ -6,7 +6,7 @@ Adapted from [clerk/og.new](https://github.com/clerk/og.new). Many thanks to [Fa
 
 ## What it does
 
-1. Pick a logo from the blog’s common assets (NestJS, Node.js, blog mark).
+1. Pick a logo from `public/logos` (built-ins: NestJS, Node.js, blog mark — plus any you upload).
 2. Enter title and subtitle (matching existing post covers).
 3. Choose a filename stem (e.g. `my-post`).
 4. Save **light** and **dark** variants into the blog app:
@@ -18,13 +18,18 @@ Then reference them from MDX frontmatter as `imageLight` / `imageDark`.
 
 ## Develop
 
+Local-only Vite + React app (never deployed). Rendering and file writes run in Vite
+dev-server middleware via Node `fs`, Satori, and Sharp.
+
 From the monorepo root:
 
 ```bash
-pnpm --filter og dev
+pnpm --filter studio dev
+# or
+pnpm dev:og
 ```
 
-Opens on [http://localhost:3010](http://localhost:3010).
+Opens on [http://localhost:3010](http://localhost:3010) (or the next free port).
 
 ## Credits
 

@@ -1,43 +1,86 @@
-"use client"
-
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import {
-  CUSTOM_LOGO_ID,
-  fileToLogoDataUrl,
-  LOGO_UPLOAD_ACCEPT,
-  LOGOS,
-  type LogoId,
-} from "@/lib/logos"
+import { LOGO_UPLOAD_ACCEPT, type LogoEntry } from "@/lib/logos"
 import { useEditorStore } from "@/providers/editor-store-provider"
+
+async function fetchLogos(): Promise<LogoEntry[]> {
+  const res = await fetch("/api/logos")
+  const data = (await res.json()) as {
+    ok?: boolean
+    logos?: LogoEntry[]
+    error?: string
+  }
+  if (!res.ok || !data.ok || !data.logos) {
+    throw new Error(data.error ?? "Failed to load logos")
+  }
+  return data.logos
+}
 
 export default function EditorForm() {
   const title = useEditorStore((s) => s.title)
   const subtitle = useEditorStore((s) => s.subtitle)
   const logoId = useEditorStore((s) => s.logoId)
-  const customLogoDataUrl = useEditorStore((s) => s.customLogoDataUrl)
+  const logos = useEditorStore((s) => s.logos)
   const filename = useEditorStore((s) => s.filename)
   const previewVariant = useEditorStore((s) => s.previewVariant)
   const setTitle = useEditorStore((s) => s.setTitle)
   const setSubtitle = useEditorStore((s) => s.setSubtitle)
   const setLogoId = useEditorStore((s) => s.setLogoId)
-  const setCustomLogo = useEditorStore((s) => s.setCustomLogo)
-  const clearCustomLogo = useEditorStore((s) => s.clearCustomLogo)
+  const setLogos = useEditorStore((s) => s.setLogos)
   const setFilename = useEditorStore((s) => s.setFilename)
   const setPreviewVariant = useEditorStore((s) => s.setPreviewVariant)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploadError, setUploadError] = useState<string | null>(null)
+  const [loadingLogos, setLoadingLogos] = useState(true)
+
+  useEffect(() => {
+    let cancelled = false
+    void (async () => {
+      try {
+        const next = await fetchLogos()
+        if (!cancelled) setLogos(next)
+      } catch (error) {
+        if (!cancelled) {
+          setUploadError(
+            error instanceof Error ? error.message : "Failed to load logos"
+          )
+        }
+      } finally {
+        if (!cancelled) setLoadingLogos(false)
+      }
+    })()
+    return () => {
+      cancelled = true
+    }
+  }, [setLogos])
 
   async function onLogoUpload(file: File | undefined) {
     if (!file) return
     setUploadError(null)
     try {
-      const dataUrl = await fileToLogoDataUrl(file)
-      setCustomLogo(dataUrl)
+      const res = await fetch("/api/logos", {
+        method: "POST",
+        headers: {
+          "Content-Type": file.type || "application/octet-stream",
+          "X-Filename": file.name,
+        },
+        body: await file.arrayBuffer(),
+      })
+      const data = (await res.json()) as {
+        ok?: boolean
+        error?: string
+        logo?: LogoEntry
+        logos?: LogoEntry[]
+      }
+      if (!res.ok || !data.ok || !data.logos || !data.logo) {
+        throw new Error(data.error ?? "Failed to upload logo")
+      }
+      setLogos(data.logos)
+      setLogoId(data.logo.id)
     } catch (error) {
       setUploadError(
         error instanceof Error ? error.message : "Failed to upload logo"
@@ -51,46 +94,34 @@ export default function EditorForm() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-2">
         <Label>Logo</Label>
-        <RadioGroup
-          value={logoId}
-          onValueChange={(value) => {
-            if (value === CUSTOM_LOGO_ID && !customLogoDataUrl) return
-            setLogoId(value as LogoId)
-          }}
-          className="grid grid-cols-3 gap-2"
-        >
-          {LOGOS.map((logo) => (
-            <label
-              key={logo.id}
-              className="flex cursor-pointer flex-col items-center gap-2 rounded-md border p-3 has-[[data-state=checked]]:border-foreground"
-            >
-              <RadioGroupItem value={logo.id} className="sr-only" />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={logo.path}
-                alt={logo.label}
-                width={40}
-                height={40}
-                className="size-10 object-contain"
-              />
-              <span className="text-xs text-muted-foreground">{logo.label}</span>
-            </label>
-          ))}
-          {customLogoDataUrl ? (
-            <label className="flex cursor-pointer flex-col items-center gap-2 rounded-md border p-3 has-[[data-state=checked]]:border-foreground">
-              <RadioGroupItem value={CUSTOM_LOGO_ID} className="sr-only" />
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={customLogoDataUrl}
-                alt="Uploaded logo"
-                width={40}
-                height={40}
-                className="size-10 object-contain"
-              />
-              <span className="text-xs text-muted-foreground">Uploaded</span>
-            </label>
-          ) : null}
-        </RadioGroup>
+        {loadingLogos && logos.length === 0 ? (
+          <p className="text-xs text-muted-foreground">Loading logos…</p>
+        ) : (
+          <RadioGroup
+            value={logoId}
+            onValueChange={(value) => setLogoId(value)}
+            className="grid grid-cols-3 gap-2"
+          >
+            {logos.map((logo) => (
+              <label
+                key={logo.id}
+                className="flex cursor-pointer flex-col items-center gap-2 rounded-md border p-3 has-[[data-state=checked]]:border-foreground"
+              >
+                <RadioGroupItem value={logo.id} className="sr-only" />
+                <img
+                  src={logo.path}
+                  alt={logo.label}
+                  width={40}
+                  height={40}
+                  className="size-10 object-contain"
+                />
+                <span className="text-xs text-muted-foreground">
+                  {logo.label}
+                </span>
+              </label>
+            ))}
+          </RadioGroup>
+        )}
 
         <div className="flex flex-wrap items-center gap-2 pt-1">
           <input
@@ -109,22 +140,10 @@ export default function EditorForm() {
           >
             Upload logo
           </Button>
-          {customLogoDataUrl ? (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                setUploadError(null)
-                clearCustomLogo()
-              }}
-            >
-              Remove upload
-            </Button>
-          ) : null}
         </div>
         <p className="text-xs text-muted-foreground">
-          SVG, PNG, or WebP — used for this cover only (preview + save).
+          SVG, PNG, or WebP — saved into the local logos folder and listed with
+          the built-ins.
         </p>
         {uploadError ? (
           <p className="text-xs text-destructive">{uploadError}</p>

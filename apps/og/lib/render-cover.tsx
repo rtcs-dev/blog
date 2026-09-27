@@ -1,24 +1,21 @@
-import { readFile } from "fs/promises"
-import path from "path"
+import { readFile } from "node:fs/promises"
+import path from "node:path"
+import { fileURLToPath } from "node:url"
 
 import satori from "satori"
 
 import { CoverGradientLayers } from "@/components/cover-gradient-layers"
+import { resolveLogoFilePath } from "@/lib/logos-fs"
 import { getFontUrl, getFontsFromParams } from "@/lib/fonts"
-import {
-  CUSTOM_LOGO_ID,
-  getLogoPath,
-  isBuiltinLogoId,
-  type LogoId,
-} from "@/lib/logos"
 import { CANVAS, THEMES, type ThemeVariant } from "@/lib/themes"
 
-async function loadBuiltinLogoDataUrl(logoId: LogoId): Promise<string> {
-  if (!isBuiltinLogoId(logoId)) {
-    throw new Error("Custom logo requires an inlined data URL")
+const appRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..")
+
+async function loadLogoDataUrl(logoId: string): Promise<string> {
+  const filePath = await resolveLogoFilePath(appRoot, logoId)
+  if (!filePath) {
+    throw new Error(`Unknown logo id: ${logoId}`)
   }
-  const logoPath = getLogoPath(logoId)
-  const filePath = path.join(process.cwd(), "public", logoPath)
   const buffer = await readFile(filePath)
   const ext = path.extname(filePath).toLowerCase()
   const mime =
@@ -26,21 +23,10 @@ async function loadBuiltinLogoDataUrl(logoId: LogoId): Promise<string> {
       ? "image/png"
       : ext === ".svg"
         ? "image/svg+xml"
-        : "application/octet-stream"
+        : ext === ".webp"
+          ? "image/webp"
+          : "application/octet-stream"
   return `data:${mime};base64,${buffer.toString("base64")}`
-}
-
-async function resolveLogoDataUrl(
-  logoId: LogoId,
-  customLogoDataUrl?: string | null
-): Promise<string> {
-  if (logoId === CUSTOM_LOGO_ID) {
-    if (!customLogoDataUrl) {
-      throw new Error("Custom logo data URL is required")
-    }
-    return customLogoDataUrl
-  }
-  return loadBuiltinLogoDataUrl(logoId)
 }
 
 function ServerCover({
@@ -83,7 +69,6 @@ function ServerCover({
           gap: "1.25rem",
         }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={logoDataUrl}
           width={96}
@@ -133,8 +118,7 @@ function ServerCover({
 export async function renderCoverSvg(input: {
   title: string
   subtitle: string
-  logoId: LogoId
-  customLogoDataUrl?: string | null
+  logoId: string
   variant: ThemeVariant
   titleSize?: number
   subtitleSize?: number
@@ -153,10 +137,7 @@ export async function renderCoverSvg(input: {
     })
   )
 
-  const logoDataUrl = await resolveLogoDataUrl(
-    input.logoId,
-    input.customLogoDataUrl
-  )
+  const logoDataUrl = await loadLogoDataUrl(input.logoId)
 
   return satori(
     <ServerCover

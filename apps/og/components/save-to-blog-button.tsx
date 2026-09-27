@@ -1,5 +1,3 @@
-"use client"
-
 import { useState } from "react"
 
 import { Button } from "@/components/ui/button"
@@ -10,7 +8,6 @@ export default function SaveToBlogButton() {
   const title = useEditorStore((s) => s.title)
   const subtitle = useEditorStore((s) => s.subtitle)
   const logoId = useEditorStore((s) => s.logoId)
-  const customLogoDataUrl = useEditorStore((s) => s.customLogoDataUrl)
   const filename = useEditorStore((s) => s.filename)
   const titleSize = useEditorStore((s) => s.titleSize)
   const subtitleSize = useEditorStore((s) => s.subtitleSize)
@@ -24,7 +21,6 @@ export default function SaveToBlogButton() {
       title,
       subtitle,
       logoId,
-      customLogoDataUrl: customLogoDataUrl ?? undefined,
       filename,
     })
     if (!parsed.success) {

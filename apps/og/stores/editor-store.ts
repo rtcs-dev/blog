@@ -1,14 +1,13 @@
 import { createStore } from "zustand/vanilla"
 
-import { CUSTOM_LOGO_ID, type LogoId } from "@/lib/logos"
+import type { LogoEntry } from "@/lib/logos"
 import type { ThemeVariant } from "@/lib/themes"
 
 export type EditorState = {
   title: string
   subtitle: string
-  logoId: LogoId
-  /** Data URL for a user-uploaded logo when logoId is "custom". */
-  customLogoDataUrl: string | null
+  logoId: string
+  logos: LogoEntry[]
   filename: string
   previewVariant: ThemeVariant
   titleSize: number
@@ -19,9 +18,8 @@ export type EditorState = {
 export type EditorActions = {
   setTitle: (title: string) => void
   setSubtitle: (subtitle: string) => void
-  setLogoId: (logoId: LogoId) => void
-  setCustomLogo: (dataUrl: string) => void
-  clearCustomLogo: () => void
+  setLogoId: (logoId: string) => void
+  setLogos: (logos: LogoEntry[]) => void
   setFilename: (filename: string) => void
   setPreviewVariant: (variant: ThemeVariant) => void
   updatePreviewSvg: (svg: string) => void
@@ -33,7 +31,7 @@ export const defaultInitState: EditorState = {
   title: "Configuration",
   subtitle: "In NestJS applications",
   logoId: "nestjs",
-  customLogoDataUrl: null,
+  logos: [],
   filename: "configuring-nest",
   previewVariant: "light",
   titleSize: 64,
@@ -49,12 +47,12 @@ export const createEditorStore = (
     setTitle: (title) => set({ title }),
     setSubtitle: (subtitle) => set({ subtitle }),
     setLogoId: (logoId) => set({ logoId }),
-    setCustomLogo: (customLogoDataUrl) =>
-      set({ logoId: CUSTOM_LOGO_ID, customLogoDataUrl }),
-    clearCustomLogo: () =>
+    setLogos: (logos) =>
       set((state) => ({
-        customLogoDataUrl: null,
-        logoId: state.logoId === CUSTOM_LOGO_ID ? "nestjs" : state.logoId,
+        logos,
+        logoId: logos.some((logo) => logo.id === state.logoId)
+          ? state.logoId
+          : (logos[0]?.id ?? state.logoId),
       })),
     setFilename: (filename) => set({ filename }),
     setPreviewVariant: (previewVariant) => set({ previewVariant }),

@@ -1,7 +1,7 @@
 # dependencies
 /node_modules
+/dist
 /.next/
-/out/
 
 # debug
 npm-debug.log*
