@@ -22,10 +22,6 @@ export default function App() {
             <Card className="lg:col-span-1">
               <CardHeader>
                 <CardTitle>Cover</CardTitle>
-                <CardDescription>
-                  Match existing posts: centered logo, bold title, lighter
-                  subtitle, homepage-style light + dark gradients.
-                </CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col gap-6">
                 <EditorForm />
