@@ -6,7 +6,7 @@
 
 This repository contains the source code for the [rtcs blog](https://rtcs.dev).
 
-It is a pnpm workspace. The site lives in `apps/web`, built with Astro, Tailwind CSS, and MDX, and deployed on Cloudflare Workers.
+It is a pnpm workspace. The site lives in `apps/web`, built with Astro, Tailwind CSS, and MDX, and deployed on Cloudflare Workers. Local publishing tools live in `apps/studio`.
 
 ## Directory Structure
 

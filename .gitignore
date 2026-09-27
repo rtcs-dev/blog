@@ -16,6 +16,8 @@ pnpm-debug.log*
 # environment variables
 .env
 .env.production
+.env.local
+.env*.local
 
 # macOS-specific files
 .DS_Store
@@ -37,3 +39,5 @@ coverage/
 
 # git worktrees
 .worktrees
+# shallow-cloned third-party reference repos
+.vendor/
