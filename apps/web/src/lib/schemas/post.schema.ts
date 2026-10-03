@@ -9,8 +9,7 @@ export const Post = z.object({
   imageDark: z.string(),
   imageLight: z.string(),
   keywords: z.string().optional(),
-  /** Publish state. Missing values default to stable so existing posts stay live. */
-  status: PostStatus.default("stable"),
+  status: PostStatus,
 });
 
 export type Post = z.infer<typeof Post>;

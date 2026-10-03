@@ -16,17 +16,17 @@ describe("isPostVisible", () => {
   });
 });
 
-describe("Post schema status default", () => {
-  it("defaults missing status to stable", async () => {
+describe("Post schema status", () => {
+  it("rejects a post with no status", async () => {
     const { Post } = await import("./schemas/post.schema");
-    const parsed = Post.parse({
+    const parsed = Post.safeParse({
       title: "Example",
       description: "Desc",
       date: "2024-01-01",
       imageDark: "/dark.webp",
       imageLight: "/light.webp",
     });
-    expect(parsed.status).toBe("stable");
+    expect(parsed.success).toBe(false);
   });
 
   it("accepts draft and stable", async () => {
