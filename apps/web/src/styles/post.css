@@ -7,7 +7,7 @@
 }
 
 article.prose :is(h2, h3, h4) {
-  scroll-margin-top: 5.5rem;
+  scroll-margin-top: calc(80px + env(safe-area-inset-top, 0px) + 1rem);
 }
 
 .title:not(.expressive-code *) {
@@ -18,6 +18,20 @@ article.prose :is(h2, h3, h4) {
 h2 {
   @apply my-6 leading-normal;
   @apply dark:bg-gradient-to-br dark:from-primary dark:via-blog-title-accent dark:to-primary bg-clip-text text-transparent bg-primary;
+}
+
+h2[data-slot="popover-title"],
+h2[data-slot="drawer-title"] {
+  margin: 0;
+  font-family: inherit;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  letter-spacing: normal;
+  color: inherit;
+  background: none;
+  -webkit-text-fill-color: currentColor;
+  background-clip: border-box;
 }
 
 h3 {

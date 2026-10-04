@@ -1,17 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUp, List } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
-  Popover,
-  PopoverContent,
-  PopoverDescription,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@/components/ui/drawer";
 import { cn } from "@/lib/utils";
 
 export type TocHeading = {
@@ -34,17 +34,22 @@ function scrollToId(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
 
-  el.scrollIntoView({
+  const header = document.querySelector("header");
+  const headerBottom = header?.getBoundingClientRect().bottom ?? 0;
+  const top = el.getBoundingClientRect().top + window.scrollY - headerBottom - 16;
+
+  window.scrollTo({
+    top: Math.max(0, top),
     behavior: prefersReducedMotion() ? "instant" : "smooth",
-    block: "start",
   });
 }
 
 function scrollToTop() {
-  window.scrollTo({
-    top: 0,
-    behavior: prefersReducedMotion() ? "instant" : "smooth",
-  });
+  const root = document.documentElement;
+  const previous = root.style.scrollBehavior;
+  root.style.scrollBehavior = "auto";
+  window.scrollTo({ top: 0, behavior: "instant" });
+  root.style.scrollBehavior = previous;
 }
 
 function stripMarkup(text: string) {
@@ -121,33 +126,41 @@ function TocLinkList({
   activeId,
   onNavigate,
   className,
+  variant = "rail",
 }: {
   headings: TocHeading[];
   activeId: string | null;
-  onNavigate?: () => void;
+  onNavigate?: (id: string) => void;
   className?: string;
+  variant?: "rail" | "sheet";
 }) {
+  const sheet = variant === "sheet";
+
   return (
-    <ul className={cn("flex flex-col gap-1", className)}>
+    <ul className={cn("flex flex-col", sheet ? "gap-1" : "gap-1", className)}>
       {headings.map((heading) => {
         const isActive = activeId === heading.slug;
+        const nested = heading.depth > 2;
         return (
           <li key={heading.slug}>
             <a
               href={`#${heading.slug}`}
               aria-current={isActive ? "location" : undefined}
               className={cn(
-                "block rounded-md py-1 text-sm leading-snug transition-colors duration-150 motion-reduce:transition-none",
-                heading.depth > 2 ? "pl-3" : "pl-0",
+                "block rounded-md text-sm transition-colors duration-150 motion-reduce:transition-none",
+                sheet ? "px-2.5 py-2 leading-5" : "py-1 leading-snug",
+                nested ? (sheet ? "pl-6" : "pl-3") : sheet ? "pl-2.5" : "pl-0",
                 isActive
-                  ? "font-medium text-foreground"
+                  ? sheet
+                    ? "bg-muted text-foreground"
+                    : "text-foreground"
                   : "text-muted-foreground hover:text-foreground",
               )}
               onClick={(event) => {
                 event.preventDefault();
-                scrollToId(heading.slug);
                 history.replaceState(null, "", `#${heading.slug}`);
-                onNavigate?.();
+                if (onNavigate) onNavigate(heading.slug);
+                else scrollToId(heading.slug);
               }}
             >
               {stripMarkup(heading.text)}
@@ -162,25 +175,29 @@ function TocLinkList({
 function ScrollTopButton({
   className,
   enabled,
+  labeled = false,
 }: {
   className?: string;
   enabled: boolean;
+  labeled?: boolean;
 }) {
   return (
     <Button
       type="button"
       variant="outline"
-      size="icon"
-      aria-label="Scroll to top"
+      size={labeled ? "default" : "icon"}
+      aria-label={labeled ? undefined : "Scroll to top"}
       disabled={!enabled}
       className={cn(
-        "size-10 bg-background/90 shadow-sm backdrop-blur-sm transition-opacity duration-200 ease-out motion-reduce:transition-none",
+        "bg-background/90 shadow-sm backdrop-blur-sm transition-opacity duration-200 ease-out motion-reduce:transition-none",
+        !labeled && "size-10",
         enabled ? "opacity-100" : "opacity-0",
         className,
       )}
       onClick={scrollToTop}
     >
-      <ArrowUp />
+      <ArrowUp data-icon={labeled ? "inline-start" : undefined} />
+      {labeled ? "Scroll to top" : null}
     </Button>
   );
 }
@@ -194,6 +211,7 @@ export function PostToc({ headings }: PostTocProps) {
   const activeId = useActiveHeading(ids);
   const scrolled = useScrolledPast();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const pendingScrollId = useRef<string | null>(null);
   const hasToc = tocHeadings.length > 0;
 
   if (!hasToc) {
@@ -201,7 +219,8 @@ export function PostToc({ headings }: PostTocProps) {
 
     return (
       <div className="fixed right-4 bottom-4 z-40 md:right-6 md:bottom-6">
-        <ScrollTopButton enabled />
+        <ScrollTopButton enabled className="xl:hidden" />
+        <ScrollTopButton enabled labeled className="hidden xl:inline-flex" />
       </div>
     );
   }
@@ -212,21 +231,37 @@ export function PostToc({ headings }: PostTocProps) {
       <aside aria-label="Table of contents" className="hidden h-full xl:block">
         <div className="sticky top-28 flex max-h-[calc(100vh-8rem)] flex-col gap-4 overflow-y-auto">
           <div>
-            <p className="mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase">
-              On this page
+            <p className="mb-2 text-sm font-medium text-foreground">
+              Table of contents
             </p>
             <nav>
               <TocLinkList headings={tocHeadings} activeId={activeId} />
             </nav>
           </div>
-          <ScrollTopButton enabled={scrolled} className="self-start" />
+          <ScrollTopButton
+            enabled={scrolled}
+            labeled
+            className="self-start"
+          />
         </div>
       </aside>
 
       <div className="fixed right-4 bottom-4 z-40 xl:hidden">
         <div className="flex items-center gap-1 rounded-xl border border-border bg-background/90 p-1 shadow-sm backdrop-blur-sm">
-          <Popover open={mobileOpen} onOpenChange={setMobileOpen}>
-            <PopoverTrigger
+          <Drawer
+            open={mobileOpen}
+            onOpenChange={setMobileOpen}
+            onOpenChangeComplete={(open) => {
+              if (open) return;
+              const id = pendingScrollId.current;
+              if (!id) return;
+              pendingScrollId.current = null;
+              scrollToId(id);
+            }}
+            showSwipeHandle
+            snapPoints={[0.72]}
+          >
+            <DrawerTrigger
               render={
                 <Button
                   type="button"
@@ -238,26 +273,27 @@ export function PostToc({ headings }: PostTocProps) {
               }
             >
               <List />
-            </PopoverTrigger>
-            <PopoverContent
-              align="end"
-              side="top"
-              sideOffset={10}
-              className="max-h-[min(60vh,24rem)] w-72 overflow-y-auto p-3"
-            >
-              <PopoverHeader className="mb-2">
-                <PopoverTitle>On this page</PopoverTitle>
-                <PopoverDescription className="sr-only">
+            </DrawerTrigger>
+            <DrawerContent>
+              <DrawerHeader>
+                <DrawerTitle>Table of contents</DrawerTitle>
+                <DrawerDescription className="sr-only">
                   Jump to a section in this article
-                </PopoverDescription>
-              </PopoverHeader>
-              <TocLinkList
-                headings={tocHeadings}
-                activeId={activeId}
-                onNavigate={() => setMobileOpen(false)}
-              />
-            </PopoverContent>
-          </Popover>
+                </DrawerDescription>
+              </DrawerHeader>
+              <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-[max(1rem,env(safe-area-inset-bottom))]">
+                <TocLinkList
+                  variant="sheet"
+                  headings={tocHeadings}
+                  activeId={activeId}
+                  onNavigate={(id) => {
+                    pendingScrollId.current = id;
+                    setMobileOpen(false);
+                  }}
+                />
+              </div>
+            </DrawerContent>
+          </Drawer>
 
           <Button
             type="button"
