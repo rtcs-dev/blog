@@ -1,0 +1,122 @@
+@reference "./globals.css";
+
+.blog-section {
+  @apply mb-10 md:mb-12;
+}
+
+.blog-page-title,
+.blog-featured-title {
+  @apply mb-0 w-fit max-w-full bg-primary bg-clip-text font-heading font-bold text-balance text-transparent;
+  @apply dark:bg-gradient-to-br dark:from-primary dark:via-blog-title-accent dark:to-primary;
+}
+
+.blog-section-title {
+  @apply mb-0 w-fit max-w-full bg-transparent font-heading text-2xl font-bold leading-normal text-balance text-foreground md:text-3xl;
+}
+
+.blog-page-title {
+  @apply text-5xl leading-normal md:text-6xl;
+}
+
+.blog-featured-title {
+  @apply text-3xl leading-normal md:text-4xl;
+}
+
+.blog-series-name,
+.blog-list-title {
+  @apply mb-0 font-heading font-semibold leading-snug text-pretty text-foreground;
+}
+
+.blog-series-name {
+  @apply text-xl md:text-2xl;
+}
+
+.blog-list-title {
+  @apply text-xl md:text-2xl;
+}
+
+.blog-featured-kicker {
+  @apply mb-2 font-heading text-base font-semibold text-primary;
+}
+
+.blog-summary {
+  @apply mt-2 mb-0 line-clamp-2 text-base leading-7 text-pretty text-muted-foreground;
+}
+
+.blog-featured-summary {
+  @apply mt-4 mb-0 max-w-xl text-lg leading-8 text-pretty text-primary-blog-foreground;
+}
+
+.blog-row {
+  display: grid;
+  gap: 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .blog-row {
+    grid-template-columns: 11rem minmax(0, 1fr);
+    align-items: start;
+    column-gap: 2rem;
+  }
+}
+
+.blog-meta {
+  @apply flex flex-wrap items-center gap-x-3 gap-y-1 md:flex-col md:items-start md:gap-1.5 md:pt-1;
+}
+
+.blog-date,
+.blog-part,
+.blog-count,
+.blog-between {
+  @apply text-sm text-muted-foreground;
+}
+
+.blog-date {
+  @apply whitespace-nowrap;
+}
+
+.blog-count,
+.blog-between {
+  @apply mb-0;
+}
+
+.blog-draft {
+  @apply text-sm font-medium text-primary;
+}
+
+.blog-feature {
+  @apply grid gap-6 md:grid-cols-[minmax(0,1fr)_minmax(14rem,20rem)] md:items-center md:gap-10 lg:grid-cols-[minmax(0,1.15fr)_minmax(18rem,26rem)] lg:gap-12;
+}
+
+.blog-card,
+.blog-series-row {
+  @apply py-4 md:py-5;
+}
+
+.blog-cover-image {
+  aspect-ratio: 1200 / 630;
+  width: 100%;
+  object-fit: cover;
+}
+
+.blog-series-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.blog-series-head {
+  padding-bottom: 0.25rem;
+}
+
+.blog-omitted {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+.blog-feature:focus-visible,
+.blog-card:focus-visible,
+.blog-series-row:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 3px;
+}

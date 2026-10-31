@@ -1,5 +1,6 @@
 ---
 import BlogLayout from "@/layouts/blog-layout.astro";
+import { includeDraftPosts } from "@/lib/env";
 import { getPosts } from "@/lib/posts";
 import { getSeriesMembers } from "@/lib/posts/series";
 import { render } from "astro:content";
@@ -17,7 +18,11 @@ const { post, posts } = Astro.props;
 const { Content, headings } = await render(post);
 
 const seriesName = post.data.series?.name;
-const seriesMembers = seriesName ? getSeriesMembers(posts, seriesName) : [];
+const seriesMembers = seriesName
+  ? getSeriesMembers(posts, seriesName, {
+      includeDrafts: includeDraftPosts(),
+    })
+  : [];
 ---
 
 <BlogLayout

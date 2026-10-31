@@ -1,36 +1,21 @@
 ---
-import FeaturedPost from "@/components/blog/featured-post.astro";
-import Post from "@/components/blog/post.astro";
+import BlogIndex from "@/components/blog/blog-index.astro";
 import DefaultLayout from "@/layouts/default-layout.astro";
 import { getPosts } from "@/lib/posts";
+import { buildBlogIndex, pickFeaturedPost } from "@/lib/posts/series";
 
 const posts = await getPosts();
-
-const [featuredPost, ...otherPosts] = posts;
+const featured = pickFeaturedPost(posts);
+const index = buildBlogIndex(posts, featured?.id);
+const highlightedSeries = index.series[0];
 ---
 
 <DefaultLayout headProps={{ title: "Blog - Robert Tabacaru" }}>
-  <div>
-    <h1 class="mb-8 text-center md:text-left">Articles and guides</h1>
-  </div>
-  <div>
-    <div class="hidden md:block">
-      <FeaturedPost id={featuredPost.id} {...featuredPost.data} />
-    </div>
-    <div class="md:hidden">
-      <Post {...featuredPost.data} id={featuredPost.id} />
-    </div>
-    <section
-      class="my-8 grid gap-8 grid-cols-1 auto-rows-fr md:grid-cols-2 lg:grid-cols-3"
-    >
-      {otherPosts.map((post) => <Post {...post.data} id={post.id} />)}
-    </section>
-    <div class="flex justify-center items-center gap-4">
-      <hr class="bg-muted w-full" />
-      <p class="text-center text-muted-foreground whitespace-nowrap">
-        more coming soon
-      </p>
-      <hr class="bg-muted w-full" />
-    </div>
+  <div class="pt-4 md:pt-8">
+    <BlogIndex
+      featured={featured}
+      series={highlightedSeries}
+      posts={index.posts}
+    />
   </div>
 </DefaultLayout>

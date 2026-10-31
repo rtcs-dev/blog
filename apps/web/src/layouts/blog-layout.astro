@@ -3,9 +3,16 @@ import type { CollectionEntry } from "astro:content";
 import DefaultLayout from "./default-layout.astro";
 import FormattedDate from "@/components/ui/formatted-date.astro";
 import DottedBackground from "@/components/layout/dotted-background.astro";
-import { PostToc, type TocHeading } from "@/components/blog-post/post-toc";
-import SeriesNav from "@/components/blog/series-nav.astro";
-import type { SeriesMember } from "@/lib/posts/series";
+import {
+  PostToc,
+  type PostSeriesContext,
+  type TocHeading,
+} from "@/components/blog-post/post-toc";
+import {
+  getSeriesNeighbors,
+  seriesHref,
+  type SeriesMember,
+} from "@/lib/posts/series";
 import "@/styles/post.css";
 
 type Props = CollectionEntry<"posts">["data"] & {
@@ -27,7 +34,24 @@ const {
 const tocHeadings = headings.filter(
   (heading) => heading.depth === 2 || heading.depth === 3,
 );
-const hasToc = tocHeadings.length > 0;
+const seriesContext: PostSeriesContext | undefined = (() => {
+  if (!series || !currentId || !seriesMembers?.length) return undefined;
+  const neighbors = getSeriesNeighbors(seriesMembers, currentId);
+  if (neighbors.position < 1) return undefined;
+  return {
+    name: series.name,
+    href: seriesHref(series.name),
+    position: neighbors.position,
+    total: seriesMembers.length,
+    previous: neighbors.previous
+      ? { id: neighbors.previous.id, title: neighbors.previous.title }
+      : undefined,
+    next: neighbors.next
+      ? { id: neighbors.next.id, title: neighbors.next.title }
+      : undefined,
+  };
+})();
+const showRail = tocHeadings.length > 0 || Boolean(seriesContext);
 ---
 
 <DefaultLayout
@@ -45,23 +69,16 @@ const hasToc = tocHeadings.length > 0;
       <FormattedDate class="text-muted-foreground" date={date} />
     </p>
   </div>
-  {
-    series && seriesMembers && currentId && (
-      <SeriesNav
-        name={series.name}
-        members={seriesMembers}
-        currentId={currentId}
-      />
-    )
-  }
   <div
     class:list={[
-      hasToc && "xl:grid xl:grid-cols-[minmax(0,1fr)_13rem] xl:gap-10",
+      showRail && "xl:grid xl:grid-cols-[minmax(0,1fr)_13rem] xl:gap-10",
     ]}
   >
-    <article class="prose min-w-0">
-      <slot />
-    </article>
-    <PostToc client:load headings={tocHeadings} />
+    <div class="min-w-0">
+      <article class="prose min-w-0">
+        <slot />
+      </article>
+    </div>
+    <PostToc client:load headings={tocHeadings} series={seriesContext} />
   </div>
 </DefaultLayout>

@@ -1,0 +1,54 @@
+.post-link-title::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 200ms cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .post-link:hover .post-link-title::after {
+    transform: scaleX(1);
+  }
+}
+
+.post-link:focus-visible .post-link-title::after {
+  transform: scaleX(1);
+}
+
+.post-link-arrow-motion svg[data-icon="inline-end"] {
+  transition:
+    opacity 150ms ease-out,
+    transform 150ms ease-out;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .post-link-arrow-motion svg[data-icon="inline-end"] {
+    opacity: 0;
+  }
+
+  .post-link-arrow-motion:hover svg[data-icon="inline-end"],
+  .post-link-arrow-motion:focus-visible svg[data-icon="inline-end"] {
+    opacity: 1;
+    transform: translateX(0.25rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .post-link-title::after,
+  .post-link-arrow-motion svg[data-icon="inline-end"] {
+    transition: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: reduce) {
+  .post-link-arrow-motion:hover svg[data-icon="inline-end"],
+  .post-link-arrow-motion:focus-visible svg[data-icon="inline-end"] {
+    transform: none;
+  }
+}
