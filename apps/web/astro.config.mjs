@@ -18,7 +18,11 @@ export default defineConfig({
     imageService: "compile",
   }),
   vite: {
-    plugins: [tailwindcss(), svgr(), wgslVitePlugin({ minify: true })],
+    plugins: [
+      tailwindcss(),
+      svgr(),
+      wgslVitePlugin({ minify: true }),
+    ],
     resolve: {
       dedupe: ["react", "react-dom"],
     },
