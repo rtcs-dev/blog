@@ -1,0 +1,58 @@
+---
+import { ArrowRight } from "lucide-react";
+import {
+  postLink,
+  postLinkArrow,
+  postLinkArrowMotion,
+  postLinkRow,
+  postLinkTitle,
+} from "@/components/blog/post-link";
+import FormattedDate from "@/components/ui/formatted-date.astro";
+import type { BlogIndexPost } from "@/lib/posts/series";
+import "@/styles/blog-listing.css";
+
+type Props = {
+  post: BlogIndexPost;
+  headingId: string;
+  heading?: "h2" | "h3" | "h4";
+  variant?: "card" | "series";
+};
+
+const { post, headingId, heading = "h3", variant = "card" } = Astro.props;
+const Heading = heading;
+const published = new Date(post.data.date);
+---
+
+<a
+  class:list={[
+    postLink,
+    postLinkArrowMotion,
+    postLinkRow,
+    variant === "card" ? "blog-card" : "blog-series-row",
+  ]}
+  href={`/posts/${post.id}`}
+  aria-labelledby={headingId}
+>
+  <span class="blog-row min-w-0">
+    <span class="blog-meta">
+      <FormattedDate class="blog-date" date={published} />
+      {
+        post.data.series && (
+          <span class="blog-part">Part {post.data.series.order}</span>
+        )
+      }
+      {post.data.status === "draft" && <span class="blog-draft">Draft</span>}
+    </span>
+    <span class="min-w-0">
+      <Heading id={headingId} class:list={[postLinkTitle, "blog-list-title"]}>
+        {post.data.title}
+      </Heading>
+      {
+        post.data.description && (
+          <p class="blog-summary">{post.data.description}</p>
+        )
+      }
+    </span>
+  </span>
+  <ArrowRight data-icon="inline-end" className={postLinkArrow} />
+</a>

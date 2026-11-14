@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUp, List } from "lucide-react";
 
+import { postLink, postLinkTitle } from "@/components/blog/post-link";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -20,8 +21,23 @@ export type TocHeading = {
   text: string;
 };
 
+export type PostSeriesLink = {
+  id: string;
+  title: string;
+};
+
+export type PostSeriesContext = {
+  name: string;
+  href: string;
+  position: number;
+  total: number;
+  previous?: PostSeriesLink;
+  next?: PostSeriesLink;
+};
+
 type PostTocProps = {
   headings: TocHeading[];
+  series?: PostSeriesContext;
 };
 
 const TOC_DEPTHS = new Set([2, 3]);
@@ -172,6 +188,76 @@ function TocLinkList({
   );
 }
 
+function SeriesContext({
+  series,
+  variant = "rail",
+}: {
+  series: PostSeriesContext;
+  variant?: "rail" | "sheet";
+}) {
+  const sheet = variant === "sheet";
+
+  return (
+    <nav aria-label={`${series.name} series`}>
+      <a
+        href={series.href}
+        className={cn(
+          postLink,
+          "block text-sm font-medium text-foreground",
+          sheet && "rounded-md px-2.5 py-2",
+        )}
+      >
+        <span className={postLinkTitle}>{series.name}</span>
+      </a>
+      <p
+        className={cn(
+          "text-sm text-muted-foreground",
+          sheet ? "px-2.5 pb-1" : "mt-1",
+        )}
+      >
+        Part {series.position} of {series.total}
+      </p>
+      {series.previous || series.next ? (
+        <div className={cn("mt-3 flex flex-col", sheet ? "gap-1" : "gap-2")}>
+          {series.previous ? (
+            <a
+              href={`/posts/${series.previous.id}`}
+              className={cn(
+                postLink,
+                "block rounded-md text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground motion-reduce:transition-none",
+                sheet ? "px-2.5 py-2" : "py-1",
+              )}
+            >
+              <span className="block">Previous</span>
+              <span className={cn("text-foreground", postLinkTitle)}>
+                {series.previous.title}
+              </span>
+            </a>
+          ) : null}
+          {series.next ? (
+            <a
+              href={`/posts/${series.next.id}`}
+              className={cn(
+                postLink,
+                "block rounded-md text-sm text-muted-foreground transition-colors duration-150 hover:text-foreground motion-reduce:transition-none",
+                sheet ? "px-2.5 py-2" : "py-1",
+              )}
+            >
+              <span className="block">Next</span>
+              <span className={cn("text-foreground", postLinkTitle)}>
+                {series.next.title}
+              </span>
+            </a>
+          ) : null}
+        </div>
+      ) : null}
+    </nav>
+  );
+}
+
+const scrollTopDisabledCursor =
+  "disabled:pointer-events-auto disabled:cursor-not-allowed";
+
 function ScrollTopButton({
   className,
   enabled,
@@ -190,6 +276,7 @@ function ScrollTopButton({
       disabled={!enabled}
       className={cn(
         "bg-background/90 shadow-sm backdrop-blur-sm transition-opacity duration-200 ease-out motion-reduce:transition-none",
+        scrollTopDisabledCursor,
         !labeled && "size-10",
         enabled ? "opacity-100" : "opacity-0",
         className,
@@ -202,7 +289,7 @@ function ScrollTopButton({
   );
 }
 
-export function PostToc({ headings }: PostTocProps) {
+export function PostToc({ headings, series }: PostTocProps) {
   const tocHeadings = useMemo(
     () => headings.filter((heading) => TOC_DEPTHS.has(heading.depth)),
     [headings],
@@ -213,8 +300,9 @@ export function PostToc({ headings }: PostTocProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const pendingScrollId = useRef<string | null>(null);
   const hasToc = tocHeadings.length > 0;
+  const hasSeries = Boolean(series && series.position > 0);
 
-  if (!hasToc) {
+  if (!hasToc && !hasSeries) {
     if (!scrolled) return null;
 
     return (
@@ -225,19 +313,27 @@ export function PostToc({ headings }: PostTocProps) {
     );
   }
 
+  const drawerLabel = hasToc ? "Table of contents" : (series?.name ?? "Series");
+
   return (
-    // Single grid cell: desktop rail in-flow, mobile cluster fixed.
     <div className="relative min-h-0">
-      <aside aria-label="Table of contents" className="hidden h-full xl:block">
-        <div className="sticky top-28 flex max-h-[calc(100vh-8rem)] flex-col gap-4 overflow-y-auto">
-          <div>
-            <p className="mb-2 text-sm font-medium text-foreground">
-              Table of contents
-            </p>
-            <nav>
-              <TocLinkList headings={tocHeadings} activeId={activeId} />
-            </nav>
-          </div>
+      <aside className="hidden h-full xl:block">
+        <div className="sticky top-28 flex max-h-[calc(100vh-8rem)] flex-col gap-4">
+          {hasSeries && series ? (
+            <div className={cn(hasToc && "border-b border-border pb-4")}>
+              <SeriesContext series={series} />
+            </div>
+          ) : null}
+          {hasToc ? (
+            <div className="min-h-0 flex-1 overflow-y-auto">
+              <p className="mb-2 text-sm font-medium text-foreground">
+                Table of contents
+              </p>
+              <nav aria-label="Table of contents">
+                <TocLinkList headings={tocHeadings} activeId={activeId} />
+              </nav>
+            </div>
+          ) : null}
           <ScrollTopButton
             enabled={scrolled}
             labeled
@@ -267,7 +363,7 @@ export function PostToc({ headings }: PostTocProps) {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  aria-label="Table of contents"
+                  aria-label={drawerLabel}
                   className="size-10"
                 />
               }
@@ -276,21 +372,32 @@ export function PostToc({ headings }: PostTocProps) {
             </DrawerTrigger>
             <DrawerContent>
               <DrawerHeader>
-                <DrawerTitle>Table of contents</DrawerTitle>
+                <DrawerTitle>{drawerLabel}</DrawerTitle>
                 <DrawerDescription className="sr-only">
-                  Jump to a section in this article
+                  {hasToc
+                    ? "Jump to a section in this article"
+                    : `Parts in the ${series?.name} series`}
                 </DrawerDescription>
               </DrawerHeader>
               <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-[max(1rem,env(safe-area-inset-bottom))]">
-                <TocLinkList
-                  variant="sheet"
-                  headings={tocHeadings}
-                  activeId={activeId}
-                  onNavigate={(id) => {
-                    pendingScrollId.current = id;
-                    setMobileOpen(false);
-                  }}
-                />
+                {hasSeries && series ? (
+                  <div
+                    className={cn(hasToc && "mb-3 border-b border-border pb-3")}
+                  >
+                    <SeriesContext series={series} variant="sheet" />
+                  </div>
+                ) : null}
+                {hasToc ? (
+                  <TocLinkList
+                    variant="sheet"
+                    headings={tocHeadings}
+                    activeId={activeId}
+                    onNavigate={(id) => {
+                      pendingScrollId.current = id;
+                      setMobileOpen(false);
+                    }}
+                  />
+                ) : null}
               </div>
             </DrawerContent>
           </Drawer>
@@ -302,6 +409,7 @@ export function PostToc({ headings }: PostTocProps) {
             aria-label="Scroll to top"
             className={cn(
               "size-10 transition-opacity duration-200 ease-out motion-reduce:transition-none",
+              scrollTopDisabledCursor,
               scrolled ? "opacity-100" : "opacity-40",
             )}
             disabled={!scrolled}

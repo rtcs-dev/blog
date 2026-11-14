@@ -1,0 +1,55 @@
+---
+import { ArrowLeft } from "lucide-react";
+import BlogPostRow from "@/components/blog/blog-post-row.astro";
+import { buttonVariants } from "@/components/ui/button";
+import DefaultLayout from "@/layouts/default-layout.astro";
+import { getPosts } from "@/lib/posts";
+import { buildBlogIndex, seriesSlug } from "@/lib/posts/series";
+import "@/styles/blog-listing.css";
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  const index = buildBlogIndex(posts);
+
+  return index.series.map((entry) => ({
+    params: { slug: seriesSlug(entry.name) },
+    props: { name: entry.name, posts: entry.posts },
+  }));
+}
+
+const { name, posts } = Astro.props;
+
+function partsLabel(count: number) {
+  return count === 1 ? "1 part" : `${count} parts`;
+}
+---
+
+<DefaultLayout headProps={{ title: `${name} - Robert Tabacaru` }}>
+  <div class="pt-4 md:pt-8">
+    <a class:list={[buttonVariants({ variant: "muted" }), "mb-8"]} href="/blog">
+      <ArrowLeft data-icon="inline-start" className="size-4" />
+      Back
+    </a>
+    <header class="mb-8">
+      <h1 class="blog-page-title">{name}</h1>
+      <p class="mt-3 mb-0 text-base text-muted-foreground">{partsLabel(posts.length)}</p>
+    </header>
+    <ol class="blog-series-list">
+        {
+          posts.map((post) => {
+            const headingId = `series-page-${post.id}`;
+            return (
+              <li>
+                <BlogPostRow
+                  post={post}
+                  heading="h2"
+                  headingId={headingId}
+                  variant="series"
+                />
+              </li>
+            );
+          })
+        }
+    </ol>
+  </div>
+</DefaultLayout>

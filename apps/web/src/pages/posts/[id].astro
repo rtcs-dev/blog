@@ -1,6 +1,8 @@
 ---
 import BlogLayout from "@/layouts/blog-layout.astro";
+import { includeDraftPosts } from "@/lib/env";
 import { getPosts } from "@/lib/posts";
+import { getSeriesMembers } from "@/lib/posts/series";
 import { render } from "astro:content";
 
 export async function getStaticPaths() {
@@ -8,14 +10,26 @@ export async function getStaticPaths() {
 
   return posts.map((post) => ({
     params: { id: post.id },
-    props: { post },
+    props: { post, posts },
   }));
 }
 
-const { post } = Astro.props;
+const { post, posts } = Astro.props;
 const { Content, headings } = await render(post);
+
+const seriesName = post.data.series?.name;
+const seriesMembers = seriesName
+  ? getSeriesMembers(posts, seriesName, {
+      includeDrafts: includeDraftPosts(),
+    })
+  : [];
 ---
 
-<BlogLayout {...post.data} headings={headings}>
+<BlogLayout
+  {...post.data}
+  headings={headings}
+  seriesMembers={seriesMembers}
+  currentId={post.id}
+>
   <Content />
 </BlogLayout>

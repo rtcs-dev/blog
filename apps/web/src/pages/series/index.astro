@@ -1,0 +1,65 @@
+---
+import { ArrowLeft } from "lucide-react";
+import BlogPostRow from "@/components/blog/blog-post-row.astro";
+import { buttonVariants } from "@/components/ui/button";
+import DefaultLayout from "@/layouts/default-layout.astro";
+import { getPosts } from "@/lib/posts";
+import { buildBlogIndex, seriesSlug } from "@/lib/posts/series";
+import "@/styles/blog-listing.css";
+
+const posts = await getPosts();
+const { series } = buildBlogIndex(posts);
+
+function partsLabel(count: number) {
+  return count === 1 ? "1 part" : `${count} parts`;
+}
+---
+
+<DefaultLayout headProps={{ title: "Series - Robert Tabacaru" }}>
+  <div class="pt-4 md:pt-8">
+    <a class:list={[buttonVariants({ variant: "muted" }), "mb-8"]} href="/blog">
+      <ArrowLeft data-icon="inline-start" className="size-4" />
+      Back
+    </a>
+    <header class="mb-8">
+      <h1 class="blog-page-title">All series</h1>
+    </header>
+    <div class="flex flex-col gap-8">
+      {
+        series.map((entry) => {
+          const headingId = `series-${seriesSlug(entry.name)}`;
+          return (
+            <section aria-labelledby={headingId}>
+                <div class="blog-series-head">
+                  <div class="blog-row">
+                    <div class="hidden md:block" aria-hidden="true"></div>
+                    <div class="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
+                      <h2 id={headingId} class="blog-series-name">
+                        {entry.name}
+                      </h2>
+                      <p class="blog-count">{partsLabel(entry.posts.length)}</p>
+                    </div>
+                  </div>
+                </div>
+                <ol class="blog-series-list">
+                  {entry.posts.map((post) => {
+                    const postHeadingId = `${headingId}-${post.id}`;
+                    return (
+                      <li>
+                        <BlogPostRow
+                          post={post}
+                          heading="h3"
+                          headingId={postHeadingId}
+                          variant="series"
+                        />
+                      </li>
+                    );
+                  })}
+                </ol>
+            </section>
+          );
+        })
+      }
+    </div>
+  </div>
+</DefaultLayout>
