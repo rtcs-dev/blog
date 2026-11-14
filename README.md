@@ -24,7 +24,7 @@ It is a pnpm workspace. The site lives in `apps/web`, built with Astro, Tailwind
 
 ### Preliminaries for local development
 
-- `node` (version 22.18 or newer)
+- `node` (version 22.22 or newer)
 - `pnpm`
 
 Clone the repository, install the dependencies from the repo root, and make it yours!
@@ -39,7 +39,7 @@ pnpm dev
 ### Prerequisites
 
 1. Create a Cloudflare account if you don't have one
-2. Use Node.js 22.18 or newer
+2. Use Node.js 22.22 or newer
 3. Authenticate with Cloudflare: `pnpm run login`
 
 ### Deploying
