@@ -44,6 +44,11 @@ pnpm dev
 
 ### Deploying
 
-1. Build the site: `pnpm build`
-2. Deploy to Cloudflare Workers: `pnpm run deploy`
-   - Or use `pnpm run dev` to preview locally before deploying
+From the repository root:
+
+- `pnpm run dev` starts the local Worker dev server.
+- `pnpm run preview` does the same.
+- `pnpm build` checks and builds the site without deploying.
+- `pnpm run deploy` builds the site, then deploys that production build.
+- `pnpm run deploy:preview` builds the site, then deploys a Worker Preview of that build.
+- `pnpm run types` writes the Worker types from `cloudflare.config.ts`.

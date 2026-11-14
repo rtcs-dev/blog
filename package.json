@@ -13,6 +13,7 @@
     "test:cov": "pnpm --filter web test:cov",
     "deploy": "pnpm --filter web run deploy",
     "deploy:preview": "pnpm --filter web run deploy:preview",
-    "login": "pnpm --filter web login"
+    "login": "pnpm --filter web login",
+    "types": "pnpm --filter web types"
   }
 }
