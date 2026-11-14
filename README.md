@@ -24,7 +24,7 @@ It is a pnpm workspace. The site lives in `apps/web`, built with Astro, Tailwind
 
 ### Preliminaries for local development
 
-- `node` (version 20 or latest recommended)
+- `node` (version 22.18 or newer)
 - `pnpm`
 
 Clone the repository, install the dependencies from the repo root, and make it yours!
@@ -39,11 +39,11 @@ pnpm dev
 ### Prerequisites
 
 1. Create a Cloudflare account if you don't have one
-2. Install the Wrangler CLI (already included as a dev dependency)
-3. Authenticate with Cloudflare: `npx wrangler login`
+2. Use Node.js 22.18 or newer
+3. Authenticate with Cloudflare: `pnpm run login`
 
 ### Deploying
 
 1. Build the site: `pnpm build`
 2. Deploy to Cloudflare Workers: `pnpm run deploy`
-   - Or use `pnpm run deploy:preview` to preview locally before deploying
+   - Or use `pnpm run dev` to preview locally before deploying
