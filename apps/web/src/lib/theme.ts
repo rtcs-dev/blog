@@ -16,16 +16,14 @@ export const getThemePreference = (): ThemePreference => {
     : "light";
 };
 
-export function syncBrowserChrome(
-  isDark: boolean,
-  doc: Document = document,
-) {
+export function syncBrowserChrome(isDark: boolean, doc: Document = document) {
   const color = isDark ? THEME_BACKGROUNDS.dark : THEME_BACKGROUNDS.light;
   doc.documentElement.style.colorScheme = isDark ? "dark" : "light";
 
-  let meta = doc.querySelector('meta[name="theme-color"]');
-  if (!(meta instanceof HTMLMetaElement)) {
-    meta = doc.createElement("meta");
+  const existing = doc.querySelector('meta[name="theme-color"]');
+  const meta =
+    existing instanceof HTMLMetaElement ? existing : doc.createElement("meta");
+  if (!(existing instanceof HTMLMetaElement)) {
     meta.name = "theme-color";
     doc.head.appendChild(meta);
   }
