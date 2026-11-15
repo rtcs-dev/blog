@@ -12,7 +12,7 @@
     "start": "cf dev",
     "login": "cf auth login",
     "deploy": "pnpm run build && cf deploy --prebuilt --mode production",
-    "deploy:preview": "pnpm run build && cf previews deploy --prebuilt --mode production",
+    "deploy:preview": "astro check && pnpm run build:registry && cf previews deploy --mode production",
     "types": "cf workers types",
     "test": "vitest run",
     "test:watch": "vitest --watch",

@@ -50,5 +50,5 @@ From the repository root:
 - `pnpm run preview` does the same.
 - `pnpm build` checks and builds the site without deploying.
 - `pnpm run deploy` builds the site, then deploys that production build.
-- `pnpm run deploy:preview` builds the site, then deploys a Worker Preview of that build.
+- `pnpm run deploy:preview` runs the checks and registry build, then `cf previews deploy` builds and deploys a Worker Preview.
 - `pnpm run types` writes the Worker types from `cloudflare.config.ts`.
