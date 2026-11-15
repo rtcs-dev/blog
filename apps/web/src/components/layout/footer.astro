@@ -4,8 +4,7 @@ import { buttonVariants } from "@/components/ui/button";
 import "@/styles/footer.css";
 import GithubIcon from "@/icons/social/github.svg";
 import LinkedInIcon from "@/icons/social/linkedin.svg";
-import TwitterIcon from "@/icons/social/twitter.svg";
-import FacebookIcon from "@/icons/social/facebook.svg";
+import XIcon from "@/icons/social/x-icon.astro";
 import EmailIcon from "@/icons/social/email.svg";
 ---
 
@@ -21,7 +20,7 @@ import EmailIcon from "@/icons/social/email.svg";
       </a>
     </p>
   </div>
-  <div class="grid grid-cols-5 gap-4" id="contact">
+  <div class="grid grid-cols-4 gap-4" id="contact">
     <a
       aria-label="Social Media"
       href={SOCIALS.github}
@@ -41,22 +40,13 @@ import EmailIcon from "@/icons/social/email.svg";
       <LinkedInIcon class="feather feather-linkedin" />
     </a>
     <a
-      aria-label="Social Media"
-      href={SOCIALS.twitter}
+      aria-label="X"
+      href={SOCIALS.x}
       target="_blank"
-      style="--icon-color: #1da1f2;"
-      class="footer-icons twitter-icon"
+      style="--icon-color: #fff; --icon-color-light: #000;"
+      class="footer-icons x-icon"
     >
-      <TwitterIcon class="feather feather-twitter" />
-    </a>
-    <a
-      aria-label="Social Media"
-      href={SOCIALS.facebook}
-      target="_blank"
-      class="footer-icons facebook-icon"
-      style="--icon-color: #fff; --icon-color-light: #4267B2"
-    >
-      <FacebookIcon class="feather feather-facebook" />
+      <XIcon />
     </a>
     <a
       aria-label="Social Media"
