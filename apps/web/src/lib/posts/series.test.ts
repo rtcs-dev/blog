@@ -446,16 +446,16 @@ describe("seriesSlidePosts", () => {
     ]);
   });
 
-  it("returns both posts when the series has two", () => {
+  it("returns both posts newest first", () => {
     expect(
       seriesSlidePosts([slidePosts[1]!, slidePosts[2]!]).map((post) => post.id),
-    ).toEqual(["first", "last"]);
+    ).toEqual(["last", "first"]);
   });
 
-  it("returns the first and last posts and skips the middle", () => {
+  it("returns the newest and oldest posts and skips the middle", () => {
     expect(seriesSlidePosts(slidePosts).map((post) => post.id)).toEqual([
-      "first",
       "last",
+      "first",
     ]);
   });
 });

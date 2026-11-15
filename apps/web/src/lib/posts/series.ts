@@ -103,7 +103,7 @@ export function seriesSlidePosts<
   T extends { data: { series?: { order: number } } },
 >(posts: readonly T[]): T[] {
   const sorted = [...posts].sort(
-    (a, b) => (a.data.series?.order ?? 0) - (b.data.series?.order ?? 0),
+    (a, b) => (b.data.series?.order ?? 0) - (a.data.series?.order ?? 0),
   );
   if (sorted.length <= 2) return sorted;
   return [sorted[0]!, sorted[sorted.length - 1]!];
