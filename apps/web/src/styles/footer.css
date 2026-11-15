@@ -9,14 +9,24 @@ footer .feather * {
   @apply flex items-center p-4 rounded-lg justify-center;
 }
 
-.footer-icons:not(.email-icon):hover * {
+.footer-icons:not(.email-icon):not(.x-icon):hover * {
   stroke: var(--icon-color-light, var(--icon-color));
   @apply dark:fill-(--icon-color) dark:stroke-accent-foreground;
 }
 
-.footer-icons:not(.email-icon).hover * {
+.footer-icons:not(.email-icon):not(.x-icon).hover * {
   stroke: var(--icon-color-light, var(--icon-color));
   @apply dark:fill-(--icon-color) dark:stroke-accent-foreground;
+}
+
+.footer-icons.x-icon {
+  @apply text-foreground;
+}
+
+.footer-icons.x-icon:hover,
+.footer-icons.x-icon.hover {
+  color: var(--icon-color-light, var(--icon-color));
+  @apply dark:text-(--icon-color);
 }
 
 .footer-icons.email-icon:hover * {
