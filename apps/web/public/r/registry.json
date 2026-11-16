@@ -4,6 +4,20 @@
   "homepage": "https://rtcs.dev",
   "items": [
     {
+      "name": "nav-01",
+      "title": "Nav 01",
+      "description": "A rounded, blurred navigation bar with a two-line wordmark, scroll-linked padding, and a menu that collapses into a panel.",
+      "type": "registry:ui",
+      "dependencies": ["motion", "lucide-react"],
+      "files": [
+        {
+          "path": "registry/default/ui/nav-01.tsx",
+          "type": "registry:ui",
+          "target": "@ui/nav-01.tsx"
+        }
+      ]
+    },
+    {
       "name": "chunk",
       "title": "Chunk",
       "description": "Splits an array into multiple arrays, each containing a maximum of 'chunkSize' elements.",
