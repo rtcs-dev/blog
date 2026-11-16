@@ -2,13 +2,13 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { RegistryDemoProps } from "@/components/registry/registry-modules";
 import {
-  Nav01,
-  Nav01Actions,
-  Nav01Brand,
-  Nav01Link,
-  Nav01Links,
-  Nav01Title,
-} from "./nav-01";
+  Nav,
+  NavActions,
+  NavBrand,
+  NavLink,
+  NavLinks,
+  NavTitle,
+} from "./nav";
 
 const links = [
   { href: "#overview", label: "Overview" },
@@ -64,8 +64,8 @@ export function RegistryDemo({ variant = "page" }: RegistryDemoProps) {
           ))}
         </div>
       </div>
-      <Nav01 position="contained">
-        <Nav01Brand
+      <Nav>
+        <NavBrand
           href="#overview"
           onClick={(event) => event.preventDefault()}
         >
@@ -75,21 +75,21 @@ export function RegistryDemo({ variant = "page" }: RegistryDemoProps) {
             className="h-8 w-auto @sm:h-10"
           />
           <span className="flex flex-col items-start gap-1">
-            <Nav01Title>ACME</Nav01Title>
+            <NavTitle>ACME</NavTitle>
           </span>
-        </Nav01Brand>
-        <Nav01Links>
+        </NavBrand>
+        <NavLinks>
           {links.map((link) => (
-            <Nav01Link
+            <NavLink
               key={link.href}
               href={link.href}
               onClick={(event) => event.preventDefault()}
             >
               {link.label}
-            </Nav01Link>
+            </NavLink>
           ))}
-        </Nav01Links>
-        <Nav01Actions>
+        </NavLinks>
+        <NavActions>
           <Button
             variant="outline"
             size="sm"
@@ -98,8 +98,8 @@ export function RegistryDemo({ variant = "page" }: RegistryDemoProps) {
           >
             Sign in
           </Button>
-        </Nav01Actions>
-      </Nav01>
+        </NavActions>
+      </Nav>
     </div>
   );
 }

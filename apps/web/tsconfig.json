@@ -8,6 +8,7 @@
   ],
   "compilerOptions": {
     "paths": {
+      "@/hooks/use-scroll-shrink": ["./registry/nav-01/use-scroll-shrink.ts"],
       "@/*": ["./src/*"]
     },
     "jsx": "react-jsx",

@@ -11,9 +11,14 @@
       "dependencies": ["motion"],
       "files": [
         {
-          "path": "registry/nav-01/nav-01.tsx",
+          "path": "registry/nav-01/nav.tsx",
           "type": "registry:ui",
-          "target": "@ui/nav-01.tsx"
+          "target": "@ui/nav-01/nav.tsx"
+        },
+        {
+          "path": "registry/nav-01/use-scroll-shrink.ts",
+          "type": "registry:hook",
+          "target": "@hooks/use-scroll-shrink.ts"
         }
       ]
     },

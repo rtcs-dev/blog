@@ -2,7 +2,7 @@
 
 A registry item is one folder, `apps/web/registry/<name>/`.
 
-- `<name>.tsx` or `<name>.ts` is the installable source, listed in `apps/web/registry.json`.
+- Installable source is whatever `apps/web/registry.json` lists for that folder. The file does not have to be named `<name>.tsx`. Hooks use `registry:hook` and a `@hooks/` target.
 - `demo.tsx` exports `RegistryDemo`. The index and item page pick it up by folder name. Omit it for a text-only card.
 - `meta.ts` exports `props`. The item page renders that table. Omit it when there is nothing to document.
 
