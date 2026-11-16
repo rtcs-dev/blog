@@ -40,12 +40,35 @@ export function RegistryDemo({ variant = "page" }: RegistryDemoProps) {
   return (
     <div
       className={cn(
-        "overflow-y-auto overscroll-contain bg-muted/40",
+        "relative isolate overflow-hidden bg-muted/40 [transform:translateZ(0)]",
         page ? "h-[32rem] rounded-xl border border-border" : "h-72",
       )}
     >
+      <div className="h-full overflow-y-auto overscroll-contain [overflow-anchor:none]">
+        <div className="h-28 shrink-0" aria-hidden="true" />
+        <div className="mx-auto flex max-w-3xl flex-col gap-16 px-6 pb-24">
+          {sections.map((section) => (
+            <section key={section.id} id={section.id} className="scroll-mt-28">
+              <h3 className="mb-3 text-lg font-semibold text-foreground">
+                {section.title}
+              </h3>
+              <p className="max-w-xl text-sm leading-6 text-muted-foreground">
+                {section.body}
+              </p>
+              <div className="mt-6 flex flex-col gap-3">
+                <div className="h-3 w-2/3 rounded-full bg-foreground/10" />
+                <div className="h-3 w-1/2 rounded-full bg-foreground/10" />
+                <div className="mt-2 h-24 rounded-xl bg-background/80" />
+              </div>
+            </section>
+          ))}
+        </div>
+      </div>
       <Nav01 position="contained">
-        <Nav01Brand href="#overview">
+        <Nav01Brand
+          href="#overview"
+          onClick={(event) => event.preventDefault()}
+        >
           <img
             src="/assets/logo/orange-1200x1200.svg"
             alt=""
@@ -57,34 +80,26 @@ export function RegistryDemo({ variant = "page" }: RegistryDemoProps) {
         </Nav01Brand>
         <Nav01Links>
           {links.map((link) => (
-            <Nav01Link key={link.href} href={link.href}>
+            <Nav01Link
+              key={link.href}
+              href={link.href}
+              onClick={(event) => event.preventDefault()}
+            >
               {link.label}
             </Nav01Link>
           ))}
         </Nav01Links>
         <Nav01Actions>
-          <Button variant="outline" size="sm" type="button">
+          <Button
+            variant="outline"
+            size="sm"
+            type="button"
+            className="active:!translate-y-0"
+          >
             Sign in
           </Button>
         </Nav01Actions>
       </Nav01>
-      <div className="mx-auto flex max-w-3xl flex-col gap-16 px-6 pt-12 pb-24">
-        {sections.map((section) => (
-          <section key={section.id} id={section.id} className="scroll-mt-28">
-            <h3 className="mb-3 text-lg font-semibold text-foreground">
-              {section.title}
-            </h3>
-            <p className="max-w-xl text-sm leading-6 text-muted-foreground">
-              {section.body}
-            </p>
-            <div className="mt-6 flex flex-col gap-3">
-              <div className="h-3 w-2/3 rounded-full bg-foreground/10" />
-              <div className="h-3 w-1/2 rounded-full bg-foreground/10" />
-              <div className="mt-2 h-24 rounded-xl bg-background/80" />
-            </div>
-          </section>
-        ))}
-      </div>
     </div>
   );
 }

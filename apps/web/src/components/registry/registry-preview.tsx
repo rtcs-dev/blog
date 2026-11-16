@@ -26,5 +26,9 @@ export function RegistryPreview({
 }) {
   const Demo = demos[name];
   if (!Demo) return null;
-  return <Demo variant={variant} />;
+  return (
+    <div className="relative isolate overflow-hidden [transform:translateZ(0)]">
+      <Demo variant={variant} />
+    </div>
+  );
 }

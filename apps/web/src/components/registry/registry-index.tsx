@@ -79,7 +79,7 @@ export function RegistryIndex({
                 button.focus();
               }}
               className={cn(
-                "rounded-full border px-3 py-1 text-sm transition-colors duration-150 ease-out outline-none focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none",
+                "rounded-full border px-3 py-1 text-sm transition-colors duration-150 ease-out outline-none focus-visible:ring-3 focus-visible:ring-ring/50 motion-reduce:transition-none active:translate-y-0",
                 selected
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border bg-background text-muted-foreground hover:text-foreground",

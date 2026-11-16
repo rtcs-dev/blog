@@ -45,18 +45,29 @@ function useNav01() {
 
 const scrollShrinkDistance = 8
 
+function isScrollable(node: Element) {
+  const overflowY = getComputedStyle(node).overflowY
+  return (
+    overflowY === "auto" || overflowY === "scroll" || overflowY === "overlay"
+  )
+}
+
 function findScrollParent(node: HTMLElement | null) {
   let current = node?.parentElement ?? null
   while (current) {
-    const overflowY = getComputedStyle(current).overflowY
-    if (
-      overflowY === "auto" ||
-      overflowY === "scroll" ||
-      overflowY === "overlay"
-    ) {
-      return current
-    }
+    if (isScrollable(current)) return current
     current = current.parentElement
+  }
+  return null
+}
+
+function findContainedScroller(node: HTMLElement | null) {
+  const ancestor = findScrollParent(node)
+  if (ancestor) return ancestor
+  const parent = node?.parentElement
+  if (!parent) return null
+  for (const child of parent.children) {
+    if (child !== node && isScrollable(child)) return child as HTMLElement
   }
   return null
 }
@@ -85,9 +96,10 @@ function Nav01({
 
   useEffect(() => {
     const root = rootRef.current
-    const target: HTMLElement | Window = contained
-      ? (findScrollParent(root) ?? window)
+    const target: HTMLElement | Window | null = contained
+      ? findContainedScroller(root)
       : window
+    if (!target) return
 
     const read = () => {
       scrollY.set(target instanceof Window ? target.scrollY : target.scrollTop)
@@ -132,8 +144,8 @@ function Nav01({
           } as CSSProperties
         }
         className={cn(
-          "z-30 w-full",
-          contained ? "sticky top-0" : "fixed inset-x-0 top-0",
+          "w-full",
+          contained ? "absolute inset-x-0 top-0 z-10" : "fixed inset-x-0 top-0 z-30",
           className,
         )}
         {...props}
