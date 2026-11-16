@@ -1,7 +1,7 @@
 "use client"
 
-import { Menu, X } from "lucide-react"
 import { motion, useMotionValue, useMotionValueEvent } from "motion/react"
+import { IconPlaceholder } from "@/components/icon-placeholder"
 import {
   useEffect,
   useId,
@@ -28,6 +28,8 @@ export type Nav01Props = {
   subtitle?: string
   links: Nav01Link[]
   trailing?: ReactNode
+  menuIcon?: ReactNode
+  closeIcon?: ReactNode
   position?: "fixed" | "contained"
   homeHref?: string
   className?: string
@@ -57,6 +59,8 @@ function Nav01({
   subtitle,
   links,
   trailing,
+  menuIcon,
+  closeIcon,
   position = "fixed",
   homeHref = "/",
   className,
@@ -157,22 +161,44 @@ function Nav01({
                 aria-label={menuOpen ? "Close menu" : "Open menu"}
                 onClick={() => setMenuOpen((open) => !open)}
               >
-                <Menu
+                <span
                   className={cn(
-                    "m-auto size-6 transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.19,1,0.22,1)] motion-reduce:transition-none",
+                    "m-auto grid size-6 place-items-center transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.19,1,0.22,1)] motion-reduce:transition-none [&_svg]:size-6",
                     menuOpen
                       ? "scale-0 rotate-180 opacity-0 motion-reduce:scale-100 motion-reduce:rotate-0"
                       : "scale-100 rotate-0 opacity-100",
                   )}
-                />
-                <X
+                >
+                  {menuIcon ?? (
+                    <IconPlaceholder
+                      lucide="MenuIcon"
+                      tabler="IconMenu2"
+                      hugeicons="Menu01Icon"
+                      phosphor="ListIcon"
+                      remixicon="RiMenuLine"
+                      aria-hidden="true"
+                    />
+                  )}
+                </span>
+                <span
                   className={cn(
-                    "absolute inset-0 m-auto size-6 transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.19,1,0.22,1)] motion-reduce:transition-none",
+                    "absolute inset-0 m-auto grid size-6 place-items-center transition-[opacity,transform] duration-200 ease-[cubic-bezier(0.19,1,0.22,1)] motion-reduce:transition-none [&_svg]:size-6",
                     menuOpen
                       ? "rotate-0 scale-100 opacity-100"
                       : "-rotate-180 scale-0 opacity-0 motion-reduce:rotate-0 motion-reduce:scale-100",
                   )}
-                />
+                >
+                  {closeIcon ?? (
+                    <IconPlaceholder
+                      lucide="XIcon"
+                      tabler="IconX"
+                      hugeicons="Cancel01Icon"
+                      phosphor="XIcon"
+                      remixicon="RiCloseLine"
+                      aria-hidden="true"
+                    />
+                  )}
+                </span>
               </button>
               <ul className="hidden items-center gap-6 @sm:flex">
                 {links.map((link) => (

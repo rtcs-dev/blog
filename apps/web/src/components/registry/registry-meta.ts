@@ -41,6 +41,20 @@ export const registryProps: Record<string, RegistryPropRow[]> = {
         "Anything you want at the end, like a button. On a small screen it sits in the menu.",
     },
     {
+      name: "menuIcon",
+      type: "ReactNode",
+      defaultValue: "—",
+      description:
+        "The icon that opens the menu. Leave it out and the bar uses your project's icon set.",
+    },
+    {
+      name: "closeIcon",
+      type: "ReactNode",
+      defaultValue: "—",
+      description:
+        "The icon that closes the menu. Leave it out and the bar uses your project's icon set.",
+    },
+    {
       name: "position",
       type: '"fixed" | "contained"',
       defaultValue: '"fixed"',

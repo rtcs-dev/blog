@@ -8,7 +8,7 @@
       "title": "Nav 01",
       "description": "A top bar that shrinks a little as you scroll. On a small screen the links fold into a menu.",
       "type": "registry:ui",
-      "dependencies": ["motion", "lucide-react"],
+      "dependencies": ["motion"],
       "files": [
         {
           "path": "registry/default/ui/nav-01.tsx",
