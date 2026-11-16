@@ -2,7 +2,7 @@
   "$schema": "https://ui.shadcn.com/schema/registry-item.json",
   "name": "nav-01",
   "title": "Nav 01",
-  "description": "A rounded, blurred navigation bar with a two-line wordmark, scroll-linked padding, and a menu that collapses into a panel.",
+  "description": "A top bar that shrinks a little as you scroll. On a small screen the links fold into a menu.",
   "dependencies": [
     "motion",
     "lucide-react"

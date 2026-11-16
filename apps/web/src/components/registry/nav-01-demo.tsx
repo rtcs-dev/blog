@@ -12,17 +12,17 @@ const sections = [
   {
     id: "overview",
     title: "Overview",
-    body: "The bar stays pinned to this frame. Scroll the preview and it tightens, picking up a shadow as the page moves underneath.",
+    body: "Scroll down. The bar stays put and tightens as the page moves under it.",
   },
   {
     id: "work",
     title: "Work",
-    body: "Logo, wordmark, and links stay in one row once the bar is wide enough. The slot on the right is whatever you pass in.",
+    body: "The name and the links share one row when there's room. Sign in is just whatever you put in the slot.",
   },
   {
     id: "notes",
     title: "Notes",
-    body: "Narrow the window and the links move into the menu. Escape closes it and returns focus to the button.",
+    body: "Shrink the window and the links drop into the menu. Escape closes it.",
   },
 ];
 
@@ -42,8 +42,7 @@ export function Nav01Demo({ variant = "page" }: { variant?: "card" | "page" }) {
           src: "/assets/logo/orange-1200x1200.svg",
           alt: "",
         }}
-        title="rtcs"
-        subtitle="dev"
+        title="ACME"
         homeHref="#overview"
         links={links}
         trailing={

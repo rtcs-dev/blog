@@ -11,53 +11,53 @@ export const registryProps: Record<string, RegistryPropRow[]> = {
       name: "logo",
       type: "{ src: string; alt: string }",
       defaultValue: "—",
-      description: "Image shown beside the wordmark.",
+      description: "The image next to the name.",
     },
     {
       name: "title",
       type: "string",
       defaultValue: "—",
-      description: "Primary wordmark line.",
+      description: "The name next to the logo.",
     },
     {
       name: "subtitle",
       type: "string",
       defaultValue: "—",
       description:
-        "Second wordmark line. It renders once the bar's container is at least 40rem wide.",
+        "An optional second line under the name. It only shows when the bar has room.",
     },
     {
       name: "links",
       type: "{ href: string; label: string }[]",
       defaultValue: "—",
       description:
-        "Navigation links. On a narrow bar they move into the menu panel.",
+        "The links in the bar. On a small screen they move into the menu.",
     },
     {
       name: "trailing",
       type: "ReactNode",
       defaultValue: "—",
       description:
-        "Slot after the links. On a narrow bar it sits at the bottom of the menu panel.",
+        "Anything you want at the end, like a button. On a small screen it sits in the menu.",
     },
     {
       name: "position",
       type: '"fixed" | "contained"',
       defaultValue: '"fixed"',
       description:
-        "fixed pins the bar to the viewport. contained sticks it to the nearest scroll parent so a preview can scroll on its own.",
+        "fixed sticks the bar to the window. contained keeps it inside a scrolling box, which is how this preview works.",
     },
     {
       name: "homeHref",
       type: "string",
       defaultValue: '"/"',
-      description: "Href for the logo and wordmark.",
+      description: "Where the logo and name go.",
     },
     {
       name: "className",
       type: "string",
       defaultValue: "—",
-      description: "Extra classes on the header element.",
+      description: "Extra classes on the bar.",
     },
   ],
 };
