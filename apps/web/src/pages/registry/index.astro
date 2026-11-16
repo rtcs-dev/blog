@@ -24,7 +24,7 @@ const registryItems = registryData.items;
     <RegistryIndex
       client:load
       items={registryItems}
-      origin={Astro.url.origin}
+      origin={Astro.site?.origin ?? Astro.url.origin}
     />
   </div>
 </DefaultLayout>

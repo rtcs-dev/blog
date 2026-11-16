@@ -1,4 +1,10 @@
-import { useMemo, useRef, useState } from "react";
+import {
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type MouseEvent,
+} from "react";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
   Tooltip,
@@ -14,8 +20,84 @@ interface CommandTabsProps {
   registryUrl: string;
 }
 
+type PackageManager = "npm" | "pnpm" | "bun" | "yarn";
+
+const packageManagers: PackageManager[] = ["npm", "pnpm", "bun", "yarn"];
+
+const storageKey = "rtcs-package-manager";
+
+let packageManager: PackageManager = "npm";
+let packageManagerHydrated = false;
+const packageManagerListeners = new Set<() => void>();
+
+function isPackageManager(value: string): value is PackageManager {
+  return packageManagers.some((manager) => manager === value);
+}
+
+function readStoredPackageManager() {
+  try {
+    const stored = localStorage.getItem(storageKey);
+    if (stored && isPackageManager(stored)) packageManager = stored;
+  } catch {
+    return;
+  }
+}
+
+function emitPackageManager() {
+  for (const listener of packageManagerListeners) listener();
+}
+
+function subscribePackageManager(listener: () => void) {
+  packageManagerListeners.add(listener);
+  return () => {
+    packageManagerListeners.delete(listener);
+  };
+}
+
+if (typeof window !== "undefined") {
+  window.addEventListener("storage", (event) => {
+    if (event.key !== storageKey || !event.newValue) return;
+    if (!isPackageManager(event.newValue)) return;
+    if (packageManager === event.newValue) return;
+    packageManager = event.newValue;
+    emitPackageManager();
+  });
+}
+
+function getPackageManagerSnapshot() {
+  if (!packageManagerHydrated) {
+    packageManagerHydrated = true;
+    readStoredPackageManager();
+  }
+  return packageManager;
+}
+
+function getServerPackageManager(): PackageManager {
+  return "npm";
+}
+
+function rememberPackageManager(next: PackageManager) {
+  if (packageManager === next) return;
+  packageManager = next;
+  packageManagerHydrated = true;
+  try {
+    localStorage.setItem(storageKey, next);
+  } catch {
+    return emitPackageManager();
+  }
+  emitPackageManager();
+}
+
+function usePackageManager() {
+  return useSyncExternalStore(
+    subscribePackageManager,
+    getPackageManagerSnapshot,
+    getServerPackageManager,
+  );
+}
+
 export function CommandTabs({ registryUrl }: CommandTabsProps) {
-  const [activeTab, setActiveTab] = useState("npm");
+  const activeTab = usePackageManager();
   const [copied, setCopied] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -30,7 +112,9 @@ export function CommandTabs({ registryUrl }: CommandTabsProps) {
     [registryUrl],
   );
 
-  const handleCopy = async () => {
+  const handleCopy = async (event: MouseEvent<HTMLButtonElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (!inputRef.current) return;
 
     try {
@@ -47,7 +131,14 @@ export function CommandTabs({ registryUrl }: CommandTabsProps) {
   };
 
   return (
-    <Tabs value={activeTab} onValueChange={setActiveTab}>
+    <Tabs
+      value={activeTab}
+      onValueChange={(value) => {
+        if (isPackageManager(value)) rememberPackageManager(value);
+      }}
+      onClick={(event) => event.stopPropagation()}
+      onPointerDown={(event) => event.stopPropagation()}
+    >
       <div className="flex items-center justify-between mb-2">
         <TabsList variant="line">
           {Object.keys(commands).map((pm) => (
@@ -63,6 +154,7 @@ export function CommandTabs({ registryUrl }: CommandTabsProps) {
                 <Button
                   type="button"
                   onClick={handleCopy}
+                  onPointerDown={(event) => event.stopPropagation()}
                   variant="ghost"
                   size="icon-sm"
                   aria-label={copied ? "Command copied" : "Copy command"}
@@ -85,7 +177,7 @@ export function CommandTabs({ registryUrl }: CommandTabsProps) {
         <TabsContent key={pm} value={pm} className="mt-0">
           <div className="relative">
             <input
-              ref={inputRef}
+              ref={pm === activeTab ? inputRef : undefined}
               type="text"
               readOnly
               className="w-full bg-muted border border-border rounded px-3 py-2 text-sm font-mono text-foreground"

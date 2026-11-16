@@ -5,10 +5,7 @@ import { useRender } from "@base-ui/react/use-render"
 import { motion } from "motion/react"
 import { IconPlaceholder } from "@/components/icon-placeholder"
 import {
-  Children,
-  cloneElement,
   createContext,
-  isValidElement,
   useCallback,
   useContext,
   useEffect,
@@ -17,24 +14,21 @@ import {
   useState,
   type ComponentProps,
   type CSSProperties,
-  type ReactElement,
   type ReactNode,
   type RefObject,
 } from "react"
 import { cn } from "@/lib/utils"
 import { useScrollShrink } from "@/hooks/use-scroll-shrink"
 
-type NavLinksPlacement = "desktop" | "mobile"
-
 type NavContextValue = {
   open: boolean
   setOpen: (open: boolean) => void
   menuId: string
   menuButtonRef: RefObject<HTMLButtonElement | null>
+  scrolled: boolean
 }
 
 const NavContext = createContext<NavContextValue | null>(null)
-const NavLinksPlacementContext = createContext<NavLinksPlacement>("desktop")
 
 function useNav() {
   const context = useContext(NavContext)
@@ -56,6 +50,7 @@ function Nav({
   defaultOpen?: boolean
   open?: boolean
   onOpenChange?: (open: boolean) => void
+  children?: ReactNode
 }) {
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen)
   const open = openProp ?? uncontrolledOpen
@@ -85,10 +80,10 @@ function Nav({
     return () => document.removeEventListener("keydown", onKeyDown)
   }, [open, setOpen])
 
-  const parts = slotChildren(children)
-
   return (
-    <NavContext.Provider value={{ open, setOpen, menuId, menuButtonRef }}>
+    <NavContext.Provider
+      value={{ open, setOpen, menuId, menuButtonRef, scrolled }}
+    >
       <header
         {...props}
         ref={rootRef}
@@ -115,23 +110,8 @@ function Nav({
               scrolled && "shadow-lg shadow-foreground/5",
             )}
           >
-            <motion.div className="relative flex flex-wrap items-center justify-between gap-4 py-3 transition-[padding] duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] motion-reduce:transition-none @sm:py-(--nav-pad)">
-              <div className="flex w-full items-center justify-between gap-8 @sm:w-auto">
-                {parts.brand}
-                {parts.menu ?? <NavMenu />}
-                {renderLinks(parts.links, "desktop")}
-              </div>
-              <div
-                id={menuId}
-                data-slot="nav-panel"
-                className={cn(
-                  "w-full flex-col gap-6 rounded-2xl border border-border bg-background p-4 shadow-lg @sm:w-auto @sm:flex-row @sm:items-center @sm:rounded-none @sm:border-transparent @sm:bg-transparent @sm:p-0 @sm:shadow-none",
-                  open ? "flex" : "hidden @sm:flex",
-                )}
-              >
-                {renderLinks(parts.links, "mobile")}
-                {parts.actions}
-              </div>
+            <motion.div className="relative grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 py-3 transition-[padding] duration-300 ease-[cubic-bezier(0.19,1,0.22,1)] motion-reduce:transition-none @sm:grid-cols-[auto_minmax(0,1fr)_auto] @sm:gap-x-8 @sm:py-(--nav-pad)">
+              {children}
             </motion.div>
           </div>
         </nav>
@@ -152,7 +132,7 @@ function NavBrand({
       {
         "data-slot": "nav-brand",
         className: cn(
-          "flex items-center gap-3 rounded-md outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
+          "col-start-1 row-start-1 flex min-w-0 items-center gap-3 rounded-md outline-none focus-visible:ring-3 focus-visible:ring-ring/50",
           className,
         ),
       } as ComponentProps<"a">,
@@ -200,7 +180,7 @@ function NavMenu({ className, onClick, ...props }: ComponentProps<"button">) {
       {...props}
       ref={menuButtonRef}
       className={cn(
-        "relative size-11 cursor-pointer rounded-lg text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50 @sm:hidden",
+        "relative col-start-2 row-start-1 size-11 cursor-pointer justify-self-end rounded-lg text-foreground outline-none focus-visible:ring-3 focus-visible:ring-ring/50 @sm:hidden",
         className,
       )}
       onClick={(event) => {
@@ -246,22 +226,39 @@ function NavMenu({ className, onClick, ...props }: ComponentProps<"button">) {
   )
 }
 
-function NavLinks({ className, ...props }: ComponentProps<"ul">) {
-  const placement = useContext(NavLinksPlacementContext)
+function NavLinks({ className, children, ...props }: ComponentProps<"ul">) {
+  const { open, menuId } = useNav()
 
   return (
-    <ul
-      data-slot="nav-links"
-      data-placement={placement}
-      className={cn(
-        "group/links",
-        placement === "desktop"
-          ? "hidden items-center gap-6 @sm:flex"
-          : "flex flex-col gap-4 @sm:hidden",
-        className,
-      )}
-      {...props}
-    />
+    <>
+      <ul
+        data-slot="nav-links"
+        data-placement="desktop"
+        className={cn(
+          "group/links col-span-full row-start-2 hidden min-w-0 items-center gap-6 @sm:col-span-1 @sm:col-start-2 @sm:row-start-1 @sm:flex",
+          className,
+        )}
+        {...props}
+      >
+        {children}
+      </ul>
+      <div
+        id={menuId}
+        data-slot="nav-panel"
+        className={cn(
+          "col-span-full row-start-2 mt-4 flex-col gap-4 rounded-t-2xl border border-b-0 bg-background px-4 pt-4 shadow-lg @sm:hidden",
+          open ? "flex" : "hidden",
+        )}
+      >
+        <ul
+          data-slot="nav-links"
+          data-placement="mobile"
+          className={cn("group/links flex flex-col gap-4", className)}
+        >
+          {children}
+        </ul>
+      </div>
+    </>
   )
 }
 
@@ -296,43 +293,18 @@ function NavLink({
 }
 
 function NavActions({ className, ...props }: ComponentProps<"div">) {
+  const { open } = useNav()
+
   return (
     <div
       data-slot="nav-actions"
       className={cn(
-        "flex flex-col gap-3 @sm:flex-row @sm:items-center",
+        "col-span-full row-start-3 flex-col gap-3 rounded-b-2xl border border-t-0 bg-background px-4 pt-6 pb-4 @sm:col-span-1 @sm:col-start-3 @sm:row-start-1 @sm:flex @sm:flex-row @sm:items-center @sm:justify-self-end @sm:rounded-none @sm:border-0 @sm:bg-transparent @sm:p-0 @sm:shadow-none",
+        open ? "flex" : "hidden",
         className,
       )}
       {...props}
     />
-  )
-}
-
-function slotChildren(children: ReactNode) {
-  const parts: {
-    brand?: ReactNode
-    menu?: ReactNode
-    links?: ReactNode
-    actions?: ReactNode
-  } = {}
-
-  for (const child of Children.toArray(children)) {
-    if (!isValidElement(child)) continue
-    if (child.type === NavBrand) parts.brand = child
-    else if (child.type === NavMenu) parts.menu = child
-    else if (child.type === NavLinks) parts.links = child
-    else if (child.type === NavActions) parts.actions = child
-  }
-
-  return parts
-}
-
-function renderLinks(links: ReactNode, placement: NavLinksPlacement) {
-  if (!isValidElement(links) || links.type !== NavLinks) return null
-  return (
-    <NavLinksPlacementContext.Provider value={placement}>
-      {cloneElement(links as ReactElement)}
-    </NavLinksPlacementContext.Provider>
   )
 }
 

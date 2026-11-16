@@ -120,9 +120,7 @@ export function RegistryIndex({
                       {item.description}
                     </p>
                   </div>
-                  {preview ? null : (
-                    <CommandTabs registryUrl={`${origin}/r/${item.name}.json`} />
-                  )}
+                  <CommandTabs registryUrl={`${origin}/r/${item.name}.json`} />
                   <a
                     className={buttonVariants({
                       variant: "link",
