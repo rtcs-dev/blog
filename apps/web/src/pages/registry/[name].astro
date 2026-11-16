@@ -29,9 +29,9 @@ const ui = item.data.type === "registry:ui";
 const props = registryProps[name] ?? [];
 const typeLabel =
   item.data.type === "registry:ui"
-    ? "UI"
+    ? "Blocks"
     : item.data.type === "registry:lib"
-      ? "Lib"
+      ? "Utilities"
       : item.data.type.replace("registry:", "");
 
 const files = item.data.files.map((file) => {

@@ -12,23 +12,23 @@ export type RegistryIndexItem = {
   dependencies?: string[];
 };
 
-type RegistryFilter = "all" | "ui" | "lib";
+type RegistryFilter = "all" | "blocks" | "utilities";
 
 const filters: { id: RegistryFilter; label: string }[] = [
   { id: "all", label: "All" },
-  { id: "ui", label: "UI" },
-  { id: "lib", label: "Lib" },
+  { id: "blocks", label: "Blocks" },
+  { id: "utilities", label: "Utilities" },
 ];
 
 function typeLabel(type: string) {
-  if (type === "registry:ui") return "UI";
-  if (type === "registry:lib") return "Lib";
+  if (type === "registry:ui") return "Blocks";
+  if (type === "registry:lib") return "Utilities";
   return type.replace("registry:", "");
 }
 
 function matches(type: string, filter: RegistryFilter) {
   if (filter === "all") return true;
-  if (filter === "ui") return type === "registry:ui";
+  if (filter === "blocks") return type === "registry:ui";
   return type === "registry:lib";
 }
 
@@ -77,7 +77,9 @@ export function RegistryIndex({
                 event.preventDefault();
                 const button = buttons[next];
                 const value = button?.dataset.filter;
-                if (value !== "all" && value !== "ui" && value !== "lib") return;
+                if (value !== "all" && value !== "blocks" && value !== "utilities") {
+                  return;
+                }
                 setFilter(value);
                 button.focus();
               }}
