@@ -39,11 +39,7 @@ export function RegistryIndex({
 
   return (
     <div className="flex flex-col gap-6">
-      <div
-        role="radiogroup"
-        aria-label="Filter registry"
-        className="flex flex-wrap gap-2"
-      >
+      <div role="radiogroup" aria-label="Filter registry" className="flex flex-wrap gap-2">
         {filters.map((item) => {
           const selected = filter === item.id;
           return (
@@ -76,11 +72,7 @@ export function RegistryIndex({
                 event.preventDefault();
                 const button = buttons[next];
                 const value = button?.dataset.filter;
-                if (
-                  value !== "all" &&
-                  value !== "blocks" &&
-                  value !== "utilities"
-                ) {
+                if (value !== "all" && value !== "blocks" && value !== "utilities") {
                   return;
                 }
                 setFilter(value);
@@ -128,21 +120,16 @@ export function RegistryIndex({
                       {item.description}
                     </p>
                   </div>
-                  <div className="mt-auto flex flex-col gap-4">
-                    <CommandTabs
-                      registryUrl={`${origin}/r/${item.name}.json`}
-                      variant="compact"
-                    />
-                    <a
-                      className={buttonVariants({
-                        variant: "link",
-                        className: "self-start px-0",
-                      })}
-                      href={`/registry/${item.name}`}
-                    >
-                      View source
-                    </a>
-                  </div>
+                  <CommandTabs registryUrl={`${origin}/r/${item.name}.json`} />
+                  <a
+                    className={buttonVariants({
+                      variant: "link",
+                      className: "self-start px-0",
+                    })}
+                    href={`/registry/${item.name}`}
+                  >
+                    View source
+                  </a>
                 </div>
               </article>
             );

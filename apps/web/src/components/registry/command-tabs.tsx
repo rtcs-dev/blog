@@ -1,5 +1,4 @@
 import {
-  useEffect,
   useMemo,
   useRef,
   useState,
@@ -14,25 +13,16 @@ import {
   TooltipProvider,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import CopyIcon from "@/icons/actions/copy.svg?react";
 import CheckMarkIcon from "@/icons/actions/check-mark.svg?react";
 
 interface CommandTabsProps {
   registryUrl: string;
-  variant?: "tabs" | "compact";
 }
 
 type PackageManager = "npm" | "pnpm" | "bun" | "yarn";
 
 const packageManagers: PackageManager[] = ["npm", "pnpm", "bun", "yarn"];
-
-const installPrefix: Record<PackageManager, string> = {
-  npm: "npx shadcn@latest add",
-  pnpm: "pnpm dlx shadcn@latest add",
-  yarn: "yarn dlx shadcn@latest add",
-  bun: "bunx --bun shadcn@latest add",
-};
 
 const storageKey = "rtcs-package-manager";
 
@@ -106,201 +96,96 @@ function usePackageManager() {
   );
 }
 
-function installCommands(registryUrl: string) {
-  return {
-    npm: `${installPrefix.npm} ${registryUrl}`,
-    pnpm: `${installPrefix.pnpm} ${registryUrl}`,
-    bun: `${installPrefix.bun} ${registryUrl}`,
-    yarn: `${installPrefix.yarn} ${registryUrl}`,
-  } satisfies Record<PackageManager, string>;
-}
-
-function useCommandCopy(command: string) {
+export function CommandTabs({ registryUrl }: CommandTabsProps) {
+  const activeTab = usePackageManager();
   const [copied, setCopied] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
-  const timeoutRef = useRef<number | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current != null) window.clearTimeout(timeoutRef.current);
-    };
-  }, []);
+  const commands = useMemo<Record<string, string>>(
+    () => ({
+      npm: `npx shadcn@latest add ${registryUrl}`,
+      pnpm: `pnpm dlx shadcn@latest add ${registryUrl}`,
+      bun: `bunx shadcn@latest add ${registryUrl}`,
+      yarn: `yarn dlx shadcn@latest add ${registryUrl}`,
+    }),
+    [registryUrl],
+  );
 
-  async function copy(event: MouseEvent<HTMLButtonElement>) {
+  const handleCopy = async (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     event.stopPropagation();
+    if (!inputRef.current) return;
+
     try {
-      await navigator.clipboard.writeText(command);
+      await navigator.clipboard.writeText(inputRef.current.value);
       setCopied(true);
       setTooltipOpen(true);
-      if (timeoutRef.current != null) window.clearTimeout(timeoutRef.current);
-      timeoutRef.current = window.setTimeout(() => {
+      setTimeout(() => {
         setCopied(false);
         setTooltipOpen(false);
       }, 2000);
-    } catch (error) {
-      console.error("Failed to copy:", error);
+    } catch (err) {
+      console.error("Failed to copy:", err);
     }
-  }
+  };
 
-  return { copied, tooltipOpen, setTooltipOpen, copy };
-}
-
-function CopyStatus({ message }: { message: string }) {
-  return (
-    <span className="sr-only" role="status" aria-live="polite">
-      {message}
-    </span>
-  );
-}
-
-function stopCardNavigation(event: { stopPropagation(): void }) {
-  event.stopPropagation();
-}
-
-function CopyCommandButton({ command }: { command: string }) {
-  const { copied, tooltipOpen, setTooltipOpen, copy } = useCommandCopy(command);
-  const copiedLabel = "Copied install command";
-  const idleLabel = `Copy install command: ${command}`;
-
-  return (
-    <div className="relative shrink-0">
-      <TooltipProvider>
-        <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
-          <TooltipTrigger
-            render={
-              <Button
-                type="button"
-                onClick={copy}
-                onPointerDown={stopCardNavigation}
-                variant="ghost"
-                size="icon-sm"
-                aria-label={copied ? copiedLabel : idleLabel}
-                data-copied={copied ? "true" : "false"}
-              />
-            }
-          >
-            <span className="grid" aria-hidden="true">
-              <CopyIcon
-                className={cn(
-                  "col-start-1 row-start-1 text-muted-foreground",
-                  copied && "invisible",
-                )}
-              />
-              <CheckMarkIcon
-                className={cn(
-                  "col-start-1 row-start-1 text-muted-foreground",
-                  !copied && "invisible",
-                )}
-              />
-            </span>
-          </TooltipTrigger>
-          <TooltipContent>{copied ? "Copied!" : "Copy command"}</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <CopyStatus message={copied ? copiedLabel : ""} />
-    </div>
-  );
-}
-
-function PackageManagerTabs({
-  manager,
-  onChange,
-  compact = false,
-}: {
-  manager: PackageManager;
-  onChange: (manager: PackageManager) => void;
-  compact?: boolean;
-}) {
   return (
     <Tabs
-      value={manager}
+      value={activeTab}
       onValueChange={(value) => {
-        if (isPackageManager(value)) onChange(value);
+        if (isPackageManager(value)) rememberPackageManager(value);
       }}
-      className={compact ? "min-w-0 gap-2" : undefined}
+      onClick={(event) => event.stopPropagation()}
+      onPointerDown={(event) => event.stopPropagation()}
     >
-      <div className="flex min-w-0 items-center justify-between gap-2">
-        <TabsList variant="line" className="min-w-0">
-          {packageManagers.map((item) => (
-            <TabsTrigger
-              key={item}
-              value={item}
-              className={compact ? "px-1.5 text-xs" : undefined}
-            >
-              {item}
+      <div className="flex items-center justify-between mb-2">
+        <TabsList variant="line">
+          {Object.keys(commands).map((pm) => (
+            <TabsTrigger key={pm} value={pm}>
+              {pm}
             </TabsTrigger>
           ))}
         </TabsList>
+        <TooltipProvider>
+          <Tooltip open={tooltipOpen} onOpenChange={setTooltipOpen}>
+            <TooltipTrigger
+              render={
+                <Button
+                  type="button"
+                  onClick={handleCopy}
+                  onPointerDown={(event) => event.stopPropagation()}
+                  variant="ghost"
+                  size="icon-sm"
+                  aria-label={copied ? "Command copied" : "Copy command"}
+                />
+              }
+            >
+              {copied ? (
+                <CheckMarkIcon className="text-muted-foreground" />
+              ) : (
+                <CopyIcon className="text-muted-foreground" />
+              )}
+            </TooltipTrigger>
+            <TooltipContent>
+              {copied ? "Copied!" : "Copy command"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </div>
+      {Object.keys(commands).map((pm) => (
+        <TabsContent key={pm} value={pm} className="mt-0">
+          <div className="relative">
+            <input
+              ref={pm === activeTab ? inputRef : undefined}
+              type="text"
+              readOnly
+              className="w-full bg-muted border border-border rounded px-3 py-2 text-sm font-mono text-foreground"
+              value={commands[pm]}
+            />
+          </div>
+        </TabsContent>
+      ))}
     </Tabs>
-  );
-}
-
-export function CommandTabs({
-  registryUrl,
-  variant = "tabs",
-}: CommandTabsProps) {
-  const manager = usePackageManager();
-  const commands = useMemo(() => installCommands(registryUrl), [registryUrl]);
-  const command = commands[manager];
-
-  const selectManager = (next: PackageManager) => {
-    rememberPackageManager(next);
-  };
-
-  if (variant === "compact") {
-    return (
-      <div
-        className="flex min-w-0 flex-col gap-2"
-        data-package-manager={manager}
-        onClick={stopCardNavigation}
-        onPointerDown={stopCardNavigation}
-      >
-        <div className="flex min-w-0 items-center justify-between gap-2">
-          <PackageManagerTabs
-            manager={manager}
-            onChange={selectManager}
-            compact
-          />
-          <CopyCommandButton key={manager} command={command} />
-        </div>
-        <p className="truncate font-mono text-xs text-foreground">{command}</p>
-      </div>
-    );
-  }
-
-  return (
-    <div data-package-manager={manager} onClick={stopCardNavigation}>
-      <Tabs
-        value={manager}
-        onValueChange={(value) => {
-          if (isPackageManager(value)) selectManager(value);
-        }}
-      >
-        <div className="mb-2 flex items-center justify-between">
-          <TabsList variant="line">
-            {packageManagers.map((item) => (
-              <TabsTrigger key={item} value={item}>
-                {item}
-              </TabsTrigger>
-            ))}
-          </TabsList>
-          <CopyCommandButton key={manager} command={command} />
-        </div>
-        {packageManagers.map((item) => (
-          <TabsContent key={item} value={item} className="mt-0">
-            <div className="relative">
-              <input
-                type="text"
-                readOnly
-                className="w-full rounded border border-border bg-muted px-3 py-2 font-mono text-sm text-foreground"
-                value={commands[item]}
-              />
-            </div>
-          </TabsContent>
-        ))}
-      </Tabs>
-    </div>
   );
 }
