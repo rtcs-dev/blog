@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { InstallCommand } from "./command-tabs";
+import { CommandTabs } from "./command-tabs";
 import { registryTypeLabel } from "./registry-modules";
 import { hasRegistryDemo, RegistryPreview } from "./registry-preview";
 
@@ -129,8 +129,9 @@ export function RegistryIndex({
                     </p>
                   </div>
                   <div className="mt-auto flex flex-col gap-4">
-                    <InstallCommand
+                    <CommandTabs
                       registryUrl={`${origin}/r/${item.name}.json`}
+                      variant="compact"
                     />
                     <a
                       className={buttonVariants({
