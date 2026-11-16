@@ -4,6 +4,7 @@ const RegistryItemFile = z.object({
   path: z.string(),
   content: z.string().optional(),
   type: z.string(),
+  target: z.string().optional(),
 });
 
 export const RegistryItem = z.object({
@@ -12,7 +13,8 @@ export const RegistryItem = z.object({
   type: z.string(),
   title: z.string(),
   description: z.string(),
-  dependencies: z.array(z.string()),
+  dependencies: z.array(z.string()).optional().default([]),
+  registryDependencies: z.array(z.string()).optional().default([]),
   files: z.array(RegistryItemFile),
 });
 

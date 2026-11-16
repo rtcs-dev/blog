@@ -20,6 +20,19 @@ It is a pnpm workspace. The site lives in `apps/web`, built with Astro, Tailwind
 - `icons`: SVG assets imported directly as Astro components.
 - `lib`: business logic, constants (that don't belong in content collections) and schemas.
 
+## Adding a registry item
+
+Each item is a folder at `apps/web/registry/<name>/`. The pages discover demos and props from that folder. Do not import a demo, or branch on an item name, from `src/pages/registry/` or `src/components/registry/`.
+
+1. Add the folder `apps/web/registry/<name>/`. The installable source can be named anything. `nav-01` uses `nav.tsx` plus `use-scroll-shrink.ts`. A utility can be `<name>.ts`.
+2. Register every installable file in `apps/web/registry.json`, component first. Set `name` to the folder name. Use `registry:ui` for a component and `registry:hook` or `registry:lib` for the rest. Set `target` when the install path should not be the default, such as `@ui/<name>/nav.tsx` or `@hooks/use-scroll-shrink.ts`. Import a hook with the `@/hooks/` alias so `shadcn add` installs it beside the component. Map that alias in `apps/web/tsconfig.json` so the preview resolves the hook while it still lives in the item folder.
+3. Optional: add `apps/web/registry/<name>/demo.tsx` that exports `RegistryDemo`. The index card and the item page render it. Without this file, the item stays a text card and the item page shows code only.
+4. Optional: add `apps/web/registry/<name>/meta.ts` that exports `props` as `RegistryPropRow[]`. The item page renders that table. Without this file, there is no props section.
+5. Put the public description in the `registry.json` entry. That is the sentence on the card and the item page.
+6. Run `pnpm --filter web run build:registry` so `public/r/<name>.json` is generated. Install URLs stay `/r/<name>.json`. The pages discover `demo.tsx` and `meta.ts` by folder name, not by the source file name.
+
+`demo.tsx` and `meta.ts` are not listed in `registry.json`, so `shadcn add` does not install them.
+
 ## Getting Started
 
 ### Preliminaries for local development

@@ -4,13 +4,32 @@
   "homepage": "https://rtcs.dev",
   "items": [
     {
+      "name": "nav-01",
+      "title": "Nav 01",
+      "description": "A top bar that shrinks a little as you scroll. On a small screen the links fold into a menu.",
+      "type": "registry:ui",
+      "dependencies": ["motion"],
+      "files": [
+        {
+          "path": "registry/nav-01/nav.tsx",
+          "type": "registry:ui",
+          "target": "@ui/nav-01/nav.tsx"
+        },
+        {
+          "path": "registry/nav-01/use-scroll-shrink.ts",
+          "type": "registry:hook",
+          "target": "@hooks/use-scroll-shrink.ts"
+        }
+      ]
+    },
+    {
       "name": "chunk",
       "title": "Chunk",
       "description": "Splits an array into multiple arrays, each containing a maximum of 'chunkSize' elements.",
       "type": "registry:lib",
       "files": [
         {
-          "path": "registry/default/lib/chunk.ts",
+          "path": "registry/chunk/chunk.ts",
           "type": "registry:lib"
         }
       ],
@@ -23,7 +42,7 @@
       "type": "registry:lib",
       "files": [
         {
-          "path": "registry/default/lib/deep-partial.ts",
+          "path": "registry/deep-partial/deep-partial.ts",
           "type": "registry:lib"
         }
       ],
@@ -36,7 +55,7 @@
       "type": "registry:lib",
       "files": [
         {
-          "path": "registry/default/lib/deep-key-paths.ts",
+          "path": "registry/deep-key-paths/deep-key-paths.ts",
           "type": "registry:lib"
         }
       ],

@@ -1,0 +1,62 @@
+---
+import type { RegistryPropRow } from "./registry-modules";
+
+interface Props {
+  rows: RegistryPropRow[];
+}
+
+const { rows } = Astro.props;
+---
+
+<div class="flex flex-col gap-3 md:hidden">
+  {
+    rows.map((row) => (
+      <div class="flex flex-col gap-2 rounded-lg border border-border p-3">
+        <p class="text-xs text-muted-foreground">{row.component}</p>
+        <div class="flex items-baseline justify-between gap-3">
+          <span class="font-mono text-xs font-medium">{row.name}</span>
+          <span class="font-mono text-xs text-muted-foreground">
+            {row.defaultValue}
+          </span>
+        </div>
+        <p class="font-mono text-xs break-words text-muted-foreground">
+          {row.type}
+        </p>
+        <p class="text-sm text-muted-foreground">{row.description}</p>
+      </div>
+    ))
+  }
+</div>
+
+<div class="hidden md:block overflow-x-auto">
+  <table class="w-full border-collapse text-left text-sm">
+    <thead>
+      <tr class="border-b border-border">
+        <th class="py-2 pr-4 font-medium" scope="col">Component</th>
+        <th class="py-2 pr-4 font-medium" scope="col">Prop</th>
+        <th class="py-2 pr-4 font-medium" scope="col">Type</th>
+        <th class="py-2 pr-4 font-medium" scope="col">Default</th>
+        <th class="py-2 font-medium" scope="col">Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => (
+          <tr class="border-b border-border align-top">
+            <th class="py-3 pr-4 text-left text-xs font-medium" scope="row">
+              {row.component}
+            </th>
+            <td class="py-3 pr-4 font-mono text-xs">{row.name}</td>
+            <td class="py-3 pr-4 font-mono text-xs text-muted-foreground">
+              {row.type}
+            </td>
+            <td class="py-3 pr-4 font-mono text-xs whitespace-nowrap text-muted-foreground">
+              {row.defaultValue}
+            </td>
+            <td class="py-3 text-muted-foreground">{row.description}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
