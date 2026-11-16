@@ -1,6 +1,13 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { Nav01 } from "../../../registry/default/ui/nav-01";
+import {
+  Nav01,
+  Nav01Actions,
+  Nav01Brand,
+  Nav01Link,
+  Nav01Links,
+  Nav01Title,
+} from "../../../registry/default/ui/nav-01";
 
 const links = [
   { href: "#overview", label: "Overview" },
@@ -17,7 +24,7 @@ const sections = [
   {
     id: "work",
     title: "Work",
-    body: "The name and the links share one row when there's room. Sign in is just whatever you put in the slot.",
+    body: "The name and the links share one row when there's room. Sign in is just whatever you put on the right.",
   },
   {
     id: "notes",
@@ -36,21 +43,30 @@ export function Nav01Demo({ variant = "page" }: { variant?: "card" | "page" }) {
         page ? "h-[32rem] rounded-xl border border-border" : "h-72",
       )}
     >
-      <Nav01
-        position="contained"
-        logo={{
-          src: "/assets/logo/orange-1200x1200.svg",
-          alt: "",
-        }}
-        title="ACME"
-        homeHref="#overview"
-        links={links}
-        trailing={
+      <Nav01 position="contained">
+        <Nav01Brand href="#overview">
+          <img
+            src="/assets/logo/orange-1200x1200.svg"
+            alt=""
+            className="h-8 w-auto @sm:h-10"
+          />
+          <span className="flex flex-col items-start gap-1">
+            <Nav01Title>ACME</Nav01Title>
+          </span>
+        </Nav01Brand>
+        <Nav01Links>
+          {links.map((link) => (
+            <Nav01Link key={link.href} href={link.href}>
+              {link.label}
+            </Nav01Link>
+          ))}
+        </Nav01Links>
+        <Nav01Actions>
           <Button variant="outline" size="sm" type="button">
             Sign in
           </Button>
-        }
-      />
+        </Nav01Actions>
+      </Nav01>
       <div className="mx-auto flex max-w-3xl flex-col gap-16 px-6 pt-12 pb-24">
         {sections.map((section) => (
           <section key={section.id} id={section.id} className="scroll-mt-28">

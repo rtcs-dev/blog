@@ -12,6 +12,7 @@ const { rows } = Astro.props;
   {
     rows.map((row) => (
       <div class="flex flex-col gap-2 rounded-lg border border-border p-3">
+        <p class="text-xs text-muted-foreground">{row.component}</p>
         <div class="flex items-baseline justify-between gap-3">
           <span class="font-mono text-xs font-medium">{row.name}</span>
           <span class="font-mono text-xs text-muted-foreground">
@@ -31,6 +32,7 @@ const { rows } = Astro.props;
   <table class="w-full border-collapse text-left text-sm">
     <thead>
       <tr class="border-b border-border">
+        <th class="py-2 pr-4 font-medium" scope="col">Component</th>
         <th class="py-2 pr-4 font-medium" scope="col">Prop</th>
         <th class="py-2 pr-4 font-medium" scope="col">Type</th>
         <th class="py-2 pr-4 font-medium" scope="col">Default</th>
@@ -41,9 +43,10 @@ const { rows } = Astro.props;
       {
         rows.map((row) => (
           <tr class="border-b border-border align-top">
-            <th class="py-3 pr-4 font-mono text-xs font-medium" scope="row">
-              {row.name}
+            <th class="py-3 pr-4 text-left text-xs font-medium" scope="row">
+              {row.component}
             </th>
+            <td class="py-3 pr-4 font-mono text-xs">{row.name}</td>
             <td class="py-3 pr-4 font-mono text-xs text-muted-foreground">
               {row.type}
             </td>
