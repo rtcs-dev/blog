@@ -20,6 +20,19 @@ It is a pnpm workspace. The site lives in `apps/web`, built with Astro, Tailwind
 - `icons`: SVG assets imported directly as Astro components.
 - `lib`: business logic, constants (that don't belong in content collections) and schemas.
 
+## Adding a registry item
+
+Each item is a folder at `apps/web/registry/<name>/`. The pages discover demos and props from that folder. Do not import a demo, or branch on an item name, from `src/pages/registry/` or `src/components/registry/`.
+
+1. Add the source file `apps/web/registry/<name>/<name>.tsx` (or `.ts` for a utility).
+2. Register it in `apps/web/registry.json`. Set `name` to the folder name. Point `files[0].path` at the source file. Use `registry:ui` for a component and `registry:lib` for a utility. Set `target` when the file should install somewhere other than the default, such as `@ui/<name>.tsx`.
+3. Optional: add `apps/web/registry/<name>/demo.tsx` that exports `RegistryDemo`. The index card and the item page render it. Without this file, the item stays a text card and the item page shows code only.
+4. Optional: add `apps/web/registry/<name>/meta.ts` that exports `props` as `RegistryPropRow[]`. The item page renders that table. Without this file, there is no props section.
+5. Put the public description in the `registry.json` entry. That is the sentence on the card and the item page.
+6. Run `pnpm --filter web run build:registry` so `public/r/<name>.json` is generated. Install URLs stay `/r/<name>.json`.
+
+`demo.tsx` and `meta.ts` are not listed in `registry.json`, so `shadcn add` does not install them.
+
 ## Getting Started
 
 ### Preliminaries for local development

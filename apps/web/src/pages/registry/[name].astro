@@ -6,7 +6,8 @@ import { Code } from "astro-expressive-code/components";
 import { CommandTabs } from "@/components/registry/command-tabs";
 import { RegistryDetail } from "@/components/registry/registry-detail";
 import PropsTable from "@/components/registry/props-table.astro";
-import { registryProps } from "@/components/registry/registry-meta";
+import { propsFor } from "@/components/registry/registry-items";
+import { registryTypeLabel } from "@/components/registry/registry-modules";
 import { buttonVariants } from "@/components/ui/button";
 
 export async function getStaticPaths() {
@@ -25,14 +26,8 @@ if (!name) {
 }
 
 const registryUrl = `${Astro.url.origin}/r/${name}.json`;
-const ui = item.data.type === "registry:ui";
-const props = registryProps[name] ?? [];
-const typeLabel =
-  item.data.type === "registry:ui"
-    ? "Blocks"
-    : item.data.type === "registry:lib"
-      ? "Utilities"
-      : item.data.type.replace("registry:", "");
+const props = propsFor(name);
+const typeLabel = registryTypeLabel(item.data.type);
 
 const files = item.data.files.map((file) => {
   const extension = file.path.split(".").pop() || "";
@@ -92,23 +87,15 @@ const files = item.data.files.map((file) => {
       </div>
     </div>
 
-    {
-      ui ? (
-        <RegistryDetail client:load name={name}>
-          <div class="flex flex-col gap-6">
-            {files.map((file) => (
-              <Code code={file.content || ""} lang={file.lang} title={file.fileName} />
-            ))}
-          </div>
-        </RegistryDetail>
-      ) : (
-        <div class="flex flex-col gap-6">
-          {files.map((file) => (
+    <RegistryDetail client:load name={name}>
+      <div class="flex flex-col gap-6">
+        {
+          files.map((file) => (
             <Code code={file.content || ""} lang={file.lang} title={file.fileName} />
-          ))}
-        </div>
-      )
-    }
+          ))
+        }
+      </div>
+    </RegistryDetail>
 
     {
       props.length > 0 && (

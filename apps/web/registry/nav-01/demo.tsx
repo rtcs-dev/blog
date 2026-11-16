@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import type { RegistryDemoProps } from "@/components/registry/registry-modules";
 import {
   Nav01,
   Nav01Actions,
@@ -7,7 +8,7 @@ import {
   Nav01Link,
   Nav01Links,
   Nav01Title,
-} from "../../../registry/default/ui/nav-01";
+} from "./nav-01";
 
 const links = [
   { href: "#overview", label: "Overview" },
@@ -33,7 +34,7 @@ const sections = [
   },
 ];
 
-export function Nav01Demo({ variant = "page" }: { variant?: "card" | "page" }) {
+export function RegistryDemo({ variant = "page" }: RegistryDemoProps) {
   const page = variant === "page";
 
   return (

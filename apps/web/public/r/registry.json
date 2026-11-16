@@ -11,7 +11,7 @@
       "dependencies": ["motion"],
       "files": [
         {
-          "path": "registry/default/ui/nav-01.tsx",
+          "path": "registry/nav-01/nav-01.tsx",
           "type": "registry:ui",
           "target": "@ui/nav-01.tsx"
         }
@@ -24,7 +24,7 @@
       "type": "registry:lib",
       "files": [
         {
-          "path": "registry/default/lib/chunk.ts",
+          "path": "registry/chunk/chunk.ts",
           "type": "registry:lib"
         }
       ],
@@ -37,7 +37,7 @@
       "type": "registry:lib",
       "files": [
         {
-          "path": "registry/default/lib/deep-partial.ts",
+          "path": "registry/deep-partial/deep-partial.ts",
           "type": "registry:lib"
         }
       ],
@@ -50,7 +50,7 @@
       "type": "registry:lib",
       "files": [
         {
-          "path": "registry/default/lib/deep-key-paths.ts",
+          "path": "registry/deep-key-paths/deep-key-paths.ts",
           "type": "registry:lib"
         }
       ],

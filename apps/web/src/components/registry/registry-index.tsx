@@ -2,7 +2,8 @@ import { useState } from "react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CommandTabs } from "./command-tabs";
-import { Nav01Demo } from "./nav-01-demo";
+import { registryTypeLabel } from "./registry-modules";
+import { hasRegistryDemo, RegistryPreview } from "./registry-preview";
 
 export type RegistryIndexItem = {
   name: string;
@@ -19,12 +20,6 @@ const filters: { id: RegistryFilter; label: string }[] = [
   { id: "blocks", label: "Blocks" },
   { id: "utilities", label: "Utilities" },
 ];
-
-function typeLabel(type: string) {
-  if (type === "registry:ui") return "Blocks";
-  if (type === "registry:lib") return "Utilities";
-  return type.replace("registry:", "");
-}
 
 function matches(type: string, filter: RegistryFilter) {
   if (filter === "all") return true;
@@ -101,29 +96,31 @@ export function RegistryIndex({
       ) : (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           {visible.map((item) => {
-            const ui = item.type === "registry:ui";
+            const preview = hasRegistryDemo(item.name);
             return (
               <article
                 key={item.name}
                 className={cn(
                   "flex flex-col overflow-hidden rounded-xl border border-border bg-background",
-                  ui && "lg:col-span-2",
+                  preview && "lg:col-span-2",
                 )}
               >
-                {item.name === "nav-01" ? <Nav01Demo variant="card" /> : null}
+                {preview ? (
+                  <RegistryPreview name={item.name} variant="card" />
+                ) : null}
                 <div className="flex flex-1 flex-col gap-4 p-6">
                   <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-3">
                       <h2 className="text-xl font-semibold">{item.title}</h2>
                       <span className="rounded bg-muted px-2 py-1 text-xs">
-                        {typeLabel(item.type)}
+                        {registryTypeLabel(item.type)}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
                       {item.description}
                     </p>
                   </div>
-                  {ui ? null : (
+                  {preview ? null : (
                     <CommandTabs registryUrl={`${origin}/r/${item.name}.json`} />
                   )}
                   <a
