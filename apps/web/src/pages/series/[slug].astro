@@ -1,6 +1,7 @@
 ---
 import { ArrowLeft } from "lucide-react";
 import BlogPostRow from "@/components/blog/blog-post-row.astro";
+import { SeriesTitle } from "@/components/blog/series-title";
 import { buttonVariants } from "@/components/ui/button";
 import DefaultLayout from "@/layouts/default-layout.astro";
 import { getPosts } from "@/lib/posts";
@@ -13,11 +14,11 @@ export async function getStaticPaths() {
 
   return index.series.map((entry) => ({
     params: { slug: seriesSlug(entry.name) },
-    props: { name: entry.name, posts: entry.posts },
+    props: { name: entry.name, icon: entry.icon, posts: entry.posts },
   }));
 }
 
-const { name, posts } = Astro.props;
+const { name, icon, posts } = Astro.props;
 
 function partsLabel(count: number) {
   return count === 1 ? "1 part" : `${count} parts`;
@@ -31,7 +32,9 @@ function partsLabel(count: number) {
       Back
     </a>
     <header class="mb-8">
-      <h1 class="blog-page-title">{name}</h1>
+      <h1 class="blog-page-title">
+        <SeriesTitle name={name} icon={icon} />
+      </h1>
       <p class="mt-3 mb-0 text-base text-muted-foreground">{partsLabel(posts.length)}</p>
     </header>
     <ol class="blog-series-list">

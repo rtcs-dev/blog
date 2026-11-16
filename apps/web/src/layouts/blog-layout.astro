@@ -41,6 +41,7 @@ const seriesContext: PostSeriesContext | undefined = (() => {
   return {
     name: series.name,
     href: seriesHref(series.name),
+    icon: series.icon,
     position: neighbors.position,
     total: seriesMembers.length,
     previous: neighbors.previous
