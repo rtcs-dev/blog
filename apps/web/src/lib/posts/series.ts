@@ -1,3 +1,4 @@
+import type { SeriesIcon } from "@/lib/posts/series-icon";
 import type { PostSeries } from "@/lib/schemas/post.schema";
 
 export type SeriesPostInput = {
@@ -34,6 +35,7 @@ export type BlogIndexPost = {
 
 export type BlogIndexSeries = {
   name: string;
+  icon?: SeriesIcon;
   posts: BlogIndexPost[];
 };
 
@@ -99,6 +101,16 @@ export function seriesHref(name: string): string {
   return `/series/${seriesSlug(name)}`;
 }
 
+function seriesIconFromPosts(
+  posts: readonly { data: { series?: PostSeries } }[],
+): SeriesIcon | undefined {
+  for (const post of posts) {
+    const icon = post.data.series?.icon;
+    if (icon) return icon;
+  }
+  return undefined;
+}
+
 export function seriesSlidePosts<
   T extends { data: { series?: { order: number } } },
 >(posts: readonly T[]): T[] {
@@ -155,6 +167,7 @@ export function buildBlogIndex(
 
   const series = [...grouped.entries()].map(([name, seriesPosts]) => ({
     name,
+    icon: seriesIconFromPosts(seriesPosts),
     posts: seriesPosts.sort(
       (a, b) =>
         b.data.date.getTime() - a.data.date.getTime() ||

@@ -24,6 +24,23 @@ describe("Post schema series", () => {
     expect(parsed.series).toEqual({ name: "NestJS", order: 1 });
   });
 
+  it("accepts an optional series icon", () => {
+    const parsed = Post.parse({
+      ...base,
+      series: { name: "NestJS", order: 1, icon: "nest" },
+    });
+    expect(parsed.series).toEqual({ name: "NestJS", order: 1, icon: "nest" });
+  });
+
+  it("rejects an unknown series icon", () => {
+    expect(() =>
+      Post.parse({
+        ...base,
+        series: { name: "NestJS", order: 1, icon: "react" },
+      }),
+    ).toThrow();
+  });
+
   it("rejects empty series names and non-positive order", () => {
     expect(() =>
       Post.parse({ ...base, series: { name: "", order: 1 } }),

@@ -3,6 +3,7 @@ import { ButtonArrow, buttonVariants } from "@/components/ui/button";
 import FormattedDate from "@/components/ui/formatted-date.astro";
 import BlogPostRow from "@/components/blog/blog-post-row.astro";
 import { postLink, postLinkTitle } from "@/components/blog/post-link";
+import { SeriesTitle } from "@/components/blog/series-title";
 import type { PostEntry } from "@/lib/posts";
 import {
   seriesHref,
@@ -50,7 +51,12 @@ const heroSizes =
             </div>
             <div class="min-w-0">
               {featured.data.series && (
-                <p class="blog-featured-kicker">{featured.data.series.name}</p>
+                <p class="blog-featured-kicker">
+                  <SeriesTitle
+                    name={featured.data.series.name}
+                    icon={featured.data.series.icon}
+                  />
+                </p>
               )}
               <h2
                 id={`post-title-${featured.id}`}
@@ -113,7 +119,9 @@ const heroSizes =
           <div class="blog-row">
             <div class="hidden md:block" aria-hidden="true"></div>
             <div class="flex min-w-0 flex-wrap items-baseline justify-between gap-x-4 gap-y-2">
-              <h3 class="blog-series-name">{series.name}</h3>
+              <h3 class="blog-series-name">
+                <SeriesTitle name={series.name} icon={series.icon} />
+              </h3>
               <a
                 class={cn(
                   buttonVariants({ variant: "link" }),

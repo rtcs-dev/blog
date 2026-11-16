@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ArrowUp, List } from "lucide-react";
 
 import { postLink, postLinkTitle } from "@/components/blog/post-link";
+import { SeriesTitle } from "@/components/blog/series-title";
 import { Button } from "@/components/ui/button";
 import {
   Drawer,
@@ -13,6 +14,7 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
+import type { SeriesIcon } from "@/lib/posts/series-icon";
 import { cn } from "@/lib/utils";
 
 export type TocHeading = {
@@ -29,6 +31,7 @@ export type PostSeriesLink = {
 export type PostSeriesContext = {
   name: string;
   href: string;
+  icon?: SeriesIcon;
   position: number;
   total: number;
   previous?: PostSeriesLink;
@@ -207,7 +210,9 @@ function SeriesContext({
           sheet && "rounded-md px-2.5 py-2",
         )}
       >
-        <span className={postLinkTitle}>{series.name}</span>
+        <span className={postLinkTitle}>
+          <SeriesTitle name={series.name} icon={series.icon} />
+        </span>
       </a>
       <p
         className={cn(
@@ -372,7 +377,13 @@ export function PostToc({ headings, series }: PostTocProps) {
             </DrawerTrigger>
             <DrawerContent>
               <DrawerHeader>
-                <DrawerTitle>{drawerLabel}</DrawerTitle>
+                <DrawerTitle>
+                  {hasToc || !series ? (
+                    drawerLabel
+                  ) : (
+                    <SeriesTitle name={series.name} icon={series.icon} />
+                  )}
+                </DrawerTitle>
                 <DrawerDescription className="sr-only">
                   {hasToc
                     ? "Jump to a section in this article"

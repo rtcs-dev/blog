@@ -287,6 +287,48 @@ describe("buildBlogIndex", () => {
     });
   });
 
+  it("copies an optional icon from any part onto the series", () => {
+    const parts: BlogIndexPost[] = [
+      {
+        id: "later",
+        data: {
+          title: "Later",
+          description: "",
+          date: new Date("2024-08-05"),
+          series: { name: "NestJS", order: 2 },
+        },
+      },
+      {
+        id: "earlier",
+        data: {
+          title: "Earlier",
+          description: "",
+          date: new Date("2024-02-05"),
+          series: { name: "NestJS", order: 1, icon: "nest" },
+        },
+      },
+      {
+        id: "note",
+        data: {
+          title: "Note",
+          description: "",
+          date: new Date("2025-01-01"),
+          series: { name: "Notes", order: 1 },
+        },
+      },
+    ];
+
+    expect(
+      buildBlogIndex(parts).series.map((entry) => ({
+        name: entry.name,
+        icon: entry.icon,
+      })),
+    ).toEqual([
+      { name: "Notes", icon: undefined },
+      { name: "NestJS", icon: "nest" },
+    ]);
+  });
+
   it("lists series posts newest first and breaks date ties by later part", () => {
     const tiedParts: BlogIndexPost[] = [
       {

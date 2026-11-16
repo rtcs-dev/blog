@@ -1,10 +1,12 @@
 import { z } from "astro/zod";
+import { seriesIconIds } from "../posts/series-icon";
 
 export const PostStatus = z.enum(["draft", "stable"]);
 
 export const PostSeries = z.object({
   name: z.string().min(1),
   order: z.number().int().positive(),
+  icon: z.enum(seriesIconIds).optional(),
 });
 
 export const Post = z.object({

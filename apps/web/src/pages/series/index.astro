@@ -1,6 +1,7 @@
 ---
 import { ArrowLeft } from "lucide-react";
 import BlogPostRow from "@/components/blog/blog-post-row.astro";
+import { SeriesTitle } from "@/components/blog/series-title";
 import { buttonVariants } from "@/components/ui/button";
 import DefaultLayout from "@/layouts/default-layout.astro";
 import { getPosts } from "@/lib/posts";
@@ -35,7 +36,7 @@ function partsLabel(count: number) {
                     <div class="hidden md:block" aria-hidden="true"></div>
                     <div class="flex min-w-0 flex-wrap items-baseline gap-x-3 gap-y-1">
                       <h2 id={headingId} class="blog-series-name">
-                        {entry.name}
+                        <SeriesTitle name={entry.name} icon={entry.icon} />
                       </h2>
                       <p class="blog-count">{partsLabel(entry.posts.length)}</p>
                     </div>
