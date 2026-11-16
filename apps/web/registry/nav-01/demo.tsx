@@ -7,6 +7,7 @@ import {
   NavBrand,
   NavLink,
   NavLinks,
+  NavMenu,
   NavTitle,
 } from "./nav";
 
@@ -78,6 +79,7 @@ export function RegistryDemo({ variant = "page" }: RegistryDemoProps) {
             <NavTitle>ACME</NavTitle>
           </span>
         </NavBrand>
+        <NavMenu />
         <NavLinks>
           {links.map((link) => (
             <NavLink

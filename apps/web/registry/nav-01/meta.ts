@@ -59,7 +59,7 @@ export const props: RegistryPropRow[] = [
     type: "ReactNode",
     defaultValue: "—",
     description:
-      "The links. They show in the bar when there is room, and in the menu when there is not.",
+      "The links. Place them in the bar. They stay inline when there is room, and the same links open in the menu when there is not.",
   },
   {
     component: "NavLink",
@@ -74,7 +74,8 @@ export const props: RegistryPropRow[] = [
     name: "className",
     type: "string",
     defaultValue: "—",
-    description: "Classes on the menu button. It uses your project's icon set.",
+    description:
+      "The menu button. Place it in the bar. It hides when there is room, and it uses your project's icon set.",
   },
   {
     component: "NavActions",
@@ -82,6 +83,6 @@ export const props: RegistryPropRow[] = [
     type: "ReactNode",
     defaultValue: "—",
     description:
-      "Anything you want at the end, like a button. On a small screen it sits in the menu.",
+      "Anything you want at the end, like a button. Place it in the bar. On a small screen it shows under the links while the menu is open.",
   },
 ];
