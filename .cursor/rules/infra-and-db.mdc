@@ -1,0 +1,13 @@
+---
+description: Cloudflare Workers, PlanetScale Postgres, and one schema per modulith module.
+globs: ["**/*.ts", "**/*.tsx", "**/*.sql", "**/wrangler.*", "**/drizzle.*"]
+alwaysApply: false
+---
+
+Run on Cloudflare Workers and Pages. Start on the free tier. Put login behind Cloudflare Access.
+
+Use PlanetScale Postgres through Hyperdrive. Do not add Cloudflare D1.
+
+Early apps share one $5 cluster. Each app gets one logical database and its own role.
+
+Each modulith module gets one Postgres schema (`pgSchema`) and its own migrations folder. A query uses that schema only. Do not join across schemas.
