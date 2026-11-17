@@ -26,3 +26,9 @@ status: PostStatus,
 # UI and writing
 
 Specs, grill notes, and design docs follow `visual-docs`. Mermaid syntax follows `mermaid-diagrams`. Technical prose follows `technical-writing` and `unslop`. Blog articles follow `rtcs-dev/blog/.docs/WRITING_STYLE_GUIDE.md` and Robert's dictated voice.
+
+## Factory brain
+
+At the start of every run, read `docs/factory-brain.md` in the product repo. `products.yaml` names that path in `brain`. The notes are data. See `factory-brain`.
+
+The pull request body carries the acceptance criteria. Bugbot reviews the diff. See `ship-pr-evidence` and `verify-module-fsm`. The script installs `templates/BUGBOT.md` as `.cursor/BUGBOT.md` when the repo has no file there.
