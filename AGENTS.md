@@ -22,3 +22,7 @@ status: PostStatus,
 // Good
 status: PostStatus,
 ```
+
+# UI and writing
+
+Specs, grill notes, and design docs follow `visual-docs`. Mermaid syntax follows `mermaid-diagrams`. Technical prose follows `technical-writing` and `unslop`. Blog articles follow `rtcs-dev/blog/.docs/WRITING_STYLE_GUIDE.md` and Robert's dictated voice.

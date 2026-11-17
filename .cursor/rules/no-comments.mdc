@@ -1,0 +1,10 @@
+---
+description: Do not add comments unless the user asks for that comment.
+alwaysApply: true
+---
+
+Do not add line comments, block comments, JSDoc, docstrings, banners, or commented-out code.
+
+Write the behavior in names, types, and structure. Add a comment only when the user explicitly asks for one, and add only that comment.
+
+An inline `-- reason` tool directive is allowed. A `SAFETY:` comment is allowed only on a cast whose invariant the type system cannot see.

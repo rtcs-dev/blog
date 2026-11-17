@@ -1,0 +1,22 @@
+---
+description: Two-track SDLC, Linear artifact homes, and the four external gates.
+alwaysApply: true
+---
+
+Internal apps live in the shared monorepo, use the shared shadcn system, and sign in with Google through Cloudflare Access on `rtcs.app` subdomains. Flow: brief, grill, build, pull request with evidence, Robert merges, auto-deploy.
+
+External products start from `effect-modulith-template` in their own repo and their own design system, on an `rtcs.app` subdomain.
+
+1. Entry. Start Cursor from an agreed Linear issue. If none exists, brief Jarvis first.
+2. Gate 1 Grill. Grill notes in a Linear document.
+3. Gate 2 Product spec. Domain concepts and ubiquitous language in a Linear document.
+4. Gate 3 Design doc. One Linear document for the prototype and the C4 spec, approved section by section (`spec-c4`).
+5. Gate 4 Build. GitHub pull requests with tests, preview link, and screenshots (`ship-pr-evidence`, `verify-module-fsm`).
+
+Linear documents hold specs, grill notes, design docs, and product decisions. Approve each section on its own. Verbal approval in chat tells Jarvis to write `Approved: <date>` under the section heading.
+
+Code ADRs go in `docs/decisions/` in the product repo. `cortex` holds skills, rules, `AGENTS.md`, `products.yaml`, and `docs/linear.md`. A pull request holds executable code.
+
+The Linear workspace model is `docs/linear.md` in `rtcs-dev/cortex`.
+
+An agent merges a pull request only after Robert asks for that specific pull request. A merge to `main` runs checks, database migrations, the Cloudflare deploy, and health checks.

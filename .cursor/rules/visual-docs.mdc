@@ -1,0 +1,6 @@
+---
+description: "Specs and docs stay visual: diagrams, tables, short sections, validated Mermaid."
+alwaysApply: true
+---
+
+Write specs, grill notes, design docs and other technical docs so a tired human can scan them, never as a wall of text. Flows, sequences and architecture overviews are Mermaid diagrams, not numbered prose: sequenceDiagram for flows, flowchart for decisions and container maps, tables for comparisons. Keep sections short, with the diagram first and then a few sentences. Linear uses an older Mermaid, so quote labels with special characters, avoid C4/architecture-beta/ELK/frontmatter, and validate every diagram on Mermaid 9.4.0 before publishing and again after saving. Use `mermaid-diagrams` for syntax and `visual-docs` for this policy.

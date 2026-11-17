@@ -1,0 +1,11 @@
+---
+description: shadcn base-nova, Tailwind v4, Lucide, and the private motion skills.
+globs: ["**/*.tsx", "**/*.css", "**/components.json"]
+alwaysApply: false
+---
+
+Build UI with shadcn `base-nova` on `@base-ui/react`, Tailwind v4, and Lucide icons.
+
+Internal apps use the shared design system. External products keep the design system in their own repo.
+
+In a private repo, UI and motion follow the Emil Kowalski skills in `cortex` `.cursor/skills/`. The variant picker is `ui-variants`.
